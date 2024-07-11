@@ -4,9 +4,12 @@ const bodyParser = require("body-parser");
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const jwt = require("jsonwebtoken");
+require("dotenv").config();
+const multer = require("multer");
 
 const app = express();
 const cors = require("cors");
+const dbUrl = process.env.MONGO_URL;
 
 app.use(express.json());
 app.use(
@@ -21,9 +24,7 @@ app.use(bodyParser.json());
 app.use(passport.initialize());
 
 mongoose
-  .connect(
-    "mongodb+srv://blevin0521:motsEbCaayI5AK90@cluster0.qy19ftx.mongodb.net/"
-  )
+  .connect(process.env.MONGO_URL)
   .then(() => {
     console.log("Connected to MongoDB");
   })
