@@ -3,12 +3,13 @@ import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import LoginScreen from "./screens/LoginScreen";
+import RegisterScreen from "./screens/RegisterScreen";
 import ProfileScreen from "./screens/ProfileScreen";
-import ReservationScreen from "./screens/ReservationScreen";
 import AccountScreen from "./screens/AccountScreen";
+import ReservationScreen from "./screens/ReservationScreen";
 import SettingsScreen from "./screens/SettingsScreen";
 import FeedbackScreen from "./screens/FeedbackScreen";
-import { LoginScreen } from "./screens/LoginScreen";
 import { UserProvider } from "./UserContext";
 
 const StackNavigator = () => {
@@ -16,10 +17,15 @@ const StackNavigator = () => {
   return (
     <UserProvider>
       <NavigationContainer>
-        <Stack.Navigator initialRouteName="Login">
+        <Stack.Navigator initialRouteName="Home">
           <Stack.Screen
             name="Login"
             component={LoginScreen}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="Register"
+            component={RegisterScreen}
             options={{ headerShown: false }}
           />
           <Stack.Screen
@@ -58,6 +64,4 @@ const StackNavigator = () => {
   );
 };
 
-export default StackNavigator;
-
-const styles = StyleSheet.create({});
+export default StackNavigator; 

@@ -13,16 +13,13 @@ const app = express();
 const dbUrl = process.env.MONGO_URL;
 const jwtSecret = process.env.JWT_SECRET;
 const bcryptSalt = bcrypt.genSaltSync(10);
+const api = process.env.API_URL;
 
 // Middleware
 app.use(express.json());
 app.use(helmet());
-app.use(
-  cors({
-    origin: "http://localhost:8081",
-    credentials: true,
-  })
-);
+app.use(cors());
+app.options("*", cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
@@ -32,11 +29,11 @@ mongoose
   .then(() => console.log("Connected to MongoDB"))
   .catch((err) => console.log("Error connecting to MongoDB", err));
 
-app.get("/test", (req, res) => {
+app.get(api + "/", (req, res) => {
   res.json("Hello World");
 });
 
-app.post("/register", async (req, res) => {
+app.post(`${api}/register`, async (req, res) => {
   const { name, email, password } = req.body;
   try {
     const userDoc = await User.create({
@@ -50,7 +47,7 @@ app.post("/register", async (req, res) => {
   }
 });
 
-app.post("/login", async (req, res) => {
+app.post(`${api}/login`, async (req, res) => {
   const { email, password } = req.body;
   try {
     const userDoc = await User.findOne({ email });
@@ -80,7 +77,7 @@ app.post("/login", async (req, res) => {
   }
 });
 
-app.get("/profile", (req, res) => {
+app.get(`${api}/profile`, (req, res) => {
   const { token } = req.cookies;
   if (token) {
     jwt.verify(token, jwtSecret, {}, async (err, userData) => {
@@ -95,7 +92,7 @@ app.get("/profile", (req, res) => {
   }
 });
 
-app.get("/classes", async (req, res) => {
+app.get(`${api}/classes`, async (req, res) => {
   const { date, types, campuses } = req.query;
 
   let query = {};
@@ -125,5 +122,5 @@ app.get("/classes", async (req, res) => {
 });
 
 app.listen(4000, () => {
-  console.log("Server is running on port 4000");
+  console.log("Server is running http://localhost:4000");
 });

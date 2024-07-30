@@ -11,7 +11,7 @@ import { useState, useContext } from "react";
 import { CommonActions } from "@react-navigation/native";
 import { UserContext } from "../UserContext";
 
-export const LoginScreen = ({ navigation }) => {
+const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -20,7 +20,10 @@ export const LoginScreen = ({ navigation }) => {
   async function handleLogin(ev) {
     ev.preventDefault();
     try {
-      const { data } = await axios.post("http://10.110.208.57:4000/login", { email, password });
+      const { data } = await axios.post("http://10.110.208.57:4000/login", {
+        email,
+        password,
+      });
       setUser(data);
       alert("Login successful");
       navigation.dispatch(
@@ -68,7 +71,7 @@ export const LoginScreen = ({ navigation }) => {
         </TouchableRipple>
         <Text style={styles.noAccountText}>
           No account? Click
-          <TouchableRipple onPress={() => navigation.navigate("Signup")}>
+          <TouchableRipple onPress={() => navigation.navigate("Register")}>
             <Text
               style={[
                 styles.noAccountText,
@@ -119,6 +122,7 @@ const styles = StyleSheet.create({
     fontSize: FONTSIZES.medium,
     flexDirection: "row",
     marginTop: 5,
+    fontWeight: "400",
   },
   errorText: {
     color: "red",
@@ -126,3 +130,5 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
 });
+
+export default LoginScreen;

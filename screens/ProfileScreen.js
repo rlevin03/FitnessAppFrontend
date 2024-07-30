@@ -80,7 +80,7 @@ const ProfileScreen = ({ navigation }) => {
           <SettingsOption
             title="Leave Feedback"
             onPress={() => navigation.navigate("Feedback")}
-            rounded={true}
+            roundedBottom={true}
           />
         </View>
       </View>

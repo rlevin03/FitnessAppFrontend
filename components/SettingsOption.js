@@ -4,13 +4,22 @@ import { TouchableRipple, Text } from "react-native-paper";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { COLORS, DIMENSIONS, FONTSIZES } from "./Constants";
 
-export const SettingsOption = ({ title, onPress, rounded }) => {
+export const SettingsOption = ({
+  title,
+  onPress,
+  roundedBottom,
+  roundedTop,
+}) => {
   return (
     <View>
       <View style={styles.divider} />
       <TouchableRipple
         onPress={onPress}
-        style={[styles.container, rounded && styles.roundedWrapper]}
+        style={[
+          styles.container,
+          roundedBottom && styles.roundedBottomWrapper,
+          roundedTop && styles.roundedTopWrapper,
+        ]}
       >
         <View style={styles.content}>
           <Text style={styles.text}>{title}</Text>
@@ -26,9 +35,14 @@ export const SettingsOption = ({ title, onPress, rounded }) => {
 };
 
 const styles = StyleSheet.create({
-  roundedWrapper: {
+  roundedBottomWrapper: {
     borderBottomLeftRadius: DIMENSIONS.cornerCurve,
     borderBottomRightRadius: DIMENSIONS.cornerCurve,
+    overflow: "hidden",
+  },
+  roundedTopWrapper: {
+    borderTopLeftRadius: DIMENSIONS.cornerCurve,
+    borderTopRightRadius: DIMENSIONS.cornerCurve,
     overflow: "hidden",
   },
   container: {

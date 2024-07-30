@@ -16,3 +16,8 @@ export const DIMENSIONS = {
   componentWidth: "95%",
   cornerCurve: 5,
 };
+
+export const VALIDEMAILS = [
+  "northeastern.edu",
+  "husky.neu.edu",
+];

@@ -3,7 +3,7 @@ import { StyleSheet, View } from "react-native";
 import { Header } from "../components/Header";
 import { COLORS } from "../components/Constants";
 
-export default FeedbackScreen = ({ navigation }) => {
+const FeedbackScreen = ({ navigation }) => {
   return (
     <PaperProvider>
       <View style={styles.container}>
@@ -18,3 +18,5 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.black,
   },
 });
+
+export default FeedbackScreen;

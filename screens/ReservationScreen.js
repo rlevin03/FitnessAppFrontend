@@ -50,7 +50,7 @@ function createTimeRange(startTime, durationMinutes) {
   return `${formatTime(startDate)} - ${formatTime(endDate)} ${period}`;
 }
 
-export default ReservationScreen = ({ navigation }) => {
+const ReservationScreen = ({ navigation }) => {
   return (
     <PaperProvider>
       <View style={styles.container}>
@@ -156,3 +156,5 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
 });
+
+export default ReservationScreen;
