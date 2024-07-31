@@ -11,13 +11,14 @@ import ReservationScreen from "./screens/ReservationScreen";
 import SettingsScreen from "./screens/SettingsScreen";
 import FeedbackScreen from "./screens/FeedbackScreen";
 import { UserProvider } from "./UserContext";
+import VerificationScreen from "./screens/VerificationScreen";
 
 const StackNavigator = () => {
   const Stack = createNativeStackNavigator();
   return (
     <UserProvider>
       <NavigationContainer>
-        <Stack.Navigator initialRouteName="Home">
+        <Stack.Navigator initialRouteName="Verification">
           <Stack.Screen
             name="Login"
             component={LoginScreen}
@@ -26,6 +27,11 @@ const StackNavigator = () => {
           <Stack.Screen
             name="Register"
             component={RegisterScreen}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="Verification"
+            component={VerificationScreen}
             options={{ headerShown: false }}
           />
           <Stack.Screen
@@ -64,4 +70,4 @@ const StackNavigator = () => {
   );
 };
 
-export default StackNavigator; 
+export default StackNavigator;

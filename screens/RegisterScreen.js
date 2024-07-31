@@ -30,11 +30,12 @@ const RegisterScreen = ({ navigation }) => {
       return;
     }
     try {
-      await axios.post(api + "/register", {
+      await axios.post("http://10.0.2.2:4000/register", {
         firstName,
         email,
         password,
       });
+      navigation.navigate("Login");
       alert("Account created successfully");
     } catch (error) {
       setError("Account creation failed");

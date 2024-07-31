@@ -35,6 +35,15 @@ const filterOptions = {
   instructors: ["John Doe", "Jane Doe", "Alice Smith", "Bob Johnson"],
 };
 
+const dummyClass = {
+  _id: "1",
+  name: "Yoga",
+  type: "Vinyasa",
+  instructor: "John Doe",
+  date: new Date(),
+  duration: 60,
+};
+
 function getFirstDayOfWeek(date) {
   const dayOfWeek = date.getDay();
   const firstDayOfWeek = new Date(date);
@@ -50,7 +59,7 @@ function getNumberOfDaysInAdvance(date, days) {
 }
 
 const HomeScreen = ({ navigation }) => {
-  const [classes, setClasses] = useState([]);
+  const [classes, setClasses] = useState([dummyClass, dummyClass, dummyClass]);
   const [visible, setVisible] = useState(false);
   const [selectedFilters, setSelectedFilters] = useState({
     types: [],
@@ -69,7 +78,7 @@ const HomeScreen = ({ navigation }) => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.get("/classes", {
+      const response = await axios.get("http://10.0.2.2/classes", {
         params: {
           date: selectedDate,
           types: selectedFilters.types.join(","),
@@ -79,7 +88,7 @@ const HomeScreen = ({ navigation }) => {
       });
       setClasses(response.data);
     } catch (err) {
-      setError(err);
+      setError(err.message);
     } finally {
       setLoading(false);
     }
@@ -238,7 +247,7 @@ const HomeScreen = ({ navigation }) => {
                   { color: COLORS.white, textAlign: "center" },
                 ]}
               >
-                Error loading classes
+                Error loading classes: {error}
               </Text>
             ) : classes.length > 0 ? (
               classes.map((classItem) => (
@@ -268,7 +277,7 @@ const HomeScreen = ({ navigation }) => {
           contentContainerStyle={{
             backgroundColor: COLORS.primary,
             padding: 20,
-            height: "70%",
+            height: "80%",
             width: DIMENSIONS.componentWidth,
             alignSelf: "center",
             borderRadius: DIMENSIONS.cornerCurve,
@@ -281,12 +290,18 @@ const HomeScreen = ({ navigation }) => {
                 <Text style={styles.textBig}>
                   {filterType.toLocaleUpperCase()}
                 </Text>
-                <View style={styles.filtersWrapper}>
+                <View
+                  style={[
+                    styles.filtersWrapper,
+                    { backgroundColor: COLORS.black },
+                  ]}
+                >
                   {filterOptions[filterType].map((filterValue) => (
                     <TouchableOpacity
                       key={filterValue}
                       style={[
                         styles.filterButton,
+                        { marginBottom: 5 },
                         modalFilters[filterType].includes(filterValue) &&
                           styles.selectedFilterButton,
                       ]}
@@ -386,11 +401,10 @@ const styles = StyleSheet.create({
     borderRadius: DIMENSIONS.cornerCurve,
     paddingHorizontal: 10,
     marginRight: 5,
-    marginBottom: 5,
     paddingVertical: 5,
   },
   selectedFilterButton: {
-    backgroundColor: COLORS.secondary,
+    backgroundColor: COLORS.white,
   },
   filterDivider: {
     width: 3,

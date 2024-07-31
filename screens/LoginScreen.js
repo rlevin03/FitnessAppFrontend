@@ -20,7 +20,7 @@ const LoginScreen = ({ navigation }) => {
   async function handleLogin(ev) {
     ev.preventDefault();
     try {
-      const { data } = await axios.post("http://10.110.208.57:4000/login", {
+      const { data } = await axios.post("http://10.0.2.2/login", {
         email,
         password,
       });

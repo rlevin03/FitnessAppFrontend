@@ -1,7 +1,7 @@
-import { PaperProvider } from "react-native-paper";
+import { Button, PaperProvider, Text } from "react-native-paper";
 import { Linking, StyleSheet, View } from "react-native";
 import { Header } from "../components/Header";
-import { COLORS } from "../components/Constants";
+import { COLORS, DIMENSIONS, FONTSIZES } from "../components/Constants";
 import SettingsOption from "../components/SettingsOption";
 
 const SettingsScreen = ({ navigation }) => {
@@ -37,6 +37,15 @@ const SettingsScreen = ({ navigation }) => {
             }
           />
         </View>
+        <View style={styles.spacer} />
+        <Button
+          mode="contained"
+          style={[styles.settingsButton, { marginBottom: 30 }]}
+        >
+          <Text style={[styles.textLargeBold, { color: COLORS.black }]}>
+            Log Out
+          </Text>
+        </Button>
       </View>
     </PaperProvider>
   );
@@ -49,6 +58,25 @@ const styles = StyleSheet.create({
   },
   optionsContainer: {
     marginTop: 20,
+  },
+  textLargeBold: {
+    fontSize: FONTSIZES.large,
+    fontWeight: "bold",
+    color: COLORS.white,
+    padding: 15,
+    marginBottom: 5,
+  },
+  settingsButton: {
+    backgroundColor: COLORS.primary,
+    width: DIMENSIONS.componentWidth,
+    alignSelf: "center",
+    justifyContent: "center",
+    alignContent: "center",
+    borderRadius: DIMENSIONS.cornerCurve,
+    marginTop: 20,
+  },
+  spacer: {
+    flex: 1,
   },
 });
 

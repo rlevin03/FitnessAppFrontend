@@ -33,7 +33,7 @@ app.get(api + "/", (req, res) => {
   res.json("Hello World");
 });
 
-app.post(`${api}/register`, async (req, res) => {
+app.post('/register', async (req, res) => {
   const { name, email, password } = req.body;
   try {
     const userDoc = await User.create({
@@ -47,7 +47,7 @@ app.post(`${api}/register`, async (req, res) => {
   }
 });
 
-app.post(`${api}/login`, async (req, res) => {
+app.post('/login', async (req, res) => {
   const { email, password } = req.body;
   try {
     const userDoc = await User.findOne({ email });
@@ -77,7 +77,7 @@ app.post(`${api}/login`, async (req, res) => {
   }
 });
 
-app.get(`${api}/profile`, (req, res) => {
+app.get('/profile', (req, res) => {
   const { token } = req.cookies;
   if (token) {
     jwt.verify(token, jwtSecret, {}, async (err, userData) => {
@@ -92,7 +92,7 @@ app.get(`${api}/profile`, (req, res) => {
   }
 });
 
-app.get(`${api}/classes`, async (req, res) => {
+app.get('/classes', async (req, res) => {
   const { date, types, campuses } = req.query;
 
   let query = {};
