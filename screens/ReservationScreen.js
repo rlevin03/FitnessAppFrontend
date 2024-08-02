@@ -1,6 +1,6 @@
-import { PaperProvider, Text } from "react-native-paper";
+import { PaperProvider, Text, TouchableRipple } from "react-native-paper";
 import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
-import { COLORS, FONTSIZES, DIMENSIONS } from "../components/Constants";
+import { COLORS, FONTSIZES, DIMENSIONS, createTimeRange } from "../components/Constants";
 import { Header } from "../components/Header";
 
 const date = new Date().toLocaleTimeString("en-US", {
@@ -11,44 +11,24 @@ const date = new Date().toLocaleTimeString("en-US", {
 const splitDate = new Date().toDateString().split(" ");
 
 const data = {
-  type: "Aerobics",
-  time: "6:30 PM",
-  duration: 100,
-  location: "Marino Center",
+  type: "Dance",
+  name: "Ballet",
+  date: new Date().toISOString(),
+  time: "11:00 AM",
+  duration: 60,
+  location: "Studio one",
+  instructor: "John Doe",
   maxCapacity: 20,
-  currentCapacity: 15,
+  currentCapacity: 20,
+  minimumAttendees: 5,
+  waitListCapacity: 10,
+  waitListCurrent: 5,
+  description:
+    "Dance your heart out with our special celebrity(literally) instructors. They will have you forgetting its finals season. Stressed about your dropping grades? Well stress no further as Jack Black will have you saying hakuna matata.",
+  skillLevel: "Intermediate",
+  intensity: "Medium",
+  equipment: "Hand weights",
 };
-
-function createTimeRange(startTime, durationMinutes) {
-  // Parse the start time into a Date object
-  const [hours, minutes, period] = startTime
-    .match(/(\d+):(\d+)\s*(AM|PM)/i)
-    .slice(1);
-  let startDate = new Date();
-  startDate.setHours(
-    period.toUpperCase() === "PM" && hours !== "12"
-      ? parseInt(hours) + 12
-      : parseInt(hours),
-    parseInt(minutes)
-  );
-
-  // Create a new Date object for the end time by adding the duration
-  let endDate = new Date(startDate);
-  endDate.setMinutes(startDate.getMinutes() + durationMinutes);
-
-  // Format the time as "hh:mm AM/PM"
-  const formatTime = (date) => {
-    let hours = date.getHours();
-    let minutes = date.getMinutes();
-    let period = hours >= 12 ? "PM" : "AM";
-    hours = hours % 12 || 12;
-    minutes = minutes < 10 ? "0" + minutes : minutes;
-    return `${hours}:${minutes}`;
-  };
-
-  // Return the formatted time range string
-  return `${formatTime(startDate)} - ${formatTime(endDate)} ${period}`;
-}
 
 const ReservationScreen = ({ navigation }) => {
   return (
@@ -57,60 +37,64 @@ const ReservationScreen = ({ navigation }) => {
         <Header navigation={navigation} title="Reservations" />
 
         <ScrollView>
-          <View style={styles.reservation}>
-            <View style={styles.date}>
-              <Text style={styles.textMedium}>
-                {splitDate[0].toUpperCase()}
-              </Text>
-              <Text
-                style={[
-                  styles.textBig,
-                  { color: COLORS.white, fontWeight: "bold" },
-                ]}
-              >
-                {splitDate[2]}
-              </Text>
-              <Text style={styles.textMedium}>
-                {splitDate[1].toUpperCase()}
-              </Text>
-            </View>
-            <View
-              style={{
-                flex: 12,
-                padding: 10,
-                justifyContent: "center",
-                backgroundColor: COLORS.primary,
-                marginVertical: 10,
-                marginRight: 10,
-                marginLeft: -10,
-                borderTopRightRadius: DIMENSIONS.cornerCurve,
-                borderBottomRightRadius: DIMENSIONS.cornerCurve,
-              }}
-            >
-              <Text
-                style={[
-                  styles.textBig,
-                  { textAlign: "left", fontWeight: "bold" },
-                ]}
-              >
-                {data.type}
-              </Text>
-              <Text
-                style={[
-                  styles.textMedium,
-                  { fontWeight: "bold", textAlign: "left" },
-                ]}
-              >
-                {createTimeRange(data.time, data.duration)}
-              </Text>
-              <View style={styles.placeAndAttendees}>
-                <Text style={styles.textSmall}>{data.location}</Text>
-                <Text style={[styles.textSmall, { textAlign: "right" }]}>
-                  Attendees: {data.currentCapacity}/{data.maxCapacity}
+          <TouchableRipple
+            onPress={() => navigation.navigate("Class Description", { class: data })}
+          >
+            <View style={styles.reservation}>
+              <View style={styles.date}>
+                <Text style={styles.textMedium}>
+                  {splitDate[0].toUpperCase()}
+                </Text>
+                <Text
+                  style={[
+                    styles.textBig,
+                    { color: COLORS.white, fontWeight: "bold" },
+                  ]}
+                >
+                  {splitDate[2]}
+                </Text>
+                <Text style={styles.textMedium}>
+                  {splitDate[1].toUpperCase()}
                 </Text>
               </View>
+              <View
+                style={{
+                  flex: 12,
+                  padding: 10,
+                  justifyContent: "center",
+                  backgroundColor: COLORS.primary,
+                  marginVertical: 10,
+                  marginRight: 10,
+                  marginLeft: -10,
+                  borderTopRightRadius: DIMENSIONS.cornerCurve,
+                  borderBottomRightRadius: DIMENSIONS.cornerCurve,
+                }}
+              >
+                <Text
+                  style={[
+                    styles.textBig,
+                    { textAlign: "left", fontWeight: "bold" },
+                  ]}
+                >
+                  {data.name}
+                </Text>
+                <Text
+                  style={[
+                    styles.textMedium,
+                    { fontWeight: "bold", textAlign: "left" },
+                  ]}
+                >
+                  {createTimeRange(data.time, data.duration)}
+                </Text>
+                <View style={styles.placeAndAttendees}>
+                  <Text style={styles.textSmall}>{data.location}</Text>
+                  <Text style={[styles.textSmall, { textAlign: "right" }]}>
+                    Attendees: {data.currentCapacity}/{data.maxCapacity}
+                  </Text>
+                </View>
+              </View>
             </View>
-          </View>
+          </TouchableRipple>
         </ScrollView>
       </View>
     </PaperProvider>

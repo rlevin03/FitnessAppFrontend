@@ -65,7 +65,7 @@ const LoginScreen = ({ navigation }) => {
         />
         {error ? <Text style={styles.errorText}>{error}</Text> : null}
         <TouchableRipple style={styles.loginButton} onPress={handleLogin}>
-          <Text style={{ fontWeight: "bold", fontSize: FONTSIZES.large }}>
+          <Text style={{ fontWeight: "bold", fontSize: FONTSIZES.large, color: COLORS.white }}>
             Login
           </Text>
         </TouchableRipple>
@@ -109,7 +109,7 @@ const styles = StyleSheet.create({
   },
   loginButton: {
     width: "80%",
-    backgroundColor: COLORS.primary,
+    backgroundColor: COLORS.maroon,
     padding: 10,
     alignSelf: "center",
     alignItems: "center",

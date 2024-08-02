@@ -12,13 +12,15 @@ import SettingsScreen from "./screens/SettingsScreen";
 import FeedbackScreen from "./screens/FeedbackScreen";
 import { UserProvider } from "./UserContext";
 import VerificationScreen from "./screens/VerificationScreen";
+import EmailChangeScreen from "./screens/EmailChangeScreen";
+import ClassDescriptionScreen from "./screens/ClassDescriptionScreen";
 
 const StackNavigator = () => {
   const Stack = createNativeStackNavigator();
   return (
     <UserProvider>
       <NavigationContainer>
-        <Stack.Navigator initialRouteName="Verification">
+        <Stack.Navigator initialRouteName="Home">
           <Stack.Screen
             name="Login"
             component={LoginScreen}
@@ -32,6 +34,11 @@ const StackNavigator = () => {
           <Stack.Screen
             name="Verification"
             component={VerificationScreen}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="Email Change"
+            component={EmailChangeScreen}
             options={{ headerShown: false }}
           />
           <Stack.Screen
@@ -52,6 +59,11 @@ const StackNavigator = () => {
           <Stack.Screen
             name="Reservations"
             component={ReservationScreen}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="Class Description"
+            component={ClassDescriptionScreen}
             options={{ headerShown: false }}
           />
           <Stack.Screen

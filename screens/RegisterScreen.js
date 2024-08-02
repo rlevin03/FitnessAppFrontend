@@ -88,8 +88,8 @@ const RegisterScreen = ({ navigation }) => {
         />
 
         {error ? <Text style={styles.errorText}>{error}</Text> : null}
-        <TouchableRipple style={styles.loginButton} onPress={handleRegister}>
-          <Text style={{ fontWeight: "bold", fontSize: FONTSIZES.large }}>
+        <TouchableRipple style={styles.registerButton} onPress={handleRegister}>
+          <Text style={{ fontWeight: "bold", fontSize: FONTSIZES.large, color: COLORS.white  }}>
             Create Account
           </Text>
         </TouchableRipple>
@@ -131,9 +131,9 @@ const styles = StyleSheet.create({
     width: DIMENSIONS.componentWidth,
     height: 55,
   },
-  loginButton: {
+  registerButton: {
     width: "80%",
-    backgroundColor: COLORS.primary,
+    backgroundColor: COLORS.maroon,
     padding: 10,
     alignSelf: "center",
     alignItems: "center",

@@ -3687,10 +3687,10 @@ expo-status-bar@~1.12.1:
   resolved "https://registry.npmjs.org/expo-status-bar/-/expo-status-bar-1.12.1.tgz"
   integrity sha512-/t3xdbS8KB0prj5KG5w7z+wZPFlPtkgs95BsmrP/E7Q0xHXTcDcQ6Cu2FkFuRM+PKTb17cJDnLkawyS5vDLxMA==
 
-expo@*, expo@^51.0.23:
-  version "51.0.23"
-  resolved "https://registry.npmjs.org/expo/-/expo-51.0.23.tgz"
-  integrity sha512-tZv7hiDIlKMlQxzC/IxfiLEpp0xcm6VISuoeFobkvoelEWsj6bpjlsF0HP4k6pr3ELL++r7wE1VGYa/AceC6+w==
+expo@*, expo@^51.0.24:
+  version "51.0.24"
+  resolved "https://registry.npmjs.org/expo/-/expo-51.0.24.tgz"
+  integrity sha512-HoOuNIWXzS6Gxifcb0N+qRt5K6iR9YitQaWIVNB8elyupvQdyI566IMgMBiO45NgpO5es0sfFNNBasxBHLkbUw==
   dependencies:
     "@babel/runtime" "^7.20.0"
     "@expo/cli" "0.18.26"
