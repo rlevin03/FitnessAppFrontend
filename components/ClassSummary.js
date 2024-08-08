@@ -3,7 +3,7 @@ import { StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
 import { COLORS, DIMENSIONS, FONTSIZES } from "./Constants";
 
-export const ClassSummary = ({ title, type, instructor, startTime, duration }) => {
+const ClassSummary = ({ title, type, instructor, startTime, duration }) => {
   return (
     <View style={styles.container}>
       <View style={styles.timeContainer}>
@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
   detailsContainer: {
     flex: 2,
     justifyContent: "center",
-    marginLeft: 10
+    marginLeft: 10,
   },
   textBig: {
     fontSize: FONTSIZES.medium,
@@ -56,3 +56,5 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
 });
+
+export default ClassSummary;

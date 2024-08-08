@@ -2,7 +2,7 @@ import { Appbar } from "react-native-paper";
 import { COLORS, FONTSIZES } from "./Constants";
 import { StyleSheet } from "react-native";
 
-export const Header = ({ navigation, title }) => {
+const Header = ({ navigation, title }) => {
   return (
     <Appbar.Header style={styles.header} mode="center-aligned">
       <Appbar.BackAction size={30} onPress={() => navigation.goBack()} />
@@ -24,3 +24,5 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.primary,
   },
 });
+
+export default Header;

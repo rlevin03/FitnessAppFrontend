@@ -4,12 +4,7 @@ import { TouchableRipple, Text } from "react-native-paper";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { COLORS, DIMENSIONS, FONTSIZES } from "./Constants";
 
-export const SettingsOption = ({
-  title,
-  onPress,
-  roundedBottom,
-  roundedTop,
-}) => {
+const SettingsOption = ({ title, onPress, roundedBottom, roundedTop }) => {
   return (
     <View>
       <View style={styles.divider} />

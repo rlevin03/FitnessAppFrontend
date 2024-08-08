@@ -34,7 +34,10 @@ const EmailChangeScreen = ({ navigation }) => {
           value={email2}
           onChangeText={setEmail2}
         />
-        <TouchableRipple style={styles.emailChangeButton}>
+        <TouchableRipple
+          style={styles.emailChangeButton}
+          onPress={navigation.navigate("Verification", email)}
+        >
           <Text
             style={{
               fontWeight: "bold",

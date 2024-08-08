@@ -14,13 +14,13 @@ import { UserContext } from "../UserContext";
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [error, setError] = useState(null);
   const { setUser } = useContext(UserContext);
 
-  async function handleLogin(ev) {
-    ev.preventDefault();
+  const handleLogin = async () => {
+    setError(null);
     try {
-      const { data } = await axios.post("http://10.0.2.2/login", {
+      const { data } = await axios.post("/auth/login", {
         email,
         password,
       });
@@ -33,9 +33,9 @@ const LoginScreen = ({ navigation }) => {
         })
       );
     } catch (error) {
-      setError("Login failed");
+      setError("Login failed. Please check your email and password.");
     }
-  }
+  };
 
   return (
     <PaperProvider>
@@ -65,7 +65,13 @@ const LoginScreen = ({ navigation }) => {
         />
         {error ? <Text style={styles.errorText}>{error}</Text> : null}
         <TouchableRipple style={styles.loginButton} onPress={handleLogin}>
-          <Text style={{ fontWeight: "bold", fontSize: FONTSIZES.large, color: COLORS.white }}>
+          <Text
+            style={{
+              fontWeight: "bold",
+              fontSize: FONTSIZES.large,
+              color: COLORS.white,
+            }}
+          >
             Login
           </Text>
         </TouchableRipple>

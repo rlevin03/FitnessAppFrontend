@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useContext } from "react";
 import {
   View,
   Text,
@@ -20,6 +20,8 @@ import {
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { COLORS, DIMENSIONS, FONTSIZES } from "../components/Constants";
 import ClassSummary from "../components/ClassSummary";
+import { UserContext } from "../UserContext";
+import { CommonActions } from "@react-navigation/native";
 import axios from "axios";
 
 const imageSliderData = [
@@ -30,18 +32,9 @@ const imageSliderData = [
 ];
 
 const filterOptions = {
-  types: ["Yoga", "Pilates", "Cardio", "Strength"],
-  campuses: ["Main Campus", "Marino Center", "Satellite Campus"],
-  instructors: ["John Doe", "Jane Doe", "Alice Smith", "Bob Johnson"],
-};
-
-const dummyClass = {
-  _id: "1",
-  name: "Yoga",
-  type: "Vinyasa",
-  instructor: "John Doe",
-  date: new Date(),
-  duration: 60,
+  types: ["Yoga", "Pilates", "Cardio", "Strength", "Dance"],
+  campuses: ["Main Campus", "Marino Center", "Satellite Campus", "Boston"],
+  instructors: ["John Doe","Joe Shmo", "Jane Doe", "Alice Smith", "Bob Johnson"],
 };
 
 function getFirstDayOfWeek(date) {
@@ -59,7 +52,7 @@ function getNumberOfDaysInAdvance(date, days) {
 }
 
 const HomeScreen = ({ navigation }) => {
-  const [classes, setClasses] = useState([dummyClass, dummyClass, dummyClass]);
+  const [classes, setClasses] = useState([]);
   const [visible, setVisible] = useState(false);
   const [selectedFilters, setSelectedFilters] = useState({
     types: [],
@@ -70,6 +63,7 @@ const HomeScreen = ({ navigation }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [modalFilters, setModalFilters] = useState({ ...selectedFilters });
+  const { user, ready } = useContext(UserContext);
 
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
@@ -78,9 +72,11 @@ const HomeScreen = ({ navigation }) => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.get("http://10.0.2.2/classes", {
+      const response = await axios.get("/classes", {
         params: {
-          date: selectedDate,
+          date: selectedDate
+            ? selectedDate.toISOString().split("T")[0]
+            : undefined,
           types: selectedFilters.types.join(","),
           campuses: selectedFilters.campuses.join(","),
           instructors: selectedFilters.instructors.join(","),
@@ -127,6 +123,28 @@ const HomeScreen = ({ navigation }) => {
     setSelectedFilters(modalFilters);
     hideModal();
   };
+
+  if (!ready) {
+    return (
+      <PaperProvider>
+        <View style={styles.container}>
+          <ActivityIndicator size="large" color={COLORS.primary} />
+        </View>
+      </PaperProvider>
+    );
+  }
+
+  if (user && user.verified === false) {
+    navigation.dispatch(
+      CommonActions.reset({
+        index: 0,
+        routes: [
+          { name: "Verification", params: { recipientEmail: user.email } },
+        ],
+      })
+    );
+    return null; // Prevent rendering of HomeScreen if the user is not verified
+  }
 
   return (
     <PaperProvider>
@@ -256,7 +274,7 @@ const HomeScreen = ({ navigation }) => {
                   title={classItem.name}
                   type={classItem.type}
                   instructor={classItem.instructor}
-                  startTime={new Date(classItem.date).toLocaleTimeString()}
+                  startTime={classItem.startTime}
                   duration={`${classItem.duration} min`}
                 />
               ))

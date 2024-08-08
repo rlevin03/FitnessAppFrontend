@@ -7,8 +7,8 @@ import {
   FONTSIZES,
   VALIDEMAILS,
 } from "../components/Constants";
-import { UserContext } from "../UserContext";
 import axios from "axios";
+import { CommonActions } from "@react-navigation/native";
 
 const RegisterScreen = ({ navigation }) => {
   const [email, setEmail] = useState("");
@@ -16,10 +16,8 @@ const RegisterScreen = ({ navigation }) => {
   const [password2, setPassword2] = useState("");
   const [firstName, setFirstName] = useState("");
   const [error, setError] = useState("");
-  const { setUser } = useContext(UserContext);
 
-  async function handleRegister(ev) {
-    ev.preventDefault();
+  async function handleRegister() {
     let emailEnd = email.split("@")[1];
     if (password !== password2) {
       setError("Passwords do not match");
@@ -30,14 +28,20 @@ const RegisterScreen = ({ navigation }) => {
       return;
     }
     try {
-      await axios.post("http://10.0.2.2:4000/register", {
+      await axios.post("/auth/register", {
         firstName,
         email,
         password,
       });
-      navigation.navigate("Login");
-      alert("Account created successfully");
+
+      navigation.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [{ name: "Verification", params: { recipientEmail: email } }],
+        })
+      );
     } catch (error) {
+      console.error(error);
       setError("Account creation failed");
     }
   }
@@ -89,7 +93,13 @@ const RegisterScreen = ({ navigation }) => {
 
         {error ? <Text style={styles.errorText}>{error}</Text> : null}
         <TouchableRipple style={styles.registerButton} onPress={handleRegister}>
-          <Text style={{ fontWeight: "bold", fontSize: FONTSIZES.large, color: COLORS.white  }}>
+          <Text
+            style={{
+              fontWeight: "bold",
+              fontSize: FONTSIZES.large,
+              color: COLORS.white,
+            }}
+          >
             Create Account
           </Text>
         </TouchableRipple>

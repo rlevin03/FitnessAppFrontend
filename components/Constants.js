@@ -50,4 +50,3 @@ export function createTimeRange(startTime, durationMinutes) {
   // Return the formatted time range string
   return `${formatTime(startDate)} - ${formatTime(endDate)}`;
 }
-

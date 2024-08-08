@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Linking, ScrollView, StyleSheet, View } from "react-native";
 import { Appbar, Button, PaperProvider, Text } from "react-native-paper";
 import { COLORS, DIMENSIONS, FONTSIZES } from "../components/Constants";
 import { SettingsOption } from "../components/SettingsOption";
 import { Header } from "../components/Header";
+import { UserContext } from "../UserContext";
 
 const monthNames = [
   "January",
@@ -21,18 +22,7 @@ const monthNames = [
 ];
 
 const ProfileScreen = ({ navigation }) => {
-  const [classesAttended, setClassesAttended] = useState(0);
-
-  useEffect(() => {
-    const fetchClassesAttended = async () => {
-      // Replace with your database fetching logic
-      const fetchedClassesAttended = 10; // This should be fetched from your database
-      setClassesAttended(fetchedClassesAttended);
-    };
-
-    fetchClassesAttended();
-  }, []);
-
+  const { user } = useContext(UserContext);
   const currentMonth = monthNames[new Date().getMonth()];
   const currentYear = new Date().getFullYear();
 
@@ -48,7 +38,7 @@ const ProfileScreen = ({ navigation }) => {
             >{`${currentMonth} ${currentYear}`}</Text>
           </View>
           <View style={styles.classesAttendedNumberContainer}>
-            <Text style={styles.classesAttendedNumber}>{classesAttended}</Text>
+            <Text style={styles.classesAttendedNumber}>{user.classesAttended}</Text>
           </View>
         </View>
         <Button
