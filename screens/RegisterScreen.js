@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { Image, StyleSheet, Text, View } from "react-native";
 import { PaperProvider, TextInput, TouchableRipple } from "react-native-paper";
 import {
@@ -14,10 +14,10 @@ const RegisterScreen = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [password2, setPassword2] = useState("");
-  const [firstName, setFirstName] = useState("");
+  const [name, setName] = useState("");
   const [error, setError] = useState("");
 
-  async function handleRegister() {
+  const handleRegister = async () => {
     let emailEnd = email.split("@")[1];
     if (password !== password2) {
       setError("Passwords do not match");
@@ -29,7 +29,7 @@ const RegisterScreen = ({ navigation }) => {
     }
     try {
       await axios.post("/auth/register", {
-        firstName,
+        name,
         email,
         password,
       });
@@ -44,7 +44,7 @@ const RegisterScreen = ({ navigation }) => {
       console.error(error);
       setError("Account creation failed");
     }
-  }
+  };
   return (
     <PaperProvider>
       <View style={styles.container}>
@@ -63,12 +63,12 @@ const RegisterScreen = ({ navigation }) => {
         />
         <TextInput
           mode="outlined"
-          label="First Name"
+          label="Name"
           textColor="white"
           activeOutlineColor="white"
           style={styles.input}
-          value={firstName}
-          onChangeText={setFirstName}
+          value={name}
+          onChangeText={setName}
         />
         <TextInput
           mode="outlined"

@@ -52,6 +52,32 @@ router.post("/login", async (req, res) => {
   }
 });
 
+router.post("/logout", (req, res) => {
+  res.clearCookie("token").json({ message: "Logged out" });
+});
+
+router.delete("/delete-account", async (req, res) => {
+  const { email } = req.body;
+
+  console.log(email);
+  if (!email) {
+    return res.status(400).json({ error: "Email query parameter is required" });
+  }
+
+  try {
+    const deletedUser = await User.findOneAndDelete({ email });
+
+    if (!deletedUser) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    res.json({ message: "User successfully deleted", user: deletedUser });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 router.get("/profile", (req, res) => {
   const { token } = req.cookies;
   if (token) {
@@ -87,6 +113,52 @@ router.patch("/verify", async (req, res) => {
     }
 
     res.json({ message: "User successfully verified", user: updatedUser });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+router.patch("/email-change", async (req, res) => {
+  const { email, newEmail } = req.body;
+
+  try {
+    const updatedUser = await User.findOneAndUpdate(
+      { email },
+      { email: newEmail },
+      { new: true }
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    res.json({ message: "Email updated successfully", user: updatedUser });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+router.patch("/password-change", async (req, res) => {
+  const { email, oldPassword, newPassword } = req.body;
+
+  const userDoc = await User.findOne({ email });
+  if (!bcrypt.compareSync(oldPassword, userDoc.password)) {
+    return res
+      .status(401)
+      .json({ message: "Old password inconsistent with current password" });
+  }
+
+  try {
+    const updatedUser = await User.findOneAndUpdate(
+      { email },
+      { password: bcrypt.hashSync(newPassword, bcryptSalt) },
+      { new: true }
+    );
+    res
+      .status(200)
+      .json({ message: "Password updated successfully", user: updatedUser });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal server error" });

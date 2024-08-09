@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Image, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import {
   PaperProvider,
   Text,
@@ -7,12 +7,29 @@ import {
   TouchableRipple,
 } from "react-native-paper";
 import { COLORS, DIMENSIONS, FONTSIZES } from "../components/Constants";
-import { useState, useContext } from "react";
+import { useState } from "react";
 
-const EmailChangeScreen = ({ navigation }) => {
+const EmailChangeScreen = ({ navigation, route }) => {
+  const { oldEmail } = route.params;
   const [email, setEmail] = useState("");
   const [email2, setEmail2] = useState("");
 
+  const handleEmailChange = async () => {
+    if (email !== email2) {
+      alert("Emails do not match");
+      return;
+    }
+    try {
+      await axios.patch("/auth/email-change", {
+        email: oldEmail,
+        newEmail: email,
+      });
+      navigation.navigate("Verification", { recipientEmail: email });
+    } catch (error) {
+      console.error(error);
+      alert("Failed to change email");
+    }
+  };
   return (
     <PaperProvider>
       <View style={styles.container}>
@@ -36,7 +53,7 @@ const EmailChangeScreen = ({ navigation }) => {
         />
         <TouchableRipple
           style={styles.emailChangeButton}
-          onPress={navigation.navigate("Verification", email)}
+          onPress={handleEmailChange}
         >
           <Text
             style={{

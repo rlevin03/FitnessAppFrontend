@@ -25,7 +25,6 @@ const LoginScreen = ({ navigation }) => {
         password,
       });
       setUser(data);
-      alert("Login successful");
       navigation.dispatch(
         CommonActions.reset({
           index: 0,

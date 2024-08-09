@@ -16,73 +16,81 @@ import EmailChangeScreen from "./screens/EmailChangeScreen";
 import ClassDescriptionScreen from "./screens/ClassDescriptionScreen";
 
 import { UserProvider } from "./UserContext";
+import PasswordChangeScreen from "./screens/PasswordChangeScreen";
 
-axios.defaults.baseURL = "http://10.110.169.4:4000";
+axios.defaults.baseURL = "http://192.168.1.163:4000";
 
 export default function App() {
   const Stack = createNativeStackNavigator();
 
   return (
-    <UserProvider>
-      <NavigationContainer>
-        <Stack.Navigator initialRouteName="Login">
-          <Stack.Screen
-            name="Login"
-            component={LoginScreen}
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name="Register"
-            component={RegisterScreen}
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name="Verification"
-            component={VerificationScreen}
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name="Email Change"
-            component={EmailChangeScreen}
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name="Home"
-            component={HomeScreen}
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name="Profile"
-            component={ProfileScreen}
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name="Account"
-            component={AccountScreen}
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name="Reservations"
-            component={ReservationScreen}
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name="Class Description"
-            component={ClassDescriptionScreen}
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name="Settings"
-            component={SettingsScreen}
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name="Feedback"
-            component={FeedbackScreen}
-            options={{ headerShown: false }}
-          />
-        </Stack.Navigator>
-      </NavigationContainer>
-    </UserProvider>
+    <>
+      <UserProvider>
+        <NavigationContainer>
+          <Stack.Navigator initialRouteName="Login">
+            <Stack.Screen
+              name="Login"
+              component={LoginScreen}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="Register"
+              component={RegisterScreen}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="Verification"
+              component={VerificationScreen}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="Email Change"
+              component={EmailChangeScreen}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="Home"
+              component={HomeScreen}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="Profile"
+              component={ProfileScreen}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="Account"
+              component={AccountScreen}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="Change Password"
+              component={PasswordChangeScreen}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="Reservations"
+              component={ReservationScreen}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="Class Description"
+              component={ClassDescriptionScreen}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="Settings"
+              component={SettingsScreen}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="Feedback"
+              component={FeedbackScreen}
+              options={{ headerShown: false }}
+            />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </UserProvider>
+    </>
   );
 }

@@ -18,7 +18,7 @@ export const DIMENSIONS = {
   cornerCurve: 5,
 };
 
-export const VALIDEMAILS = ["northeastern.edu", "husky.neu.edu"];
+export const VALIDEMAILS = ["northeastern.edu", "husky.neu.edu", "gmail.com"];
 
 export function createTimeRange(startTime, durationMinutes) {
   // Parse the start time into a Date object

@@ -1,10 +1,51 @@
-import React from "react";
-import { StyleSheet, View, ScrollView } from "react-native";
+import React, { useContext, useState } from "react";
+import {
+  StyleSheet,
+  View,
+  ScrollView,
+  ActivityIndicator,
+  Alert,
+} from "react-native";
 import { Button, PaperProvider, Text } from "react-native-paper";
-import { Header } from "../components/Header";
+import Header from "../components/Header";
 import { COLORS, DIMENSIONS, FONTSIZES } from "../components/Constants";
+import { UserContext } from "../UserContext";
+import axios from "axios";
 
 const AccountScreen = ({ navigation }) => {
+  const { user } = useContext(UserContext);
+  const [loading, setLoading] = useState(false);
+
+  const handleAccountDelete = async () => {
+    Alert.alert(
+      "Confirm Deletion",
+      "Are you sure you want to delete your account?",
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "OK",
+          onPress: async () => {
+            setLoading(true);
+            try {
+              await axios.delete("/auth/delete-account", {
+                data: { email: user.email },
+              });
+              navigation.navigate("Login");
+            } catch (error) {
+              console.error(error);
+              alert("Failed to delete account");
+            } finally {
+              setLoading(false);
+            }
+          },
+        },
+      ]
+    );
+  };
+
   return (
     <PaperProvider>
       <View style={styles.container}>
@@ -14,25 +55,40 @@ const AccountScreen = ({ navigation }) => {
             <Text style={[styles.textMediumBold, { paddingBottom: 30 }]}>
               Manage Account Settings
             </Text>
-            <Text style={styles.textMediumBold}>Name: John Doe</Text>
-            <Text style={styles.textMediumBold}>
-              Email: levin.rob@northeastern.edu
-            </Text>
+            <View style={{ flexDirection: "row", alignSelf: "center" }}>
+              <Text style={[styles.textMediumBold, { fontWeight: "100" }]}>
+                Name:{" "}
+              </Text>
+              <Text style={styles.textMediumBold}>{user.name || ""} </Text>
+            </View>
+            <View style={{ flexDirection: "row", alignSelf: "center" }}>
+              <Text style={[styles.textMediumBold, { fontWeight: "100" }]}>
+                Email:{" "}
+              </Text>
+              <Text style={styles.textMediumBold}>{user.email || ""} </Text>
+            </View>
           </View>
-          <Button mode="contained" style={styles.settingsButton}>
+          <Button
+            mode="contained"
+            style={styles.settingsButton}
+            onPress={() => navigation.navigate("Change Password")}
+          >
             <Text style={styles.textLargeBold}>Change Password</Text>
-          </Button>
-          <Button mode="contained" style={styles.settingsButton}>
-            <Text style={styles.textLargeBold}>Change Name</Text>
           </Button>
           <View style={styles.spacer} />
           <Button
             mode="contained"
             style={[styles.settingsButton, { marginBottom: 30 }]}
+            onPress={handleAccountDelete}
+            disabled={loading}
           >
-            <Text style={[styles.textLargeBold, { color: COLORS.black }]}>
-              Delete Account
-            </Text>
+            {loading ? (
+              <ActivityIndicator color={COLORS.white} />
+            ) : (
+              <Text style={[styles.textLargeBold, { color: COLORS.black }]}>
+                Delete Account
+              </Text>
+            )}
           </Button>
         </ScrollView>
       </View>

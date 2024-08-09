@@ -1,7 +1,7 @@
 import React from "react";
 import { PaperProvider, Text, Button, TextInput } from "react-native-paper";
 import { StyleSheet, View } from "react-native";
-import { Header } from "../components/Header";
+import Header from "../components/Header";
 import { COLORS, DIMENSIONS, FONTSIZES } from "../components/Constants";
 import { Formik } from "formik";
 import * as Yup from "yup";

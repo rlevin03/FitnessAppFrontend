@@ -1,4 +1,10 @@
-import React, { useEffect, useState, useCallback, useContext } from "react";
+import React, {
+  useEffect,
+  useState,
+  useCallback,
+  useContext,
+  memo,
+} from "react";
 import {
   View,
   Text,
@@ -34,7 +40,13 @@ const imageSliderData = [
 const filterOptions = {
   types: ["Yoga", "Pilates", "Cardio", "Strength", "Dance"],
   campuses: ["Main Campus", "Marino Center", "Satellite Campus", "Boston"],
-  instructors: ["John Doe","Joe Shmo", "Jane Doe", "Alice Smith", "Bob Johnson"],
+  instructors: [
+    "John Doe",
+    "Joe Shmo",
+    "Jane Doe",
+    "Alice Smith",
+    "Bob Johnson",
+  ],
 };
 
 function getFirstDayOfWeek(date) {
@@ -50,6 +62,29 @@ function getNumberOfDaysInAdvance(date, days) {
   endDate.setDate(date.getDate() + days);
   return endDate;
 }
+
+const Header = memo(({ navigation }) => {
+  return (
+    <Appbar.Header style={styles.header}>
+      <Appbar.Action
+        icon={() => (
+          <Image
+            style={styles.logo}
+            source={require("../assets/Northeastern_Universitylogo_square.webp")}
+          />
+        )}
+        onPress={() => {}}
+      />
+      <Appbar.Content title="" />
+      <Appbar.Action
+        icon="account-circle-outline"
+        onPress={() => navigation.navigate("Profile")}
+        color={COLORS.black}
+        size={45}
+      />
+    </Appbar.Header>
+  );
+});
 
 const HomeScreen = ({ navigation }) => {
   const [classes, setClasses] = useState([]);
@@ -76,7 +111,7 @@ const HomeScreen = ({ navigation }) => {
         params: {
           date: selectedDate
             ? selectedDate.toISOString().split("T")[0]
-            : undefined,
+            : new Date().toISOString().split("T")[0],
           types: selectedFilters.types.join(","),
           campuses: selectedFilters.campuses.join(","),
           instructors: selectedFilters.instructors.join(","),
@@ -127,46 +162,30 @@ const HomeScreen = ({ navigation }) => {
   if (!ready) {
     return (
       <PaperProvider>
-        <View style={styles.container}>
+        <View style={[styles.container, { justifyContent: "center" }]}>
           <ActivityIndicator size="large" color={COLORS.primary} />
         </View>
       </PaperProvider>
     );
   }
 
-  if (user && user.verified === false) {
-    navigation.dispatch(
-      CommonActions.reset({
-        index: 0,
-        routes: [
-          { name: "Verification", params: { recipientEmail: user.email } },
-        ],
-      })
-    );
-    return null; // Prevent rendering of HomeScreen if the user is not verified
-  }
+  useEffect(() => {
+    if (user && user.verified === false) {
+      navigation.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [
+            { name: "Verification", params: { recipientEmail: user.email } },
+          ],
+        })
+      );
+    }
+  }, [user, navigation]);
 
   return (
     <PaperProvider>
       <View style={styles.container}>
-        <Appbar.Header style={styles.header}>
-          <Appbar.Action
-            icon={() => (
-              <Image
-                style={styles.logo}
-                source={require("../assets/Northeastern_Universitylogo_square.webp")}
-              />
-            )}
-            onPress={() => {}}
-          />
-          <Appbar.Content title="" />
-          <Appbar.Action
-            icon="account-circle-outline"
-            onPress={() => navigation.navigate("Profile")}
-            color={COLORS.black}
-            size={45}
-          />
-        </Appbar.Header>
+        <Header navigation={navigation} />
         <Text
           style={[
             styles.textBig,

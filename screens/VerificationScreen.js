@@ -1,5 +1,12 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Image, StyleSheet, View, TextInput, Alert, ActivityIndicator } from "react-native";
+import {
+  Image,
+  StyleSheet,
+  View,
+  TextInput,
+  Alert,
+  ActivityIndicator,
+} from "react-native";
 import { PaperProvider, Text, TouchableRipple } from "react-native-paper";
 import axios from "axios";
 import { COLORS, DIMENSIONS, FONTSIZES } from "../components/Constants";
@@ -12,15 +19,14 @@ const VerificationScreen = ({ navigation, route }) => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    const generateVerificationCode = () => {
-      return Math.floor(100000 + Math.random() * 900000).toString();
-    };
     const code = generateVerificationCode();
     setVerificationCode(code);
-    console.log(code);
-    console.log(recipientEmail);
     sendVerificationCodeToEmail(recipientEmail, code);
   }, [recipientEmail]);
+
+  const generateVerificationCode = () => {
+    return Math.floor(100000 + Math.random() * 900000).toString();
+  };
 
   const sendVerificationCodeToEmail = async (email, code) => {
     try {
@@ -94,9 +100,20 @@ const VerificationScreen = ({ navigation, route }) => {
 
           <Text style={styles.wrongEmailText}>
             <TouchableRipple
-              onPress={() => navigation.navigate("Email Change")}
+              onPress={() =>
+                navigation.navigate("Email Change", {
+                  oldEmail: recipientEmail,
+                })
+              }
+              accessible={true}
+              accessibilityLabel="Change Email"
             >
-              <Text style={[styles.wrongEmailText, { color: COLORS.white }]}>
+              <Text
+                style={[
+                  styles.wrongEmailText,
+                  { color: COLORS.white, marginBottom: -4 },
+                ]}
+              >
                 Click here{" "}
               </Text>
             </TouchableRipple>
@@ -112,16 +129,25 @@ const VerificationScreen = ({ navigation, route }) => {
                 value={digit}
                 onChangeText={(text) => handleChange(text, index)}
                 ref={(ref) => (inputs.current[index] = ref)}
+                accessible={true}
+                accessibilityLabel={`Verification code digit ${index + 1}`}
               />
             ))}
           </View>
         </View>
         {loading ? (
-          <ActivityIndicator size="large" color={COLORS.white} />
+          <ActivityIndicator
+            size="large"
+            color={COLORS.white}
+            accessible={true}
+            accessibilityLabel="Loading"
+          />
         ) : (
           <TouchableRipple
             style={styles.verifyButton}
             onPress={handleVerification}
+            accessible={true}
+            accessibilityLabel="Verify"
           >
             <Text style={styles.verifyButtonText}>Verify</Text>
           </TouchableRipple>

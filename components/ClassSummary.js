@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
   detailsContainer: {
     flex: 2,
     justifyContent: "center",
-    marginLeft: 10,
+    marginLeft: 20,
   },
   textBig: {
     fontSize: FONTSIZES.medium,

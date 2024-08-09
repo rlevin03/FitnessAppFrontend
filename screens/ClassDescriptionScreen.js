@@ -9,7 +9,7 @@ import {
   IconButton,
 } from "react-native-paper";
 import { MaterialCommunityIcons } from "@expo/vector-icons"; // Ensure you have this import
-import { Header } from "../components/Header";
+import Header from "../components/Header";
 import { StyleSheet, View } from "react-native";
 import {
   COLORS,

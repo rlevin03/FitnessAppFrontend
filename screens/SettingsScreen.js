@@ -1,10 +1,31 @@
 import { Button, PaperProvider, Text } from "react-native-paper";
 import { Linking, StyleSheet, View } from "react-native";
-import { Header } from "../components/Header";
+import Header from "../components/Header";
 import { COLORS, DIMENSIONS, FONTSIZES } from "../components/Constants";
 import SettingsOption from "../components/SettingsOption";
+import { CommonActions } from "@react-navigation/native";
+import axios from "axios";
+import { useContext } from "react";
+import { UserContext } from "../UserContext";
 
 const SettingsScreen = ({ navigation }) => {
+  const { setUser } = useContext(UserContext);
+  const handleLogout = async () => {
+    try {
+      navigation.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [{ name: "Login" }],
+        })
+      );
+      await axios.post("/auth/logout");
+      setUser(null);
+    } catch (error) {
+      console.error(error);
+      Alert.alert("Error", "Failed to log out");
+    }
+  };
+
   return (
     <PaperProvider>
       <View style={styles.container}>
@@ -41,6 +62,7 @@ const SettingsScreen = ({ navigation }) => {
         <Button
           mode="contained"
           style={[styles.settingsButton, { marginBottom: 30 }]}
+          onPress={handleLogout}
         >
           <Text style={[styles.textLargeBold, { color: COLORS.black }]}>
             Log Out

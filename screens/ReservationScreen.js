@@ -1,7 +1,8 @@
 import { PaperProvider, Text, TouchableRipple } from "react-native-paper";
-import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
-import { COLORS, FONTSIZES, DIMENSIONS, createTimeRange } from "../components/Constants";
-import { Header } from "../components/Header";
+import { ScrollView, StyleSheet, View } from "react-native";
+import { COLORS, DIMENSIONS, FONTSIZES } from "../components/Constants";
+import { createTimeRange } from "../components/Constants";
+import Header from "../components/Header";
 
 const date = new Date().toLocaleTimeString("en-US", {
   hour: "numeric",
@@ -38,7 +39,9 @@ const ReservationScreen = ({ navigation }) => {
 
         <ScrollView>
           <TouchableRipple
-            onPress={() => navigation.navigate("Class Description", { class: data })}
+            onPress={() =>
+              navigation.navigate("Class Description", { class: data })
+            }
           >
             <View style={styles.reservation}>
               <View style={styles.date}>

@@ -1,9 +1,9 @@
-import React, { useContext, useEffect, useState } from "react";
-import { Linking, ScrollView, StyleSheet, View } from "react-native";
-import { Appbar, Button, PaperProvider, Text } from "react-native-paper";
+import React, { useContext } from "react";
+import { Linking, StyleSheet, View } from "react-native";
+import { Button, PaperProvider, Text } from "react-native-paper";
 import { COLORS, DIMENSIONS, FONTSIZES } from "../components/Constants";
-import { SettingsOption } from "../components/SettingsOption";
-import { Header } from "../components/Header";
+import SettingsOption from "../components/SettingsOption";
+import Header from "../components/Header";
 import { UserContext } from "../UserContext";
 
 const monthNames = [
@@ -38,7 +38,9 @@ const ProfileScreen = ({ navigation }) => {
             >{`${currentMonth} ${currentYear}`}</Text>
           </View>
           <View style={styles.classesAttendedNumberContainer}>
-            <Text style={styles.classesAttendedNumber}>{user.classesAttended}</Text>
+            <Text style={styles.classesAttendedNumber}>
+              {user.classesAttended}
+            </Text>
           </View>
         </View>
         <Button
