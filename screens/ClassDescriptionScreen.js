@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import {
   PaperProvider,
   Text,
@@ -6,17 +6,19 @@ import {
   Modal,
   Portal,
   Button,
-  IconButton,
+  ActivityIndicator,
 } from "react-native-paper";
 import { MaterialCommunityIcons } from "@expo/vector-icons"; // Ensure you have this import
 import Header from "../components/Header";
-import { StyleSheet, View } from "react-native";
+import { Alert, StyleSheet, View } from "react-native";
 import {
   COLORS,
   createTimeRange,
   DIMENSIONS,
   FONTSIZES,
 } from "../components/Constants";
+import { UserContext } from "../UserContext";
+import axios from "axios";
 
 // Function to get the suffix for the day of the month (st, nd, rd, th)
 const getDaySuffix = (day) => {
@@ -34,25 +36,55 @@ const getDaySuffix = (day) => {
 };
 
 const ClassDescriptionScreen = ({ navigation, route }) => {
-  const { class: classData } = route.params;
-  const classFull = classData.currentCapacity >= classData.maxCapacity;
-
+  const { classData } = route.params;
+  const { user } = useContext(UserContext);
+  const classFull = classData.signeesAmount >= classData.maxCapacity;
   const [modalVisible, setModalVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [updatedClassData, setUpdatedClassData] = useState(classData);
 
-  const handleJoinClass = () => {
-    // Implement the functionality to join the class here
-    console.log("Join class button pressed");
-    // Optionally, set state to reflect the user has joined the class
+  const handleJoinClass = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.patch("/classes/reserve", {
+        classId: updatedClassData._id,
+        userId: user._id,
+      });
+
+      if (response.status === 200) {
+        setUpdatedClassData(response.data.classData);
+      }
+    } catch (error) {
+      console.error("Error joining class:", error);
+      Alert.alert("Error", "Could not reserve the spot. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleLeaveClass = () => {
-    // Implement the functionality to leave the class or waitlist here
-    console.log("Leave class button pressed");
-    setModalVisible(false);
+  const handleLeaveClass = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.patch("/classes/cancel", {
+        classId: updatedClassData._id,
+        userId: user._id,
+      });
+
+      if (response.status === 200) {
+        setUpdatedClassData(response.data.classData);
+        setModalVisible(false);
+      }
+    } catch (error) {
+      console.error("Error leaving class:", error);
+      Alert.alert("Error", "Could not leave the class. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <PaperProvider>
+      {/* Modal for leaving class */}
       <Portal>
         <Modal
           visible={modalVisible}
@@ -62,85 +94,81 @@ const ClassDescriptionScreen = ({ navigation, route }) => {
           <Button
             mode="contained"
             onPress={handleLeaveClass}
-            style={{
-              backgroundColor: COLORS.primary,
-              borderRadius: DIMENSIONS.cornerCurve,
-              width: DIMENSIONS.componentWidth,
-            }}
+            style={styles.modalButton}
           >
             {classFull ? "Leave Waitlist" : "Cancel Reservation"}
           </Button>
         </Modal>
       </Portal>
+
+      {/* Main UI */}
       <View style={styles.container}>
-        <Header navigation={navigation} title={classData.type} />
+        <Header navigation={navigation} title={updatedClassData.type} />
         <View style={styles.componentContainer}>
-          <Text
-            style={[styles.textLarge, { fontSize: 36, fontWeight: "bold" }]}
-          >
-            {classData.name}
-          </Text>
+          <Text style={styles.titleText}>{updatedClassData.name}</Text>
         </View>
         <View style={[styles.componentContainer, { marginVertical: 3 }]}>
-          <Text style={[styles.textLarge, { fontWeight: "bold" }]}>
+          <Text style={styles.dateText}>
             {new Intl.DateTimeFormat("en-US", { weekday: "long" }).format(
-              new Date(classData.date)
+              new Date(updatedClassData.date)
             )}
             ,{" "}
             {new Intl.DateTimeFormat("en-US", {
               month: "long",
               day: "numeric",
-            }).format(new Date(classData.date))}
-            {getDaySuffix(new Date(classData.date).getDate())}
+            }).format(new Date(updatedClassData.date))}
+            {getDaySuffix(new Date(updatedClassData.date).getDate())}
           </Text>
-          <Text style={[styles.textLarge, { fontWeight: "bold" }]}>
-            {createTimeRange(classData.time, classData.duration)}
+          <Text style={styles.dateText}>
+            {createTimeRange(
+              updatedClassData.startTime,
+              updatedClassData.duration
+            )}
           </Text>
-          <View style={{ flexDirection: "row" }}>
-            <Text style={[styles.textMedium, { fontWeight: "bold" }]}>
-              Location:{" "}
-            </Text>
-            <Text style={styles.textMedium}>{classData.location}</Text>
-          </View>
-          <View style={{ flexDirection: "row" }}>
-            <Text style={[styles.textMedium, { fontWeight: "bold" }]}>
-              Instructor:{" "}
-            </Text>
-            <Text style={styles.textMedium}>{classData.instructor}</Text>
-          </View>
-          <View style={{ flexDirection: "row" }}>
-            <Text style={[styles.textMedium, { fontWeight: "bold" }]}>
-              Currently Signed:{" "}
-            </Text>
+          <View style={styles.infoRow}>
+            <Text style={styles.labelText}>Location: </Text>
             <Text style={styles.textMedium}>
-              {classData.currentCapacity}/{classData.maxCapacity}
+              {updatedClassData.location}, {updatedClassData.campus}
+            </Text>
+          </View>
+          <View style={styles.infoRow}>
+            <Text style={styles.labelText}>Instructor: </Text>
+            <Text style={styles.textMedium}>{updatedClassData.instructor}</Text>
+          </View>
+          <View style={styles.infoRow}>
+            <Text style={styles.labelText}>Currently Signed: </Text>
+            <Text style={styles.textMedium}>
+              {updatedClassData.signeesAmount}/{updatedClassData.maxCapacity}
             </Text>
           </View>
           {classFull ? (
-            <View style={{ flexDirection: "row" }}>
-              <Text style={[styles.textMedium, { fontWeight: "bold" }]}>
-                People on Wait List:{" "}
-              </Text>
+            <View style={styles.infoRow}>
+              <Text style={styles.labelText}>People on Wait List: </Text>
               <Text style={styles.textMedium}>
-                {classData.waitListCurrent}/{classData.waitListCapacity}
+                {updatedClassData.waitListSigneesAmount}/
+                {updatedClassData.waitListCapacity}
               </Text>
             </View>
           ) : (
-            <View style={{ flexDirection: "row" }}>
-              <Text style={[styles.textMedium, { fontWeight: "bold" }]}>
-                Minimum Attendees:{" "}
-              </Text>
+            <View style={styles.infoRow}>
+              <Text style={styles.labelText}>Minimum Attendees: </Text>
               <Text style={styles.textMedium}>
-                {classData.minimumAttendees}
+                {updatedClassData.minCapacity}
               </Text>
             </View>
           )}
         </View>
+
         <View style={styles.componentContainer}>
-          <TouchableRipple onPress={handleJoinClass} style={styles.button}>
-            <View style={styles.buttonInner}>
+          {updatedClassData.usersSignedUp.includes(user._id) ||
+          updatedClassData.usersOnWaitList.includes(user._id) ? (
+            <View style={[styles.buttonInner, styles.button]}>
               <Text style={styles.buttonText}>
-                {classFull ? "Join Waitlist" : "Join Class"}
+                {updatedClassData.usersSignedUp.includes(user._id)
+                  ? "You Reserved a Spot"
+                  : `You're on the Waitlist at position ${
+                      updatedClassData.usersOnWaitList.indexOf(user._id) + 1
+                    }`}
               </Text>
               <MaterialCommunityIcons
                 name="dots-vertical"
@@ -149,116 +177,71 @@ const ClassDescriptionScreen = ({ navigation, route }) => {
                 onPress={() => setModalVisible(true)}
               />
             </View>
-          </TouchableRipple>
+          ) : (
+            <TouchableRipple
+              style={styles.button}
+              onPress={handleJoinClass}
+              disabled={loading}
+            >
+              {loading ? (
+                <ActivityIndicator color={COLORS.white} />
+              ) : (
+                <View
+                  style={[styles.buttonInner, { justifyContent: "center" }]}
+                >
+                  <Text style={styles.buttonText}>
+                    {classFull ? "Join Waitlist" : "Join Class"}
+                  </Text>
+                </View>
+              )}
+            </TouchableRipple>
+          )}
         </View>
-        <View style={{ flex: 1 }}></View>
-        <View style={[styles.componentContainer]}>
-          <Text
-            style={[
-              styles.textMedium,
-              { fontWeight: "bold", marginBottom: 10 },
-            ]}
-          >
-            What to Expect
-          </Text>
-          <Text style={styles.textMedium}>{classData.description}</Text>
+
+        {/* Other components for class details */}
+        <View style={styles.flexGrow} />
+        <View style={styles.componentContainer}>
+          <Text style={styles.sectionTitle}>What to Expect</Text>
+          <Text style={styles.textMedium}>{updatedClassData.description}</Text>
         </View>
-        <View
-          style={[
-            styles.componentContainer,
-            {
-              marginTop: 3,
+        <View style={styles.infoSection}>
+          <View style={styles.infoColumn}>
+            <Text style={styles.infoTitle}>Skill Level</Text>
+            <Text style={styles.infoContent}>
+              {updatedClassData.skillLevel}
+            </Text>
+          </View>
+          <View style={styles.infoColumn}>
+            <Text style={styles.infoTitle}>Intensity</Text>
+            <Text style={styles.infoContent}>
+              {updatedClassData.intensityLevel}
+            </Text>
+          </View>
+        </View>
+        <View style={styles.flexGrow} />
+        <View style={styles.equipmentContainer}>
+          <Text style={styles.infoTitle}>Equipment Used</Text>
+          <View
+            style={{
               flexDirection: "row",
-              backgroundColor: COLORS.primary,
-            },
-          ]}
-        >
-          <View style={{ flexDirection: "column", flex: 1 }}>
-            <Text
-              style={[
-                styles.textMedium,
-                {
-                  marginBottom: 10,
-                  textAlign: "center",
-                  color: COLORS.secondary,
-                },
-              ]}
-            >
-              Skill Level
-            </Text>
-            <Text
-              style={[
-                styles.textMedium,
-                {
-                  textAlign: "center",
-                  fontWeight: "bold",
-                },
-              ]}
-            >
-              {classData.skillLevel}
-            </Text>
-          </View>
-          <View style={{ flexDirection: "column", flex: 1 }}>
-            <Text
-              style={[
-                styles.textMedium,
-                {
-                  marginBottom: 10,
-                  textAlign: "center",
-                  color: COLORS.secondary,
-                },
-              ]}
-            >
-              Intensity
-            </Text>
-            <Text
-              style={[
-                styles.textMedium,
-                {
-                  textAlign: "center",
-                  fontWeight: "bold",
-                },
-              ]}
-            >
-              {classData.intensity}
-            </Text>
-          </View>
-        </View>
-        <View style={{ flex: 1 }}></View>
-        <View
-          style={[
-            styles.componentContainer,
-            {
-              backgroundColor: COLORS.primary,
-              alignSelf: "baseline",
-              borderBottomRightRadius: DIMENSIONS.cornerCurve * 3,
-              borderBottomLeftRadius: DIMENSIONS.cornerCurve * 3,
-            },
-          ]}
-        >
-          <Text
-            style={[
-              styles.textMedium,
-              {
-                marginBottom: 10,
-                textAlign: "center",
-                color: COLORS.secondary,
-              },
-            ]}
+              justifyContent: "center",
+              flexWrap: "wrap",
+            }}
           >
-            Equipment Used
-          </Text>
-          <Text
-            style={[
-              styles.textMedium,
-              {
-                textAlign: "center",
-                fontWeight: "bold",
-              },
-            ]}
-          >
-            {classData.equipment}
-          </Text>
+            {updatedClassData.equipmentUsed &&
+            updatedClassData.equipmentUsed.length > 0 ? (
+              updatedClassData.equipmentUsed.map((equipment, index) => (
+                <Text key={index} style={styles.infoContent}>
+                  {equipment}
+                  {index < updatedClassData.equipmentUsed.length - 1
+                    ? ",  "
+                    : ""}
+                </Text>
+              ))
+            ) : (
+              <Text style={styles.infoContent}>No equipment specified</Text>
+            )}
+          </View>
         </View>
       </View>
     </PaperProvider>
@@ -280,15 +263,30 @@ const styles = StyleSheet.create({
     fontSize: FONTSIZES.medium,
     marginVertical: 1,
   },
-  textLarge: {
+  titleText: {
+    color: COLORS.white,
+    fontSize: 36,
+    fontWeight: "bold",
+  },
+  dateText: {
     color: COLORS.white,
     fontSize: FONTSIZES.large,
-    marginVertical: 1,
+    fontWeight: "bold",
   },
-  buttonContainer: {
+  labelText: {
+    color: COLORS.white,
+    fontSize: FONTSIZES.medium,
+    fontWeight: "bold",
+  },
+  infoRow: {
     flexDirection: "row",
-    alignItems: "center",
-    alignSelf: "center",
+    marginVertical: 2,
+  },
+  sectionTitle: {
+    fontWeight: "bold",
+    marginBottom: 10,
+    color: COLORS.white,
+    fontSize: FONTSIZES.medium,
   },
   button: {
     backgroundColor: COLORS.primary,
@@ -302,6 +300,12 @@ const styles = StyleSheet.create({
     fontSize: FONTSIZES.medium,
     fontWeight: "bold",
   },
+  buttonInner: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: 15,
+  },
   modalContainer: {
     backgroundColor: COLORS.white,
     padding: 10,
@@ -309,14 +313,44 @@ const styles = StyleSheet.create({
     borderRadius: DIMENSIONS.cornerCurve,
     alignItems: "center",
   },
-  iconButton: {
-    marginLeft: 10,
+  modalButton: {
+    backgroundColor: COLORS.primary,
+    borderRadius: DIMENSIONS.cornerCurve,
+    width: DIMENSIONS.componentWidth,
   },
-  buttonInner: {
+  flexGrow: {
+    flex: 1,
+  },
+  infoSection: {
+    marginTop: 3,
     flexDirection: "row",
-    justifyContent: "space-between",
+    backgroundColor: COLORS.primary,
+    padding: 10,
+  },
+  infoColumn: {
+    flex: 1,
     alignItems: "center",
-    paddingHorizontal: 15,
+  },
+  infoTitle: {
+    color: COLORS.secondary,
+    marginBottom: 10,
+    textAlign: "center",
+    fontSize: FONTSIZES.small,
+  },
+  infoContent: {
+    color: COLORS.white,
+    fontWeight: "bold",
+    textAlign: "center",
+    fontSize: FONTSIZES.small,
+  },
+  equipmentContainer: {
+    backgroundColor: COLORS.primary,
+    alignSelf: "center",
+    width: "100%",
+    borderBottomRightRadius: DIMENSIONS.cornerCurve * 3,
+    borderBottomLeftRadius: DIMENSIONS.cornerCurve * 3,
+    padding: 20,
+    marginBottom: 20,
   },
 });
 

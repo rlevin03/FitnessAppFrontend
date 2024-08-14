@@ -10,9 +10,10 @@ import {
   Text,
   StyleSheet,
   Image,
-  ScrollView,
+  FlatList,
   TouchableOpacity,
   ActivityIndicator,
+  ScrollView,
 } from "react-native";
 import ReactNativeCalendarStrip from "react-native-calendar-strip";
 import { ImageSlider } from "react-native-image-slider-banner";
@@ -27,7 +28,7 @@ import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityI
 import { COLORS, DIMENSIONS, FONTSIZES } from "../components/Constants";
 import ClassSummary from "../components/ClassSummary";
 import { UserContext } from "../UserContext";
-import { CommonActions } from "@react-navigation/native";
+import { CommonActions, useFocusEffect } from "@react-navigation/native";
 import axios from "axios";
 
 const imageSliderData = [
@@ -125,9 +126,11 @@ const HomeScreen = ({ navigation }) => {
     }
   }, [selectedDate, selectedFilters]);
 
-  useEffect(() => {
-    fetchClasses();
-  }, [fetchClasses]);
+  useFocusEffect(
+    useCallback(() => {
+      fetchClasses();
+    }, [fetchClasses])
+  );
 
   const removeFilter = (filterType, filterValue) => {
     setSelectedFilters((prevSelectedFilters) => ({
@@ -181,6 +184,16 @@ const HomeScreen = ({ navigation }) => {
       );
     }
   }, [user, navigation]);
+
+  const renderClassItem = ({ item }) => (
+    <TouchableRipple
+      onPress={() =>
+        navigation.navigate("Class Description", { classData: item })
+      }
+    >
+      <ClassSummary navigation={navigation} classData={item} />
+    </TouchableRipple>
+  );
 
   return (
     <PaperProvider>
@@ -248,67 +261,49 @@ const HomeScreen = ({ navigation }) => {
           onDateSelected={(date) => setSelectedDate(date)}
           scrollToOnSetSelectedDate={false}
         />
-        <ScrollView style={styles.container}>
-          {Object.values(selectedFilters).flat().length > 0 && (
-            <View style={styles.filtersWrapper}>
-              <Text style={[styles.textMedium, { color: COLORS.white }]}>
-                Filters ({Object.values(selectedFilters).flat().length})
-              </Text>
-              <View style={styles.filterDivider} />
-              <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                style={styles.filtersContainer}
-              >
-                {Object.keys(selectedFilters).map((filterType) =>
-                  selectedFilters[filterType].map((filterValue) => (
-                    <TouchableOpacity
-                      key={filterValue}
-                      style={styles.filterButton}
-                      onPress={() => removeFilter(filterType, filterValue)}
-                    >
-                      <Text style={styles.textMedium}>{filterValue}</Text>
-                    </TouchableOpacity>
-                  ))
-                )}
-              </ScrollView>
-            </View>
-          )}
-          <View style={styles.classesContainer}>
-            {loading ? (
-              <ActivityIndicator size="large" color={COLORS.primary} />
-            ) : error ? (
-              <Text
-                style={[
-                  styles.textBig,
-                  { color: COLORS.white, textAlign: "center" },
-                ]}
-              >
-                Error loading classes: {error}
-              </Text>
-            ) : classes.length > 0 ? (
-              classes.map((classItem) => (
-                <ClassSummary
-                  key={classItem._id}
-                  title={classItem.name}
-                  type={classItem.type}
-                  instructor={classItem.instructor}
-                  startTime={classItem.startTime}
-                  duration={`${classItem.duration} min`}
-                />
-              ))
-            ) : (
-              <Text
-                style={[
-                  styles.textBig,
-                  { color: COLORS.white, textAlign: "center" },
-                ]}
-              >
-                No classes available
-              </Text>
-            )}
+        {Object.values(selectedFilters).flat().length > 0 && (
+          <View style={styles.filtersWrapper}>
+            <Text style={[styles.textMedium, { color: COLORS.white }]}>
+              Filters ({Object.values(selectedFilters).flat().length})
+            </Text>
+            <View style={styles.filterDivider} />
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              style={styles.filtersContainer}
+            >
+              {Object.keys(selectedFilters).map((filterType) =>
+                selectedFilters[filterType].map((filterValue) => (
+                  <TouchableOpacity
+                    key={filterValue}
+                    style={styles.filterButton}
+                    onPress={() => removeFilter(filterType, filterValue)}
+                  >
+                    <Text style={styles.textMedium}>{filterValue}</Text>
+                  </TouchableOpacity>
+                ))
+              )}
+            </ScrollView>
           </View>
-        </ScrollView>
+        )}
+        <FlatList
+          data={classes}
+          keyExtractor={(item) => item._id}
+          renderItem={renderClassItem}
+          ListEmptyComponent={
+            <Text
+              style={[
+                styles.textBig,
+                { color: COLORS.white, textAlign: "center" },
+              ]}
+            >
+              {loading ? "Loading classes..." : "No classes available"}
+            </Text>
+          }
+          contentContainerStyle={styles.classesContainer}
+          refreshing={loading}
+          onRefresh={fetchClasses}
+        />
         <Modal
           visible={visible}
           contentContainerStyle={{
@@ -458,8 +453,9 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   classesContainer: {
+    paddingTop: 15,
     paddingHorizontal: 15,
-    marginTop: 10,
+    paddingBottom: 20,
   },
   modalTitle: {
     fontSize: FONTSIZES.large,

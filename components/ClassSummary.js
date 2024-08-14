@@ -3,20 +3,32 @@ import { StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
 import { COLORS, DIMENSIONS, FONTSIZES } from "./Constants";
 
-const ClassSummary = ({ title, type, instructor, startTime, duration }) => {
+const ClassSummary = ({ classData }) => {
   return (
     <View style={styles.container}>
       <View style={styles.timeContainer}>
         <Text style={[styles.textBig, { color: COLORS.black }]}>
-          {startTime}
+          {classData.startTime}
         </Text>
-        <Text style={styles.textMedium}>{duration}</Text>
+        <View style={{ flexDirection: "row", alignItems: "center" }}>
+          <Text style={styles.textMedium}>{classData.duration}</Text>
+          <Text style={[styles.textMedium, { marginLeft: 3 }]}>min</Text>
+        </View>
       </View>
       <View style={styles.separator} />
       <View style={styles.detailsContainer}>
-        <Text style={[styles.textBig, { color: COLORS.black }]}>{type}</Text>
-        <Text style={[styles.textBig, { color: COLORS.white }]}>{title}</Text>
-        <Text style={styles.textMedium}>{instructor}</Text>
+        <Text style={[styles.textBig, { color: COLORS.black }]}>
+          {classData.type}
+        </Text>
+        <Text style={[styles.textBig, { color: COLORS.white }]}>
+          {classData.name}
+        </Text>
+        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+          <Text style={styles.textMedium}>{classData.instructor}</Text>
+          <Text style={[styles.textMedium, { marginRight: 10 }]}>
+            {classData.campus}
+          </Text>
+        </View>
       </View>
     </View>
   );

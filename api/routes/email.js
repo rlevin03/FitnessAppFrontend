@@ -6,7 +6,7 @@ const router = express.Router();
 const transporter = nodemailer.createTransport({
   host: "smtp.office365.com",
   port: 587,
-  secure: false, // true for 465, false for other ports
+  secure: false,
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS,
@@ -25,8 +25,28 @@ router.post("/send-verification-code", (req, res) => {
 
   transporter.sendMail(mailOptions, (error, info) => {
     if (error) {
-      console.error(`Error sending email to ${email}:`, error);
       return res.status(500).json({ message: "Error sending email", error });
+    } else {
+      return res.status(200).json({ message: "Verification code sent" });
+    }
+  });
+});
+
+router.post("/feedback", (req, res) => {
+  const { feedback } = req.body;
+
+  const feedbackMailOptions = {
+    from: process.env.EMAIL_USER,
+    to: process.env.EMAIL_USER,
+    subject: "Feedback",
+    text: feedback,
+  };
+
+  transporter.sendMail(feedbackMailOptions, (error, info) => {
+    if (error) {
+      return res.status(500).json({ message: "Error sending email", error });
+    } else {
+      return res.status(200).json({ message: "Feedback sent successfully" });
     }
   });
 });

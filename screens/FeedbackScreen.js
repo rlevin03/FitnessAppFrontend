@@ -23,8 +23,10 @@ const FeedbackScreen = ({ navigation }) => {
               .min(10, "Feedback must be at least 10 characters")
               .required("Feedback is required"),
           })}
-          onSubmit={(values, { resetForm }) => {
-            console.log(values);
+          onSubmit={async (values, { resetForm }) => {
+            await axios.post("/email/feedback", { feedback: values.feedback });
+            alert("Feedback sent successfully");
+
             resetForm();
           }}
         >
@@ -97,16 +99,20 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   button: {
-    marginTop: 20,
     backgroundColor: COLORS.maroon,
+    width: DIMENSIONS.componentWidth,
+    alignSelf: "center",
+    justifyContent: "center",
+    alignContent: "center",
     borderRadius: DIMENSIONS.cornerCurve,
-    alignItems: "center",
-    paddingVertical: 10,
+    marginTop: 20,
   },
   buttonText: {
-    color: COLORS.white,
-    fontSize: FONTSIZES.medium,
+    fontSize: FONTSIZES.large,
     fontWeight: "bold",
+    color: COLORS.white,
+    padding: 10,
+    marginBottom: 5,
   },
   formWrapper: {
     width: DIMENSIONS.componentWidth,

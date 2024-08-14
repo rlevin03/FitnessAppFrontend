@@ -14,11 +14,11 @@ import FeedbackScreen from "./screens/FeedbackScreen";
 import VerificationScreen from "./screens/VerificationScreen";
 import EmailChangeScreen from "./screens/EmailChangeScreen";
 import ClassDescriptionScreen from "./screens/ClassDescriptionScreen";
-
-import { UserProvider } from "./UserContext";
 import PasswordChangeScreen from "./screens/PasswordChangeScreen";
 
-axios.defaults.baseURL = "http://192.168.1.163:4000";
+import { UserProvider } from "./UserContext";
+
+axios.defaults.baseURL = "http://10.110.10.17:4000";
 
 export default function App() {
   const Stack = createNativeStackNavigator();

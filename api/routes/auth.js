@@ -59,7 +59,6 @@ router.post("/logout", (req, res) => {
 router.delete("/delete-account", async (req, res) => {
   const { email } = req.body;
 
-  console.log(email);
   if (!email) {
     return res.status(400).json({ error: "Email query parameter is required" });
   }
@@ -85,9 +84,9 @@ router.get("/profile", (req, res) => {
       if (err) {
         return res.status(401).json({ message: "Unauthorized" });
       }
-      const { name, email, verified, classesAttended, _id } =
+      const { name, email, verified, classesAttended, reservations, waitLists, _id } =
         await User.findById(userData.id);
-      res.json({ name, email, verified, classesAttended, _id });
+      res.json({ name, email, verified, classesAttended, reservations, waitLists, _id });
     });
   } else {
     res.status(401).json({ message: "Unauthorized" });

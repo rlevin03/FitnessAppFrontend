@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Image, StyleSheet, View } from "react-native";
+import { Image, LogBox, StyleSheet, View } from "react-native";
 import {
   PaperProvider,
   Text,
@@ -12,6 +12,7 @@ import { CommonActions } from "@react-navigation/native";
 import { UserContext } from "../UserContext";
 
 const LoginScreen = ({ navigation }) => {
+  LogBox.ignoreLogs(["Failed to fetch user profile"]);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
