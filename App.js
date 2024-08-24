@@ -15,8 +15,10 @@ import VerificationScreen from "./screens/VerificationScreen";
 import EmailChangeScreen from "./screens/EmailChangeScreen";
 import ClassDescriptionScreen from "./screens/ClassDescriptionScreen";
 import PasswordChangeScreen from "./screens/PasswordChangeScreen";
+import ForgotPasswordScreen from "./screens/ForgotPasswordScreen";
 
 import { UserProvider } from "./UserContext";
+import ResetPasswordScreen from "./screens/ResetPasswordScreen";
 
 axios.defaults.baseURL = "http://10.110.10.17:4000";
 
@@ -31,6 +33,16 @@ export default function App() {
             <Stack.Screen
               name="Login"
               component={LoginScreen}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="Forgot Password"
+              component={ForgotPasswordScreen}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="Reset Password"
+              component={ResetPasswordScreen}
               options={{ headerShown: false }}
             />
             <Stack.Screen

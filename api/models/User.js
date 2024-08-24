@@ -5,6 +5,7 @@ const userSchema = new Schema({
   name: String,
   email: { type: String, unique: true },
   password: String,
+  location: String,
   classesAttended: { type: Number, default: 0 },
   reservations: [{ type: mongoose.Schema.Types.ObjectId, ref: "Class" }],
   waitLists: [{ type: mongoose.Schema.Types.ObjectId, ref: "Class" }],

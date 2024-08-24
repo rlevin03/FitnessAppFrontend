@@ -165,19 +165,45 @@ router.patch("/cancel", async (req, res) => {
 
     const userIndex = cls.usersSignedUp.indexOf(userId);
     if (userIndex !== -1) {
+      // User is currently signed up, so remove them
       cls.signeesAmount--;
       cls.usersSignedUp.splice(userIndex, 1);
-      user.reservations = user.reservations.filter(
-        (reservation) => reservation.toString() !== classId
-      );
+
+      const reservationIndex = user.reservations.indexOf(classId);
+      if (reservationIndex !== -1) {
+        user.reservations.splice(reservationIndex, 1);
+      }
+
+      // Check if there is anyone on the waitlist
+      if (cls.usersOnWaitList.length > 0) {
+        const nextUserId = cls.usersOnWaitList.shift(); // Remove the first person from the waitlist
+        cls.waitListSigneesAmount--;
+
+        cls.signeesAmount++;
+        cls.usersSignedUp.push(nextUserId);
+
+        // Update the next user’s reservations
+        const nextUser = await UserModel.findById(nextUserId).session(session);
+        if (nextUser) {
+          nextUser.reservations.push(classId);
+          const userWaitListIndex = nextUser.waitLists.indexOf(classId);
+          if (userWaitListIndex !== -1) {
+            nextUser.waitLists.splice(userWaitListIndex, 1);
+          }
+          await nextUser.save({ session });
+        }
+      }
     } else {
       const waitListIndex = cls.usersOnWaitList.indexOf(userId);
       if (waitListIndex !== -1) {
+        // User is on the waitlist, so remove them
         cls.waitListSigneesAmount--;
         cls.usersOnWaitList.splice(waitListIndex, 1);
-        user.waitLists = user.waitLists.filter(
-          (waitList) => waitList.toString() !== classId
-        );
+
+        const userWaitListIndex = user.waitLists.indexOf(classId);
+        if (userWaitListIndex !== -1) {
+          user.waitLists.splice(userWaitListIndex, 1);
+        }
       } else {
         await session.abortTransaction();
         return res
@@ -190,9 +216,14 @@ router.patch("/cancel", async (req, res) => {
     await user.save({ session });
 
     await session.commitTransaction();
-    res.status(200).json({ message: "Cancellation successful", classData: cls });
+    res
+      .status(200)
+      .json({ message: "Cancellation successful", classData: cls });
   } catch (err) {
-    console.error("Error cancelling class:", err);
+    console.error(
+      `Error cancelling class for userId ${userId} and classId ${classId}:`,
+      err
+    );
     await session.abortTransaction();
     res.status(500).json({ message: err.message });
   } finally {

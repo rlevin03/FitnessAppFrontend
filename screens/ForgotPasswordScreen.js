@@ -6,66 +6,49 @@ import {
   TextInput,
   TouchableRipple,
 } from "react-native-paper";
-import {
-  COLORS,
-  DIMENSIONS,
-  FONTSIZES,
-  VALIDEMAILS,
-} from "../components/Constants";
+import { COLORS, DIMENSIONS, FONTSIZES } from "../components/Constants";
 import { useState } from "react";
 
-const EmailChangeScreen = ({ navigation, route }) => {
-  const { oldEmail } = route.params;
+const ForgotPasswordScreen = ({ navigation }) => {
   const [email, setEmail] = useState("");
-  const [email2, setEmail2] = useState("");
 
-  const handleEmailChange = async () => {
-    let emailEnd = email2.split("@")[1];
-
-    if (email !== email2) {
-      alert("Emails do not match");
-      return;
-    }
-    if (!VALIDEMAILS.includes(emailEnd)) {
-      alert("Please use your school email");
-      return;
-    }
+  const handleForgotPassword = async () => {
     try {
-      await axios.patch("/auth/email-change", {
-        email: oldEmail,
-        newEmail: email,
+      await axios.post("/auth/forgot-password", {
+        email,
       });
-      navigation.navigate("Verification", { recipientEmail: email });
+      navigation.navigate("Reset Password", { recipientEmail: email });
     } catch (error) {
       console.error(error);
-      alert("Failed to change email");
+      alert("Failed to send reset email");
     }
   };
+
   return (
     <PaperProvider>
       <View style={styles.container}>
+        <Text
+          style={{
+            color: COLORS.white,
+            fontSize: FONTSIZES.small,
+            marginVertical: 10,
+            textAlign: "center",
+          }}
+        >
+          Enter your email below to reset your password
+        </Text>
         <TextInput
           mode="outlined"
           label="Email"
           textColor="white"
+          autoCapitalize="none"
+          outlineColor="white"
           activeOutlineColor="white"
           style={styles.input}
           value={email}
           onChangeText={setEmail}
         />
-        <TextInput
-          mode="outlined"
-          label="Confirm Email"
-          textColor="white"
-          activeOutlineColor="white"
-          style={styles.input}
-          value={email2}
-          onChangeText={setEmail2}
-        />
-        <TouchableRipple
-          style={styles.emailChangeButton}
-          onPress={handleEmailChange}
-        >
+        <TouchableRipple onPress={handleForgotPassword} style={styles.emailChangeButton}>
           <Text
             style={{
               fontWeight: "bold",
@@ -73,7 +56,7 @@ const EmailChangeScreen = ({ navigation, route }) => {
               color: COLORS.white,
             }}
           >
-            Receive Email
+            Begin Reset
           </Text>
         </TouchableRipple>
       </View>
@@ -105,4 +88,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default EmailChangeScreen;
+export default ForgotPasswordScreen;

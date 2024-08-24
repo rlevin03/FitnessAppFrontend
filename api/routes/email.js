@@ -1,5 +1,8 @@
 const express = require("express");
 const nodemailer = require("nodemailer");
+const User = require("../models/User");
+const jwt = require("jsonwebtoken");
+const jwtSecret = process.env.JWT_SECRET;
 
 const router = express.Router();
 
@@ -49,6 +52,43 @@ router.post("/feedback", (req, res) => {
       return res.status(200).json({ message: "Feedback sent successfully" });
     }
   });
+});
+
+router.post("/forgot-password", async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Generate JWT with expiration time (e.g., 1 hour)
+    const token = jwt.sign({ email: user.email }, jwtSecret, {
+      expiresIn: "1h",
+    });
+
+    const resetLink = `http://../auth/reset-password/${token}`; // Replace with your app's URL
+
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: user.email,
+      subject: "Password Reset Request",
+      text: `You have requested a password reset. Please click on the link below or copy and paste it into your browser to reset your password:\n\n${resetLink}\n\nIf you did not request this, please ignore this email.`,
+    };
+
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        return res.status(500).json({ message: "Error sending email", error });
+      } else {
+        res
+          .status(200)
+          .json({ message: "Password reset link sent to your email" });
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error" });
+  }
 });
 
 module.exports = router;

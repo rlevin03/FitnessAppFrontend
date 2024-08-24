@@ -8,16 +8,29 @@ const jwtSecret = process.env.JWT_SECRET;
 const bcryptSalt = bcrypt.genSaltSync(10);
 
 router.post("/register", async (req, res) => {
-  const { name, email, password } = req.body;
+  const { name, email, password, location } = req.body;
+
   try {
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res
+        .status(409)
+        .json({ error: "User with this email already exists" });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, bcryptSalt);
+
     const userDoc = await User.create({
       name,
       email,
-      password: bcrypt.hashSync(password, bcryptSalt),
+      password: hashedPassword,
+      location
     });
-    res.json({ message: "User registered successfully", userDoc });
+
+    res.status(201).json({ message: "User registered successfully" });
   } catch (error) {
-    res.status(422).json({ error });
+    console.error("Registration error:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 });
 
@@ -60,7 +73,7 @@ router.delete("/delete-account", async (req, res) => {
   const { email } = req.body;
 
   if (!email) {
-    return res.status(400).json({ error: "Email query parameter is required" });
+    return res.status(400).json({ error: "Email is required" });
   }
 
   try {
@@ -70,7 +83,7 @@ router.delete("/delete-account", async (req, res) => {
       return res.status(404).json({ error: "User not found" });
     }
 
-    res.json({ message: "User successfully deleted", user: deletedUser });
+    res.json({ message: "User successfully deleted" });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal server error" });
@@ -84,9 +97,26 @@ router.get("/profile", (req, res) => {
       if (err) {
         return res.status(401).json({ message: "Unauthorized" });
       }
-      const { name, email, verified, classesAttended, reservations, waitLists, _id } =
-        await User.findById(userData.id);
-      res.json({ name, email, verified, classesAttended, reservations, waitLists, _id });
+      const {
+        name,
+        email,
+        verified,
+        classesAttended,
+        reservations,
+        waitLists,
+        location,
+        _id,
+      } = await User.findById(userData.id);
+      res.json({
+        name,
+        email,
+        verified,
+        classesAttended,
+        reservations,
+        waitLists,
+        location,
+        _id,
+      });
     });
   } else {
     res.status(401).json({ message: "Unauthorized" });
@@ -121,6 +151,9 @@ router.patch("/verify", async (req, res) => {
 router.patch("/email-change", async (req, res) => {
   const { email, newEmail } = req.body;
 
+  if (!email || !newEmail) {
+    return res.status(400).json({ error: "Email and new email are required" });
+  }
   try {
     const updatedUser = await User.findOneAndUpdate(
       { email },
@@ -142,6 +175,11 @@ router.patch("/email-change", async (req, res) => {
 router.patch("/password-change", async (req, res) => {
   const { email, oldPassword, newPassword } = req.body;
 
+  if (!email || !oldPassword || !newPassword) {
+    return res
+      .status(400)
+      .json({ error: "Email, old password, and new password are required" });
+  }
   const userDoc = await User.findOne({ email });
   if (!bcrypt.compareSync(oldPassword, userDoc.password)) {
     return res
@@ -158,6 +196,48 @@ router.patch("/password-change", async (req, res) => {
     res
       .status(200)
       .json({ message: "Password updated successfully", user: updatedUser });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+router.post("/forgot-password", async (req, res) => {
+  const { email } = req.body;
+
+  if (!email) {
+    return res.status(400).json({ error: "Email is required" });
+  }
+  const user = await User.findOne({ email });
+  if (!user) {
+    return res.status(404).json({ message: "User not found" });
+  } else {
+    res.status(200).json({ message: "Reset email sent" });
+  }
+});
+
+router.patch("/reset-password", async (req, res) => {
+  const { email, newPassword } = req.body;
+
+  if (!email || !newPassword) {
+    return res
+      .status(400)
+      .json({ error: "Email and new password are required" });
+  }
+  const user = await User.findOne({ email });
+
+  if (!user) {
+    return res.status(404).json({ error: "User not found" });
+  }
+
+  try {
+    await User.findOneAndUpdate(
+      { email },
+      { password: bcrypt.hashSync(newPassword, bcryptSalt) },
+      { new: true }
+    );
+
+    res.status(200).json({ message: "Password updated successfully" });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal server error" });

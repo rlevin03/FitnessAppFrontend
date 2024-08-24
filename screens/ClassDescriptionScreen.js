@@ -12,6 +12,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons"; // Ensure you have 
 import Header from "../components/Header";
 import { Alert, StyleSheet, View } from "react-native";
 import {
+  adjustDateToLocal,
   COLORS,
   createTimeRange,
   DIMENSIONS,
@@ -109,14 +110,14 @@ const ClassDescriptionScreen = ({ navigation, route }) => {
         </View>
         <View style={[styles.componentContainer, { marginVertical: 3 }]}>
           <Text style={styles.dateText}>
-            {new Intl.DateTimeFormat("en-US", { weekday: "long" }).format(
-              new Date(updatedClassData.date)
-            )}
+            {adjustDateToLocal(classData.date).toLocaleDateString("en-US", {
+              weekday: "long",
+            })}
             ,{" "}
-            {new Intl.DateTimeFormat("en-US", {
+            {adjustDateToLocal(classData.date).toLocaleDateString("en-US", {
               month: "long",
-              day: "numeric",
-            }).format(new Date(updatedClassData.date))}
+            })}{" "}
+            {adjustDateToLocal(classData.date).getDate()}
             {getDaySuffix(new Date(updatedClassData.date).getDate())}
           </Text>
           <Text style={styles.dateText}>

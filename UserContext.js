@@ -9,7 +9,8 @@ export function UserProvider({ children }) {
 
   useEffect(() => {
     if (!user) {
-      axios.get("/auth/profile")
+      axios
+        .get("/auth/profile")
         .then(({ data }) => {
           setUser(data);
           setReady(true);

@@ -6,22 +6,20 @@ import {
   TouchableRipple,
 } from "react-native-paper";
 import { FlatList, StyleSheet, View } from "react-native";
-import { COLORS, DIMENSIONS, FONTSIZES } from "../components/Constants";
+import {
+  adjustDateToLocal,
+  COLORS,
+  DIMENSIONS,
+  FONTSIZES,
+} from "../components/Constants";
 import { createTimeRange } from "../components/Constants";
 import Header from "../components/Header";
 import axios from "axios";
 import { UserContext } from "../UserContext";
 import { useFocusEffect } from "@react-navigation/native";
 
-const adjustDateToLocal = (isoDateString) => {
-  const date = new Date(isoDateString);
-  const localDate = new Date(date.getTime() + date.getTimezoneOffset() * 60000);
-  return localDate;
-};
-
 const ReservationScreen = ({ navigation }) => {
-  const [reservations, setReservations] = useState([]);
-  const [waitLists, setWaitLists] = useState([]);
+  const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { user } = useContext(UserContext);
@@ -31,8 +29,18 @@ const ReservationScreen = ({ navigation }) => {
       const response = await axios.get("/classes/reservations", {
         params: { userId: user._id },
       });
-      setReservations(response.data.reservations || []);
-      setWaitLists(response.data.waitLists || []);
+
+      const reservations = (response.data.reservations || []).map((item) => ({
+        ...item,
+        listType: "reservation", // New property to identify reservation
+      }));
+
+      const waitLists = (response.data.waitLists || []).map((item) => ({
+        ...item,
+        listType: "waitlist", // New property to identify waitlist
+      }));
+
+      setData([...reservations, ...waitLists]);
     } catch (error) {
       console.error("Error fetching classes:", error);
       setError("Failed to load reservations. Please try again later.");
@@ -78,13 +86,18 @@ const ReservationScreen = ({ navigation }) => {
       <View style={styles.container}>
         <Header navigation={navigation} title="Reservations" />
         <FlatList
-          data={reservations}
+          data={data}
           keyExtractor={(item) => item._id || Math.random().toString()}
           renderItem={({ item: classData }) => {
             if (!classData || !classData.date || !classData.name) {
               console.error("Invalid class data:", classData);
               return null;
             }
+
+            const isWaitList = classData.listType === "waitlist";
+            const containerStyle = isWaitList
+              ? [styles.date, { backgroundColor: COLORS.primary }]
+              : styles.date;
 
             return (
               <TouchableRipple
@@ -94,7 +107,7 @@ const ReservationScreen = ({ navigation }) => {
                 }
               >
                 <View style={styles.reservation}>
-                  <View style={styles.date}>
+                  <View style={containerStyle}>
                     <Text style={styles.textMedium}>
                       {adjustDateToLocal(classData.date)
                         .toLocaleDateString("en-US", {
@@ -123,7 +136,9 @@ const ReservationScreen = ({ navigation }) => {
                       flex: 12,
                       padding: 10,
                       justifyContent: "center",
-                      backgroundColor: COLORS.primary,
+                      backgroundColor: isWaitList
+                        ? COLORS.black
+                        : COLORS.primary,
                       marginVertical: 10,
                       marginRight: 10,
                       marginLeft: -10,
@@ -134,7 +149,11 @@ const ReservationScreen = ({ navigation }) => {
                     <Text
                       style={[
                         styles.textBig,
-                        { textAlign: "left", fontWeight: "bold" },
+                        {
+                          textAlign: "left",
+                          fontWeight: "bold",
+                          color: isWaitList ? COLORS.primary : COLORS.black,
+                        },
                       ]}
                     >
                       {classData.name || "Unknown Class"}
@@ -142,7 +161,11 @@ const ReservationScreen = ({ navigation }) => {
                     <Text
                       style={[
                         styles.textMedium,
-                        { fontWeight: "bold", textAlign: "left" },
+                        {
+                          fontWeight: "bold",
+                          textAlign: "left",
+                          color: COLORS.white,
+                        },
                       ]}
                     >
                       {createTimeRange(
@@ -151,12 +174,37 @@ const ReservationScreen = ({ navigation }) => {
                       ) || ""}
                     </Text>
                     <View style={styles.placeAndAttendees}>
-                      <Text style={styles.textSmall}>
+                      <Text
+                        style={[
+                          styles.textSmall,
+                          {
+                            color: isWaitList
+                              ? COLORS.tertiary
+                              : COLORS.secondary,
+                          },
+                        ]}
+                      >
                         {classData.location || "Unknown Location"}
                       </Text>
-                      <Text style={[styles.textSmall, { textAlign: "right" }]}>
-                        Attendees: {classData.signeesAmount || 0}/
-                        {classData.maxCapacity || "N/A"}
+                      <Text
+                        style={[
+                          styles.textSmall,
+                          {
+                            textAlign: "right",
+                            color: isWaitList
+                              ? COLORS.tertiary
+                              : COLORS.secondary,
+                          },
+                        ]}
+                      >
+                        {isWaitList
+                          ? `Waitlist: ${
+                              classData.usersOnWaitList.indexOf(user._id) + 1 ||
+                              0
+                            }`
+                          : `Attendees: ${classData.signeesAmount || 0}/${
+                              classData.maxCapacity || "N/A"
+                            }`}
                       </Text>
                     </View>
                   </View>

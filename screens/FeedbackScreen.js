@@ -1,6 +1,12 @@
-import React from "react";
-import { PaperProvider, Text, Button, TextInput } from "react-native-paper";
-import { StyleSheet, View } from "react-native";
+import React, { useState } from "react";
+import {
+  PaperProvider,
+  Text,
+  Button,
+  TextInput,
+  ActivityIndicator,
+} from "react-native-paper";
+import { StyleSheet, View, Alert } from "react-native";
 import Header from "../components/Header";
 import { COLORS, DIMENSIONS, FONTSIZES } from "../components/Constants";
 import { Formik } from "formik";
@@ -8,6 +14,8 @@ import * as Yup from "yup";
 import axios from "axios";
 
 const FeedbackScreen = ({ navigation }) => {
+  const [loading, setLoading] = useState(false);
+
   return (
     <PaperProvider>
       <View style={styles.container}>
@@ -24,10 +32,21 @@ const FeedbackScreen = ({ navigation }) => {
               .required("Feedback is required"),
           })}
           onSubmit={async (values, { resetForm }) => {
-            await axios.post("/email/feedback", { feedback: values.feedback });
-            alert("Feedback sent successfully");
-
-            resetForm();
+            setLoading(true);
+            try {
+              await axios.post("/email/feedback", {
+                feedback: values.feedback,
+              });
+              Alert.alert("Success", "Feedback sent successfully");
+              resetForm();
+            } catch (error) {
+              Alert.alert(
+                "Error",
+                "Failed to send feedback. Please try again later."
+              );
+            } finally {
+              setLoading(false);
+            }
           }}
         >
           {({
@@ -55,13 +74,21 @@ const FeedbackScreen = ({ navigation }) => {
               {touched.feedback && errors.feedback && (
                 <Text style={styles.errorText}>{errors.feedback}</Text>
               )}
-              <Button
-                mode="contained"
-                onPress={handleSubmit}
-                style={styles.button}
-              >
-                <Text style={[styles.buttonText]}>Submit now</Text>
-              </Button>
+              {loading ? (
+                <ActivityIndicator
+                  style={{ marginTop: 20 }}
+                  size="large"
+                  color={COLORS.maroon}
+                />
+              ) : (
+                <Button
+                  mode="contained"
+                  onPress={handleSubmit}
+                  style={styles.button}
+                >
+                  <Text style={[styles.buttonText]}>Submit now</Text>
+                </Button>
+              )}
             </View>
           )}
         </Formik>
@@ -95,7 +122,7 @@ const styles = StyleSheet.create({
   },
   errorText: {
     color: COLORS.black,
-    marginTop: 10,
+    marginTop: 20,
     textAlign: "center",
   },
   button: {

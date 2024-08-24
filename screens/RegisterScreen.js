@@ -1,6 +1,12 @@
 import { useState } from "react";
-import { Image, StyleSheet, Text, View } from "react-native";
-import { PaperProvider, TextInput, TouchableRipple } from "react-native-paper";
+import { Dimensions, Image, StyleSheet, Text, View } from "react-native";
+import {
+  Button,
+  Menu,
+  PaperProvider,
+  TextInput,
+  TouchableRipple,
+} from "react-native-paper";
 import {
   COLORS,
   DIMENSIONS,
@@ -15,16 +21,25 @@ const RegisterScreen = ({ navigation }) => {
   const [password, setPassword] = useState("");
   const [password2, setPassword2] = useState("");
   const [name, setName] = useState("");
+  const [visible, setVisible] = useState(false);
+  const [location, setLocation] = useState("");
   const [error, setError] = useState("");
+
+  const openMenu = () => setVisible(true);
+  const closeMenu = () => setVisible(false);
 
   const handleRegister = async () => {
     let emailEnd = email.split("@")[1];
+    if (!email || !password || !password2 || !name || !location) {
+      setError("Please fill out all fields");
+      return;
+    }
     if (password !== password2) {
       setError("Passwords do not match");
       return;
     }
     if (!VALIDEMAILS.includes(emailEnd)) {
-      setError("Invalid email");
+      setError("Please use your school email");
       return;
     }
     try {
@@ -32,6 +47,7 @@ const RegisterScreen = ({ navigation }) => {
         name,
         email,
         password,
+        location,
       });
 
       navigation.dispatch(
@@ -56,6 +72,8 @@ const RegisterScreen = ({ navigation }) => {
           mode="outlined"
           label="Valid Email"
           textColor="white"
+          outlineColor="white"
+          autoCapitalize="none"
           activeOutlineColor="white"
           style={styles.input}
           value={email}
@@ -65,6 +83,7 @@ const RegisterScreen = ({ navigation }) => {
           mode="outlined"
           label="Name"
           textColor="white"
+          outlineColor="white"
           activeOutlineColor="white"
           style={styles.input}
           value={name}
@@ -74,6 +93,8 @@ const RegisterScreen = ({ navigation }) => {
           mode="outlined"
           label="Password"
           textColor="white"
+          outlineColor="white"
+          autoCapitalize="none"
           secureTextEntry
           activeOutlineColor="white"
           style={styles.input}
@@ -84,12 +105,44 @@ const RegisterScreen = ({ navigation }) => {
           mode="outlined"
           label="Re-enter Password"
           textColor="white"
+          outlineColor="white"
+          autoCapitalize="none"
           secureTextEntry
           activeOutlineColor="white"
           style={styles.input}
           value={password2}
           onChangeText={setPassword2}
         />
+
+        <Menu
+          visible={visible}
+          onDismiss={closeMenu}
+          contentStyle={{
+            backgroundColor: COLORS.white,
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+          style={{
+            position: 'absolute',
+            top: Dimensions.get('window').height - 130 ,
+            left: Dimensions.get('window').width / 2 - 100,
+            width: 200,
+          }}
+          anchor={
+            <TouchableRipple
+              style={[styles.navButton, { width: DIMENSIONS.componentWidth, paddingVertical: 10 }]}
+              onPress={openMenu}
+            >
+              <Text style={[styles.navButtonText, { color: COLORS.white, fontSize: FONTSIZES.medium }]}>
+                {location || "Choose Default Campus"}
+              </Text>
+            </TouchableRipple>
+          }
+        >
+          <Menu.Item onPress={() => setLocation("Boston")} title="Boston" />
+          <Menu.Item onPress={() => setLocation("Oakland")} title="Oakland" />
+          <Menu.Item onPress={() => setLocation("London")} title="London" />
+        </Menu>
 
         {error ? <Text style={styles.errorText}>{error}</Text> : null}
         <TouchableRipple style={styles.registerButton} onPress={handleRegister}>
@@ -103,20 +156,15 @@ const RegisterScreen = ({ navigation }) => {
             Create Account
           </Text>
         </TouchableRipple>
-        <Text style={styles.noAccountText}>
-          Already have an account? Click
-          <TouchableRipple onPress={() => navigation.navigate("Login")}>
-            <Text
-              style={[
-                styles.noAccountText,
-                { color: COLORS.primary, marginBottom: -6 },
-              ]}
-            >
-              {" "}
-              here
-            </Text>
-          </TouchableRipple>
-        </Text>
+
+        <TouchableRipple
+          style={styles.navButton}
+          onPress={() => navigation.navigate("Login")}
+        >
+          <Text style={[styles.navButtonText, { color: COLORS.white }]}>
+            Have an account?
+          </Text>
+        </TouchableRipple>
       </View>
     </PaperProvider>
   );
@@ -163,6 +211,23 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     marginTop: 10,
     fontWeight: "bold",
+  },
+  navButton: {
+    width: "50%",
+    backgroundColor: COLORS.primary,
+    padding: 5,
+    alignSelf: "center",
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 10,
+    borderRadius: DIMENSIONS.cornerCurve,
+  },
+  navButtonText: {
+    color: COLORS.white,
+    alignSelf: "center",
+    fontSize: FONTSIZES.small,
+    flexDirection: "row",
+    fontWeight: "400",
   },
 });
 

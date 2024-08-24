@@ -48,6 +48,8 @@ const LoginScreen = ({ navigation }) => {
           mode="outlined"
           label="Email"
           textColor="white"
+          autoCapitalize="none"
+          outlineColor="white"
           activeOutlineColor="white"
           style={styles.input}
           value={email}
@@ -56,7 +58,9 @@ const LoginScreen = ({ navigation }) => {
         <TextInput
           mode="outlined"
           label="Password"
+          outlineColor="white"
           textColor="white"
+          autoCapitalize="none"
           secureTextEntry
           activeOutlineColor="white"
           style={styles.input}
@@ -75,20 +79,24 @@ const LoginScreen = ({ navigation }) => {
             Login
           </Text>
         </TouchableRipple>
-        <Text style={styles.noAccountText}>
-          No account? Click
-          <TouchableRipple onPress={() => navigation.navigate("Register")}>
-            <Text
-              style={[
-                styles.noAccountText,
-                { color: COLORS.primary, marginBottom: -6 },
-              ]}
-            >
-              {" "}
-              here
-            </Text>
-          </TouchableRipple>
-        </Text>
+
+        <TouchableRipple
+          style={styles.navButton}
+          onPress={() => navigation.navigate("Forgot Password")}
+        >
+          <Text style={[styles.navButtonText, { color: COLORS.white }]}>
+            Forgot Password
+          </Text>
+        </TouchableRipple>
+
+        <TouchableRipple
+          style={[styles.navButton, {marginTop: 5}]}
+          onPress={() => navigation.navigate("Register")}
+        >
+          <Text style={[styles.navButtonText, { color: COLORS.white }]}>
+            Create Account
+          </Text>
+        </TouchableRipple>
       </View>
     </PaperProvider>
   );
@@ -122,12 +130,21 @@ const styles = StyleSheet.create({
     marginTop: 20,
     borderRadius: DIMENSIONS.cornerCurve,
   },
-  noAccountText: {
+  navButton: {
+    width: "50%",
+    backgroundColor: COLORS.primary,
+    padding: 5,
+    alignSelf: "center",
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 10,
+    borderRadius: DIMENSIONS.cornerCurve,
+  },
+  navButtonText: {
     color: COLORS.white,
     alignSelf: "center",
-    fontSize: FONTSIZES.medium,
+    fontSize: FONTSIZES.small,
     flexDirection: "row",
-    marginTop: 5,
     fontWeight: "400",
   },
   errorText: {

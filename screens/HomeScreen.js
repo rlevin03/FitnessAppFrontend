@@ -15,7 +15,7 @@ import {
   ActivityIndicator,
   ScrollView,
 } from "react-native";
-import ReactNativeCalendarStrip from "react-native-calendar-strip";
+import CalendarStrip from "react-native-calendar-strip";
 import { ImageSlider } from "react-native-image-slider-banner";
 import {
   Appbar,
@@ -25,11 +25,17 @@ import {
   Button,
 } from "react-native-paper";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import { COLORS, DIMENSIONS, FONTSIZES } from "../components/Constants";
+import {
+  adjustDateToLocal,
+  COLORS,
+  DIMENSIONS,
+  FONTSIZES,
+} from "../components/Constants";
 import ClassSummary from "../components/ClassSummary";
 import { UserContext } from "../UserContext";
 import { CommonActions, useFocusEffect } from "@react-navigation/native";
 import axios from "axios";
+import moment from "moment-timezone";
 
 const imageSliderData = [
   { img: require("../assets/marino1.jpg") },
@@ -40,7 +46,6 @@ const imageSliderData = [
 
 const filterOptions = {
   types: ["Yoga", "Pilates", "Cardio", "Strength", "Dance"],
-  campuses: ["Main Campus", "Marino Center", "Satellite Campus", "Boston"],
   instructors: [
     "John Doe",
     "Joe Shmo",
@@ -49,20 +54,6 @@ const filterOptions = {
     "Bob Johnson",
   ],
 };
-
-function getFirstDayOfWeek(date) {
-  const dayOfWeek = date.getDay();
-  const firstDayOfWeek = new Date(date);
-  const diff = dayOfWeek === 0 ? -6 : 0 - dayOfWeek;
-  firstDayOfWeek.setDate(date.getDate() + diff);
-  return firstDayOfWeek;
-}
-
-function getNumberOfDaysInAdvance(date, days) {
-  const endDate = new Date(date);
-  endDate.setDate(date.getDate() + days);
-  return endDate;
-}
 
 const Header = memo(({ navigation }) => {
   return (
@@ -92,21 +83,19 @@ const HomeScreen = ({ navigation }) => {
   const [visible, setVisible] = useState(false);
   const [selectedFilters, setSelectedFilters] = useState({
     types: [],
-    campuses: [],
     instructors: [],
   });
   const [selectedDate, setSelectedDate] = useState();
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [modalFilters, setModalFilters] = useState({ ...selectedFilters });
   const { user, ready } = useContext(UserContext);
+  const currentDate = moment();
 
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
 
   const fetchClasses = useCallback(async () => {
     setLoading(true);
-    setError(null);
     try {
       const response = await axios.get("/classes", {
         params: {
@@ -114,13 +103,13 @@ const HomeScreen = ({ navigation }) => {
             ? selectedDate.toISOString().split("T")[0]
             : new Date().toISOString().split("T")[0],
           types: selectedFilters.types.join(","),
-          campuses: selectedFilters.campuses.join(","),
+          campuses: user.location,
           instructors: selectedFilters.instructors.join(","),
         },
       });
       setClasses(response.data);
     } catch (err) {
-      setError(err.message);
+      console.error(err);
     } finally {
       setLoading(false);
     }
@@ -185,15 +174,31 @@ const HomeScreen = ({ navigation }) => {
     }
   }, [user, navigation]);
 
-  const renderClassItem = ({ item }) => (
-    <TouchableRipple
-      onPress={() =>
-        navigation.navigate("Class Description", { classData: item })
-      }
-    >
-      <ClassSummary navigation={navigation} classData={item} />
-    </TouchableRipple>
-  );
+  const renderClassItem = ({ item }) => {
+    const classDate = adjustDateToLocal(item.date);
+    const now = currentDate;
+
+    const isPast = moment(classDate).isBefore(moment(), "day");
+
+    return (
+      <TouchableRipple
+        onPress={() =>
+          navigation.navigate("Class Description", { classData: item })
+        }
+        style={isPast ? styles.disabledClass : {}}
+        disabled={isPast}
+      >
+        <ClassSummary navigation={navigation} classData={item} />
+      </TouchableRipple>
+    );
+  };
+
+  const customDatesStyles = [
+    {
+      date: moment(),
+      dateNumberStyle: { color: COLORS.primary },
+    },
+  ];
 
   return (
     <PaperProvider>
@@ -237,16 +242,16 @@ const HomeScreen = ({ navigation }) => {
         <View style={styles.headerContainer}>
           <Text style={[styles.textBig, { color: COLORS.white }]}>Classes</Text>
           <TouchableRipple onPress={showModal}>
-            <Text style={[styles.textBig, { color: COLORS.primary }]}>
+            <Text style={[styles.textBig, { color: COLORS.secondary }]}>
               Filters
             </Text>
           </TouchableRipple>
         </View>
-        <ReactNativeCalendarStrip
+        <CalendarStrip
           startingDate={selectedDate}
           selectedDate={selectedDate}
-          minDate={getFirstDayOfWeek(new Date())}
-          maxDate={getNumberOfDaysInAdvance(new Date(), 30)}
+          minDate={moment().startOf("week")}
+          maxDate={moment().add(1, "month")}
           daySelectionAnimation={{
             type: "background",
             duration: 50,
@@ -259,7 +264,11 @@ const HomeScreen = ({ navigation }) => {
           highlightDateNumberStyle={{ color: COLORS.white }}
           highlightDateNameStyle={{ color: COLORS.secondary }}
           onDateSelected={(date) => setSelectedDate(date)}
-          scrollToOnSetSelectedDate={false}
+          customDatesStyles={customDatesStyles}
+          iconLeft={require("../assets/left-chevron.png")}
+          iconRight={require("../assets/chevron-right.png")}
+          iconLeftStyle={{ paddingRight: 30 }}
+          iconRightStyle={{ paddingLeft: 30 }}
         />
         {Object.values(selectedFilters).flat().length > 0 && (
           <View style={styles.filtersWrapper}>
@@ -307,7 +316,7 @@ const HomeScreen = ({ navigation }) => {
         <Modal
           visible={visible}
           contentContainerStyle={{
-            backgroundColor: COLORS.primary,
+            backgroundColor: "#A4804A",
             padding: 20,
             height: "80%",
             width: DIMENSIONS.componentWidth,
@@ -318,14 +327,14 @@ const HomeScreen = ({ navigation }) => {
           <ScrollView>
             <Text style={styles.modalTitle}>Filter Classes</Text>
             {Object.keys(filterOptions).map((filterType) => (
-              <View key={filterType} style={styles.filterSection}>
+              <View key={filterType} style={[styles.filterSection]}>
                 <Text style={styles.textBig}>
-                  {filterType.toLocaleUpperCase()}
+                  {filterType.charAt(0).toUpperCase() + filterType.slice(1)}
                 </Text>
                 <View
                   style={[
                     styles.filtersWrapper,
-                    { backgroundColor: COLORS.black },
+                    { backgroundColor: COLORS.black, width: "100%" },
                   ]}
                 >
                   {filterOptions[filterType].map((filterValue) => (
@@ -333,7 +342,7 @@ const HomeScreen = ({ navigation }) => {
                       key={filterValue}
                       style={[
                         styles.filterButton,
-                        { marginBottom: 5 },
+                        { marginBottom: 5, backgroundColor: COLORS.white },
                         modalFilters[filterType].includes(filterValue) &&
                           styles.selectedFilterButton,
                       ]}
@@ -436,7 +445,7 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
   },
   selectedFilterButton: {
-    backgroundColor: COLORS.white,
+    backgroundColor: COLORS.primary,
   },
   filterDivider: {
     width: 3,
@@ -471,6 +480,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 10,
+  },
+  disabledClass: {
+    opacity: 0.5,
   },
 });
 

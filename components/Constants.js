@@ -1,6 +1,6 @@
 export const COLORS = {
-  primary: "#B80D0D",
-  secondary: "#DB8A8A",
+  primary: "#C8102E",
+  secondary: "#FFAF80",
   tertiary: "#424344",
   maroon: "#630B0B",
   black: "#000000",
@@ -50,3 +50,9 @@ export function createTimeRange(startTime, durationMinutes) {
   // Return the formatted time range string
   return `${formatTime(startDate)} - ${formatTime(endDate)}`;
 }
+
+export const adjustDateToLocal = (isoDateString) => {
+  const date = new Date(isoDateString);
+  const localDate = new Date(date.getTime() + date.getTimezoneOffset() * 60000);
+  return localDate;
+};
