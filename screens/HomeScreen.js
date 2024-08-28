@@ -241,11 +241,12 @@ const HomeScreen = ({ navigation }) => {
         </View>
         <View style={styles.headerContainer}>
           <Text style={[styles.textBig, { color: COLORS.white }]}>Classes</Text>
-          <TouchableRipple onPress={showModal}>
-            <Text style={[styles.textBig, { color: COLORS.secondary }]}>
-              Filters
-            </Text>
-          </TouchableRipple>
+          <Text
+            style={[styles.textBig, { color: COLORS.secondary }]}
+            onPress={showModal}
+          >
+            Filters
+          </Text>
         </View>
         <CalendarStrip
           startingDate={selectedDate}

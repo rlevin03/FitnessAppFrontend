@@ -4,11 +4,25 @@ import { Text } from "react-native-paper";
 import { COLORS, DIMENSIONS, FONTSIZES } from "./Constants";
 
 const ClassSummary = ({ classData }) => {
+  const date = new Date(classData.date); // Ensure date is a Date object
+
   return (
     <View style={styles.container}>
       <View style={styles.timeContainer}>
-        <Text style={[styles.textBig, { color: COLORS.black }]}>
-          {classData.startTime}
+        <Text
+          style={[styles.textBig, { color: COLORS.black }]}
+          accessible={true}
+          accessibilityLabel={`Class time ${date.toLocaleTimeString("en-US", {
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: true,
+          })}`}
+        >
+          {date.toLocaleTimeString("en-US", {
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: true,
+          })}
         </Text>
         <View style={{ flexDirection: "row", alignItems: "center" }}>
           <Text style={styles.textMedium}>{classData.duration}</Text>

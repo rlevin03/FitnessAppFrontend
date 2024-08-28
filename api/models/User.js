@@ -11,6 +11,7 @@ const userSchema = new Schema({
   waitLists: [{ type: mongoose.Schema.Types.ObjectId, ref: "Class" }],
   verified: { type: Boolean, default: false },
   paid: { type: Boolean, default: false },
+  totalReservations: [{ type: mongoose.Schema.Types.ObjectId, ref: "Class" }],
 });
 
 const userModel = mongoose.model("User", userSchema);

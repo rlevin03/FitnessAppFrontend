@@ -106,12 +106,12 @@ router.patch("/reserve", async (req, res) => {
         .json({ message: "User is already registered for this class" });
     }
 
-    if (cls.signeesAmount < cls.maxCapacity) {
-      cls.signeesAmount++;
+    if (cls.usersSignedUp.length < cls.maxCapacity) {
       user.reservations.push(classId);
       cls.usersSignedUp.push(userId);
-    } else if (cls.waitListSigneesAmount < cls.waitListCapacity) {
-      cls.waitListSigneesAmount++;
+      user.totalReservations.push(classId);
+      cls.totalSignUps.push(userId);
+    } else if (cls.usersOnWaitList.length < cls.waitListCapacity) {
       user.waitLists.push(classId);
       cls.usersOnWaitList.push(userId);
     } else {
@@ -165,27 +165,27 @@ router.patch("/cancel", async (req, res) => {
 
     const userIndex = cls.usersSignedUp.indexOf(userId);
     if (userIndex !== -1) {
-      // User is currently signed up, so remove them
-      cls.signeesAmount--;
       cls.usersSignedUp.splice(userIndex, 1);
+      cls.totalSignUps.splice(userIndex, 1);
 
       const reservationIndex = user.reservations.indexOf(classId);
       if (reservationIndex !== -1) {
         user.reservations.splice(reservationIndex, 1);
+        user.totalReservations.splice(reservationIndex, 1);
       }
 
       // Check if there is anyone on the waitlist
       if (cls.usersOnWaitList.length > 0) {
-        const nextUserId = cls.usersOnWaitList.shift(); // Remove the first person from the waitlist
-        cls.waitListSigneesAmount--;
+        const nextUserId = cls.usersOnWaitList.shift();
 
-        cls.signeesAmount++;
         cls.usersSignedUp.push(nextUserId);
+        cls.totalSignUps.push(nextUserId);
 
         // Update the next user’s reservations
         const nextUser = await UserModel.findById(nextUserId).session(session);
         if (nextUser) {
           nextUser.reservations.push(classId);
+          nextUser.totalReservations.push(classId);
           const userWaitListIndex = nextUser.waitLists.indexOf(classId);
           if (userWaitListIndex !== -1) {
             nextUser.waitLists.splice(userWaitListIndex, 1);
@@ -196,8 +196,6 @@ router.patch("/cancel", async (req, res) => {
     } else {
       const waitListIndex = cls.usersOnWaitList.indexOf(userId);
       if (waitListIndex !== -1) {
-        // User is on the waitlist, so remove them
-        cls.waitListSigneesAmount--;
         cls.usersOnWaitList.splice(waitListIndex, 1);
 
         const userWaitListIndex = user.waitLists.indexOf(classId);

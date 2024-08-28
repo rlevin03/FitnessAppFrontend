@@ -39,13 +39,21 @@ const getDaySuffix = (day) => {
 const ClassDescriptionScreen = ({ navigation, route }) => {
   const { classData } = route.params;
   const { user } = useContext(UserContext);
-  const classFull = classData.signeesAmount >= classData.maxCapacity;
+  const classFull = classData.usersSignedUp.length >= classData.maxCapacity;
   const [modalVisible, setModalVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const [updatedClassData, setUpdatedClassData] = useState(classData);
 
   const handleJoinClass = async () => {
+    if (classData.paymentRequired && !user.paid) {
+      Alert.alert(
+        "Payment Required",
+        "You need to pay the classes fee to register for this class."
+      );
+      return;
+    }
     setLoading(true);
+
     try {
       const response = await axios.patch("/classes/reserve", {
         classId: updatedClassData._id,
@@ -85,7 +93,6 @@ const ClassDescriptionScreen = ({ navigation, route }) => {
 
   return (
     <PaperProvider>
-      {/* Modal for leaving class */}
       <Portal>
         <Modal
           visible={modalVisible}
@@ -122,7 +129,7 @@ const ClassDescriptionScreen = ({ navigation, route }) => {
           </Text>
           <Text style={styles.dateText}>
             {createTimeRange(
-              updatedClassData.startTime,
+              updatedClassData.date,
               updatedClassData.duration
             )}
           </Text>
@@ -139,14 +146,15 @@ const ClassDescriptionScreen = ({ navigation, route }) => {
           <View style={styles.infoRow}>
             <Text style={styles.labelText}>Currently Signed: </Text>
             <Text style={styles.textMedium}>
-              {updatedClassData.signeesAmount}/{updatedClassData.maxCapacity}
+              {updatedClassData.usersSignedUp.length}/
+              {updatedClassData.maxCapacity}
             </Text>
           </View>
           {classFull ? (
             <View style={styles.infoRow}>
               <Text style={styles.labelText}>People on Wait List: </Text>
               <Text style={styles.textMedium}>
-                {updatedClassData.waitListSigneesAmount}/
+                {updatedClassData.usersOnWaitList.length}/
                 {updatedClassData.waitListCapacity}
               </Text>
             </View>
@@ -221,7 +229,7 @@ const ClassDescriptionScreen = ({ navigation, route }) => {
         </View>
         <View style={styles.flexGrow} />
         <View style={styles.equipmentContainer}>
-          <Text style={styles.infoTitle}>Equipment Used</Text>
+          <Text style={styles.infoTitle}>What to Bring</Text>
           <View
             style={{
               flexDirection: "row",
@@ -229,12 +237,12 @@ const ClassDescriptionScreen = ({ navigation, route }) => {
               flexWrap: "wrap",
             }}
           >
-            {updatedClassData.equipmentUsed &&
-            updatedClassData.equipmentUsed.length > 0 ? (
-              updatedClassData.equipmentUsed.map((equipment, index) => (
+            {updatedClassData.equipmentToBring &&
+            updatedClassData.equipmentToBring.length > 0 ? (
+              updatedClassData.equipmentToBring.map((equipment, index) => (
                 <Text key={index} style={styles.infoContent}>
                   {equipment}
-                  {index < updatedClassData.equipmentUsed.length - 1
+                  {index < updatedClassData.equipmentToBring.length - 1
                     ? ",  "
                     : ""}
                 </Text>
@@ -310,9 +318,16 @@ const styles = StyleSheet.create({
   modalContainer: {
     backgroundColor: COLORS.white,
     padding: 10,
-    margin: 20,
+    marginHorizontal: 20,
+    marginTop: 0,
     borderRadius: DIMENSIONS.cornerCurve,
     alignItems: "center",
+    justifyContent: "flex-start",
+    position: "absolute",
+    top: 70,
+    left: 0,
+    right: 0,
+    zIndex: 1000,
   },
   modalButton: {
     backgroundColor: COLORS.primary,

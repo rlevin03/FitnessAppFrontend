@@ -5,7 +5,7 @@ import {
   Text,
   TouchableRipple,
 } from "react-native-paper";
-import { FlatList, StyleSheet, View } from "react-native";
+import { SectionList, StyleSheet, View } from "react-native";
 import {
   adjustDateToLocal,
   COLORS,
@@ -19,7 +19,8 @@ import { UserContext } from "../UserContext";
 import { useFocusEffect } from "@react-navigation/native";
 
 const ReservationScreen = ({ navigation }) => {
-  const [data, setData] = useState([]);
+  const [reservations, setReservations] = useState([]);
+  const [waitLists, setWaitLists] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { user } = useContext(UserContext);
@@ -30,17 +31,19 @@ const ReservationScreen = ({ navigation }) => {
         params: { userId: user._id },
       });
 
-      const reservations = (response.data.reservations || []).map((item) => ({
-        ...item,
-        listType: "reservation", // New property to identify reservation
-      }));
+      setReservations(
+        (response.data.reservations || []).map((item) => ({
+          ...item,
+          listType: "reservation",
+        }))
+      );
 
-      const waitLists = (response.data.waitLists || []).map((item) => ({
-        ...item,
-        listType: "waitlist", // New property to identify waitlist
-      }));
-
-      setData([...reservations, ...waitLists]);
+      setWaitLists(
+        (response.data.waitLists || []).map((item) => ({
+          ...item,
+          listType: "waitlist",
+        }))
+      );
     } catch (error) {
       console.error("Error fetching classes:", error);
       setError("Failed to load reservations. Please try again later.");
@@ -54,6 +57,11 @@ const ReservationScreen = ({ navigation }) => {
       fetchClasses();
     }, [])
   );
+
+  const sections = [
+    { title: "-----Reservations-----", data: reservations },
+    { title: "-----Waitlists-----", data: waitLists },
+  ];
 
   if (loading) {
     return (
@@ -84,9 +92,9 @@ const ReservationScreen = ({ navigation }) => {
   return (
     <PaperProvider>
       <View style={styles.container}>
-        <Header navigation={navigation} title="Reservations" />
-        <FlatList
-          data={data}
+        <Header navigation={navigation} title="Upcoming Reservations" />
+        <SectionList
+          sections={sections}
           keyExtractor={(item) => item._id || Math.random().toString()}
           renderItem={({ item: classData }) => {
             if (!classData || !classData.date || !classData.name) {
@@ -169,7 +177,7 @@ const ReservationScreen = ({ navigation }) => {
                       ]}
                     >
                       {createTimeRange(
-                        classData.startTime,
+                        classData.date,
                         classData.duration
                       ) || ""}
                     </Text>
@@ -202,7 +210,7 @@ const ReservationScreen = ({ navigation }) => {
                               classData.usersOnWaitList.indexOf(user._id) + 1 ||
                               0
                             }`
-                          : `Attendees: ${classData.signeesAmount || 0}/${
+                          : `Attendees: ${classData.usersSignedUp.length || 0}/${
                               classData.maxCapacity || "N/A"
                             }`}
                       </Text>
@@ -212,8 +220,17 @@ const ReservationScreen = ({ navigation }) => {
               </TouchableRipple>
             );
           }}
+          renderSectionHeader={({ section: { title } }) => (
+            <Text style={styles.sectionHeader}>{title}</Text>
+          )}
+          renderSectionFooter={({ section }) => {
+            if (section.title === "-----Reservations-----") {
+              return <View style={{ height: 50 }} />;
+            }
+            return null;
+          }}
           ListEmptyComponent={
-            <Text style={styles.emptyText}>No reservations found.</Text>
+            <Text style={styles.emptyText}>No reservations found</Text>
           }
         />
       </View>
@@ -279,6 +296,14 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginTop: 20,
     fontSize: FONTSIZES.medium,
+  },
+  sectionHeader: {
+    fontSize: FONTSIZES.large,
+    fontWeight: "bold",
+    textAlign: "center",
+    color: COLORS.white,
+    paddingVertical: 5,
+    paddingHorizontal: 10,
   },
 });
 

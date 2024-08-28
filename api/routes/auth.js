@@ -105,6 +105,7 @@ router.get("/profile", (req, res) => {
         reservations,
         waitLists,
         location,
+        paid,
         _id,
       } = await User.findById(userData.id);
       res.json({
@@ -115,6 +116,7 @@ router.get("/profile", (req, res) => {
         reservations,
         waitLists,
         location,
+        paid,
         _id,
       });
     });

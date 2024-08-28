@@ -20,35 +20,27 @@ export const DIMENSIONS = {
 
 export const VALIDEMAILS = ["northeastern.edu", "husky.neu.edu", "gmail.com"];
 
-export function createTimeRange(startTime, durationMinutes) {
-  // Parse the start time into a Date object
-  const [hours, minutes, period] = startTime
-    .match(/(\d+):(\d+)\s*(AM|PM)/i)
-    .slice(1);
-  let startDate = new Date();
-  startDate.setHours(
-    period.toUpperCase() === "PM" && hours !== "12"
-      ? parseInt(hours) + 12
-      : parseInt(hours),
-    parseInt(minutes)
-  );
+export function createTimeRange(startDateTime, durationMinutes) {
+  const startDate = new Date(startDateTime);
 
-  // Create a new Date object for the end time by adding the duration
-  let endDate = new Date(startDate);
-  endDate.setMinutes(startDate.getMinutes() + durationMinutes);
+  const startHours = startDate.getHours();
+  const startMinutes = startDate.getMinutes();
 
-  // Format the time as "hh:mm AM/PM"
-  const formatTime = (date) => {
-    let hours = date.getHours();
-    let minutes = date.getMinutes();
-    let period = hours >= 12 ? "PM" : "AM";
-    hours = hours % 12 || 12;
-    minutes = minutes < 10 ? "0" + minutes : minutes;
-    return `${hours}:${minutes} ${period}`;
-  };
+  const endDate = new Date(startDate.getTime() + durationMinutes * 60000);
 
-  // Return the formatted time range string
-  return `${formatTime(startDate)} - ${formatTime(endDate)}`;
+  const startTime = startDate.toLocaleTimeString("en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
+  });
+
+  const endTime = endDate.toLocaleTimeString("en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
+  });
+
+  return `${startTime} - ${endTime}`;
 }
 
 export const adjustDateToLocal = (isoDateString) => {
