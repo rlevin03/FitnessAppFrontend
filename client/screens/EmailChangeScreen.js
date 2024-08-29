@@ -1,5 +1,5 @@
 import axios from "axios";
-import { StyleSheet, View } from "react-native";
+import { Platform, StyleSheet, View } from "react-native";
 import {
   PaperProvider,
   Text,
@@ -13,6 +13,7 @@ import {
   VALIDEMAILS,
 } from "../components/Constants";
 import { useState } from "react";
+import { KeyboardAvoidingView } from "react-native";
 
 const EmailChangeScreen = ({ navigation, route }) => {
   const { oldEmail } = route.params;
@@ -43,7 +44,11 @@ const EmailChangeScreen = ({ navigation, route }) => {
   };
   return (
     <PaperProvider>
-      <View style={styles.container}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={styles.container}
+        keyboardVerticalOffset={Platform.select({ ios: 60, android: 0 })}
+      >
         <TextInput
           mode="outlined"
           label="Email"
@@ -76,7 +81,7 @@ const EmailChangeScreen = ({ navigation, route }) => {
             Receive Email
           </Text>
         </TouchableRipple>
-      </View>
+      </KeyboardAvoidingView>
     </PaperProvider>
   );
 };

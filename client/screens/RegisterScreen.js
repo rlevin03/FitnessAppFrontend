@@ -1,7 +1,13 @@
 import { useState } from "react";
-import { Dimensions, Image, StyleSheet, Text, View } from "react-native";
 import {
-  Button,
+  Dimensions,
+  Image,
+  KeyboardAvoidingView,
+  Platform,
+  StyleSheet,
+  Text,
+} from "react-native";
+import {
   Menu,
   PaperProvider,
   TextInput,
@@ -63,7 +69,11 @@ const RegisterScreen = ({ navigation }) => {
   };
   return (
     <PaperProvider>
-      <View style={styles.container}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={styles.container}
+        keyboardVerticalOffset={Platform.select({ ios: 60, android: 0 })}
+      >
         <Image
           style={styles.image}
           source={require("../../assets/Northeastern_Universitylogo_square.webp")}
@@ -123,17 +133,25 @@ const RegisterScreen = ({ navigation }) => {
             alignItems: "center",
           }}
           style={{
-            position: 'absolute',
-            top: Dimensions.get('window').height - 130 ,
-            left: Dimensions.get('window').width / 2 - 100,
+            position: "absolute",
+            top: Dimensions.get("window").height - 130,
+            left: Dimensions.get("window").width / 2 - 100,
             width: 200,
           }}
           anchor={
             <TouchableRipple
-              style={[styles.navButton, { width: DIMENSIONS.componentWidth, paddingVertical: 10 }]}
+              style={[
+                styles.navButton,
+                { width: DIMENSIONS.componentWidth, paddingVertical: 10 },
+              ]}
               onPress={openMenu}
             >
-              <Text style={[styles.navButtonText, { color: COLORS.white, fontSize: FONTSIZES.medium }]}>
+              <Text
+                style={[
+                  styles.navButtonText,
+                  { color: COLORS.white, fontSize: FONTSIZES.medium },
+                ]}
+              >
                 {location || "Choose Default Campus"}
               </Text>
             </TouchableRipple>
@@ -165,7 +183,7 @@ const RegisterScreen = ({ navigation }) => {
             Have an account?
           </Text>
         </TouchableRipple>
-      </View>
+      </KeyboardAvoidingView>
     </PaperProvider>
   );
 };

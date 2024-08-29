@@ -6,6 +6,8 @@ import {
   TextInput,
   Alert,
   ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import { PaperProvider, Text, TouchableRipple } from "react-native-paper";
 import axios from "axios";
@@ -84,7 +86,11 @@ const VerificationScreen = ({ navigation, route }) => {
 
   return (
     <PaperProvider>
-      <View style={styles.container}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={styles.container}
+        keyboardVerticalOffset={Platform.select({ ios: 60, android: 0 })}
+      >
         <View style={styles.wrapper}>
           <Image
             style={styles.logo}
@@ -152,7 +158,7 @@ const VerificationScreen = ({ navigation, route }) => {
             <Text style={styles.verifyButtonText}>Verify</Text>
           </TouchableRipple>
         )}
-      </View>
+      </KeyboardAvoidingView>
     </PaperProvider>
   );
 };

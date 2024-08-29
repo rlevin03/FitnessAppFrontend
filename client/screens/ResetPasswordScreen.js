@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, Alert, StyleSheet, ActivityIndicator } from "react-native";
+import { View, Text, Alert, StyleSheet, ActivityIndicator, KeyboardAvoidingView, Platform } from "react-native";
 import axios from "axios";
 import { PaperProvider, TextInput, TouchableRipple } from "react-native-paper";
 import { COLORS, DIMENSIONS, FONTSIZES } from "../components/Constants";
@@ -69,7 +69,11 @@ const ResetPasswordScreen = ({ navigation, route }) => {
 
   return (
     <PaperProvider>
-      <View style={styles.container}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={styles.container}
+        keyboardVerticalOffset={Platform.select({ ios: 60, android: 0 })}
+      >
         <TextInput
           mode="outlined"
           label="Email Verification Code"
@@ -124,7 +128,7 @@ const ResetPasswordScreen = ({ navigation, route }) => {
             </Text>
           </TouchableRipple>
         )}
-      </View>
+      </KeyboardAvoidingView>
     </PaperProvider>
   );
 };

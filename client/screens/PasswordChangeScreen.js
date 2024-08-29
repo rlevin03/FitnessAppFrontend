@@ -1,5 +1,11 @@
 import React, { useContext, useState } from "react";
-import { View, StyleSheet, Alert } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+} from "react-native";
 import {
   PaperProvider,
   TextInput,
@@ -15,6 +21,7 @@ import Header from "../components/Header";
 const PasswordChangeScreen = ({ navigation }) => {
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const { user, setUser } = useContext(UserContext);
 
   const handlePasswordChange = async () => {
@@ -24,6 +31,10 @@ const PasswordChangeScreen = ({ navigation }) => {
     }
     if (oldPassword === newPassword) {
       Alert.alert("Error", "Old and new passwords cannot be the same");
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      Alert.alert("Error", "Passwords do not match");
       return;
     }
     try {
@@ -55,13 +66,18 @@ const PasswordChangeScreen = ({ navigation }) => {
   return (
     <PaperProvider>
       <Header navigation={navigation} title="Password Form" />
-      <View style={styles.container}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={styles.container}
+        keyboardVerticalOffset={Platform.select({ ios: 60, android: 0 })}
+      >
         <TextInput
           mode="outlined"
           label="Old Password"
           secureTextEntry
           textColor="white"
           activeOutlineColor="white"
+          autoCapitalize="none"
           style={styles.input}
           value={oldPassword}
           onChangeText={setOldPassword}
@@ -72,9 +88,21 @@ const PasswordChangeScreen = ({ navigation }) => {
           secureTextEntry
           textColor="white"
           activeOutlineColor="white"
+          autoCapitalize="none"
           style={styles.input}
           value={newPassword}
           onChangeText={setNewPassword}
+        />
+        <TextInput
+          mode="outlined"
+          label="Confirm Password"
+          secureTextEntry
+          textColor="white"
+          activeOutlineColor="white"
+          autoCapitalize="none"
+          style={styles.input}
+          value={confirmPassword}
+          onChangeText={setConfirmPassword}
         />
         <TouchableRipple
           style={styles.passwordChangeButton}
@@ -90,7 +118,7 @@ const PasswordChangeScreen = ({ navigation }) => {
             Change Password
           </Text>
         </TouchableRipple>
-      </View>
+      </KeyboardAvoidingView>
     </PaperProvider>
   );
 };

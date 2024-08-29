@@ -1,5 +1,5 @@
 import axios from "axios";
-import { StyleSheet, View } from "react-native";
+import { KeyboardAvoidingView, Platform, StyleSheet, View } from "react-native";
 import {
   PaperProvider,
   Text,
@@ -26,7 +26,11 @@ const ForgotPasswordScreen = ({ navigation }) => {
 
   return (
     <PaperProvider>
-      <View style={styles.container}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={styles.container}
+        keyboardVerticalOffset={Platform.select({ ios: 60, android: 0 })}
+      >
         <Text
           style={{
             color: COLORS.white,
@@ -48,7 +52,10 @@ const ForgotPasswordScreen = ({ navigation }) => {
           value={email}
           onChangeText={setEmail}
         />
-        <TouchableRipple onPress={handleForgotPassword} style={styles.emailChangeButton}>
+        <TouchableRipple
+          onPress={handleForgotPassword}
+          style={styles.emailChangeButton}
+        >
           <Text
             style={{
               fontWeight: "bold",
@@ -59,7 +66,7 @@ const ForgotPasswordScreen = ({ navigation }) => {
             Begin Reset
           </Text>
         </TouchableRipple>
-      </View>
+      </KeyboardAvoidingView>
     </PaperProvider>
   );
 };

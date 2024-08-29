@@ -1,5 +1,11 @@
 import axios from "axios";
-import { Image, LogBox, StyleSheet, View } from "react-native";
+import {
+  Image,
+  LogBox,
+  StyleSheet,
+  KeyboardAvoidingView,
+  Platform,
+} from "react-native";
 import {
   PaperProvider,
   Text,
@@ -16,16 +22,18 @@ const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
   const { setUser } = useContext(UserContext);
 
   const handleLogin = async () => {
     setError(null);
+    setIsLoading(true);
     try {
       const { data } = await axios.post("/auth/login", {
         email,
         password,
       });
-      setUser(data);
+      if (setUser) setUser(data);
       navigation.dispatch(
         CommonActions.reset({
           index: 0,
@@ -34,12 +42,18 @@ const LoginScreen = ({ navigation }) => {
       );
     } catch (error) {
       setError("Login failed. Please check your email and password.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
     <PaperProvider>
-      <View style={styles.container}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={styles.container}
+        keyboardVerticalOffset={Platform.select({ ios: 60, android: 0 })}
+      >
         <Image
           style={styles.image}
           source={require("../../assets/Northeastern_Universitylogo_square.webp")}
@@ -54,6 +68,7 @@ const LoginScreen = ({ navigation }) => {
           style={styles.input}
           value={email}
           onChangeText={setEmail}
+          accessibilityLabel="Email input"
         />
         <TextInput
           mode="outlined"
@@ -66,9 +81,15 @@ const LoginScreen = ({ navigation }) => {
           style={styles.input}
           value={password}
           onChangeText={setPassword}
+          accessibilityLabel="Password input"
         />
         {error ? <Text style={styles.errorText}>{error}</Text> : null}
-        <TouchableRipple style={styles.loginButton} onPress={handleLogin}>
+        <TouchableRipple
+          style={styles.loginButton}
+          onPress={handleLogin}
+          disabled={isLoading}
+          accessibilityLabel="Login button"
+        >
           <Text
             style={{
               fontWeight: "bold",
@@ -76,13 +97,14 @@ const LoginScreen = ({ navigation }) => {
               color: COLORS.white,
             }}
           >
-            Login
+            {isLoading ? "Logging in..." : "Login"}
           </Text>
         </TouchableRipple>
 
         <TouchableRipple
           style={styles.navButton}
           onPress={() => navigation.navigate("Forgot Password")}
+          accessibilityLabel="Forgot Password button"
         >
           <Text style={[styles.navButtonText, { color: COLORS.white }]}>
             Forgot Password
@@ -90,14 +112,15 @@ const LoginScreen = ({ navigation }) => {
         </TouchableRipple>
 
         <TouchableRipple
-          style={[styles.navButton, {marginTop: 5}]}
+          style={[styles.navButton, { marginTop: 5 }]}
           onPress={() => navigation.navigate("Register")}
+          accessibilityLabel="Create Account button"
         >
           <Text style={[styles.navButtonText, { color: COLORS.white }]}>
             Create Account
           </Text>
         </TouchableRipple>
-      </View>
+      </KeyboardAvoidingView>
     </PaperProvider>
   );
 };
@@ -106,6 +129,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: COLORS.black,
+  },
+  scrollContainer: {
+    flexGrow: 1,
   },
   image: {
     width: "75%",
@@ -151,6 +177,7 @@ const styles = StyleSheet.create({
     color: "red",
     alignSelf: "center",
     marginTop: 10,
+    paddingHorizontal: 20,
   },
 });
 

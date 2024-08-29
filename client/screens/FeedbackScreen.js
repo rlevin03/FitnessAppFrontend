@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   PaperProvider,
   Text,
@@ -6,7 +6,13 @@ import {
   TextInput,
   ActivityIndicator,
 } from "react-native-paper";
-import { StyleSheet, View, Alert } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+} from "react-native";
 import Header from "../components/Header";
 import { COLORS, DIMENSIONS, FONTSIZES } from "../components/Constants";
 import { Formik } from "formik";
@@ -14,11 +20,13 @@ import * as Yup from "yup";
 import axios from "axios";
 
 const FeedbackScreen = ({ navigation }) => {
-  const [loading, setLoading] = useState(false);
-
   return (
     <PaperProvider>
-      <View style={styles.container}>
+      <KeyboardAvoidingView
+        style={styles.container}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.select({ ios: 60, android: 0 })}
+      >
         <Header navigation={navigation} title="Feedback" />
         <Text style={styles.textBigWhite}>Leave Feedback Below</Text>
         <Text style={styles.textSmallRed}>
@@ -31,8 +39,7 @@ const FeedbackScreen = ({ navigation }) => {
               .min(10, "Feedback must be at least 10 characters")
               .required("Feedback is required"),
           })}
-          onSubmit={async (values, { resetForm }) => {
-            setLoading(true);
+          onSubmit={async (values, { resetForm, setSubmitting }) => {
             try {
               await axios.post("/email/feedback", {
                 feedback: values.feedback,
@@ -45,7 +52,7 @@ const FeedbackScreen = ({ navigation }) => {
                 "Failed to send feedback. Please try again later."
               );
             } finally {
-              setLoading(false);
+              setSubmitting(false);
             }
           }}
         >
@@ -56,6 +63,7 @@ const FeedbackScreen = ({ navigation }) => {
             values,
             errors,
             touched,
+            isSubmitting,
           }) => (
             <View style={styles.formWrapper}>
               <TextInput
@@ -69,12 +77,13 @@ const FeedbackScreen = ({ navigation }) => {
                 value={values.feedback}
                 style={styles.textInput}
                 theme={{ colors: { text: COLORS.black } }}
-                contentStyle={{ fontSize: FONTSIZES.medium }}
+                contentStyle={{ fontSize: FONTSIZES.small }}
+                accessibilityLabel="Feedback input"
               />
               {touched.feedback && errors.feedback && (
                 <Text style={styles.errorText}>{errors.feedback}</Text>
               )}
-              {loading ? (
+              {isSubmitting ? (
                 <ActivityIndicator
                   style={{ marginTop: 20 }}
                   size="large"
@@ -85,14 +94,17 @@ const FeedbackScreen = ({ navigation }) => {
                   mode="contained"
                   onPress={handleSubmit}
                   style={styles.button}
+                  contentStyle={styles.buttonContent} // Ensures consistent height and padding
+                  labelStyle={styles.buttonText} // Ensures consistent text styling
+                  accessibilityLabel="Submit feedback button"
                 >
-                  <Text style={[styles.buttonText]}>Submit now</Text>
+                  Submit now
                 </Button>
               )}
             </View>
           )}
         </Formik>
-      </View>
+      </KeyboardAvoidingView>
     </PaperProvider>
   );
 };
@@ -119,6 +131,9 @@ const styles = StyleSheet.create({
   textInput: {
     textAlignVertical: "top",
     backgroundColor: COLORS.primary,
+    height: 300,
+    width: DIMENSIONS.componentWidth,
+    alignSelf: "center",
   },
   errorText: {
     color: COLORS.black,
@@ -130,9 +145,12 @@ const styles = StyleSheet.create({
     width: DIMENSIONS.componentWidth,
     alignSelf: "center",
     justifyContent: "center",
-    alignContent: "center",
     borderRadius: DIMENSIONS.cornerCurve,
     marginTop: 20,
+  },
+  buttonContent: {
+    height: 50,
+    justifyContent: "center",
   },
   buttonText: {
     fontSize: FONTSIZES.large,

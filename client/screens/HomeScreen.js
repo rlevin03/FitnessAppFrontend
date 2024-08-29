@@ -100,8 +100,8 @@ const HomeScreen = ({ navigation }) => {
       const response = await axios.get("/classes", {
         params: {
           date: selectedDate
-            ? selectedDate.toISOString().split("T")[0]
-            : new Date().toISOString().split("T")[0],
+            ? moment(selectedDate)
+            : moment(new Date()),
           types: selectedFilters.types.join(","),
           campuses: user.location,
           instructors: selectedFilters.instructors.join(","),
@@ -178,7 +178,7 @@ const HomeScreen = ({ navigation }) => {
     const classDate = adjustDateToLocal(item.date);
     const now = currentDate;
 
-    const isPast = moment(classDate).isBefore(moment(), "day");
+    const isPast = moment(item.date).isBefore(moment(), "day");
 
     return (
       <TouchableRipple
