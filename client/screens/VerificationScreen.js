@@ -88,7 +88,7 @@ const VerificationScreen = ({ navigation, route }) => {
         <View style={styles.wrapper}>
           <Image
             style={styles.logo}
-            source={require("../assets/latin_logo.png")}
+            source={require("../../assets/latin_logo.png")}
           />
           <Text style={[styles.text, styles.boldText]}>
             Verify your school email

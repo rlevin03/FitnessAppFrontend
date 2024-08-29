@@ -9,7 +9,7 @@ import {
 import axios from "axios";
 import { CommonActions } from "@react-navigation/native";
 import { COLORS, DIMENSIONS, FONTSIZES } from "../components/Constants";
-import { UserContext } from "../UserContext";
+import { UserContext } from "../../UserContext";
 import Header from "../components/Header";
 
 const PasswordChangeScreen = ({ navigation }) => {

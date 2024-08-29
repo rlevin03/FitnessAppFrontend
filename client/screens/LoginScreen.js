@@ -9,7 +9,7 @@ import {
 import { COLORS, DIMENSIONS, FONTSIZES } from "../components/Constants";
 import { useState, useContext } from "react";
 import { CommonActions } from "@react-navigation/native";
-import { UserContext } from "../UserContext";
+import { UserContext } from "../../UserContext";
 
 const LoginScreen = ({ navigation }) => {
   LogBox.ignoreLogs(["Failed to fetch user profile"]);
@@ -42,7 +42,7 @@ const LoginScreen = ({ navigation }) => {
       <View style={styles.container}>
         <Image
           style={styles.image}
-          source={require("../assets/Northeastern_Universitylogo_square.webp")}
+          source={require("../../assets/Northeastern_Universitylogo_square.webp")}
         />
         <TextInput
           mode="outlined"

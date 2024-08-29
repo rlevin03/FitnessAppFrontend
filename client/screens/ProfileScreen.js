@@ -4,7 +4,7 @@ import { Button, Modal, PaperProvider, Text } from "react-native-paper";
 import { COLORS, DIMENSIONS, FONTSIZES } from "../components/Constants";
 import SettingsOption from "../components/SettingsOption";
 import Header from "../components/Header";
-import { UserContext } from "../UserContext";
+import { UserContext } from "../../UserContext";
 
 const monthNames = [
   "January",

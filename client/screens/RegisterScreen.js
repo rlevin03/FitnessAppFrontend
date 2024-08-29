@@ -66,7 +66,7 @@ const RegisterScreen = ({ navigation }) => {
       <View style={styles.container}>
         <Image
           style={styles.image}
-          source={require("../assets/Northeastern_Universitylogo_square.webp")}
+          source={require("../../assets/Northeastern_Universitylogo_square.webp")}
         />
         <TextInput
           mode="outlined"

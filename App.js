@@ -3,22 +3,21 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import axios from "axios";
 
-import HomeScreen from "./screens/HomeScreen";
-import LoginScreen from "./screens/LoginScreen";
-import RegisterScreen from "./screens/RegisterScreen";
-import ProfileScreen from "./screens/ProfileScreen";
-import AccountScreen from "./screens/AccountScreen";
-import ReservationScreen from "./screens/ReservationScreen";
-import SettingsScreen from "./screens/SettingsScreen";
-import FeedbackScreen from "./screens/FeedbackScreen";
-import VerificationScreen from "./screens/VerificationScreen";
-import EmailChangeScreen from "./screens/EmailChangeScreen";
-import ClassDescriptionScreen from "./screens/ClassDescriptionScreen";
-import PasswordChangeScreen from "./screens/PasswordChangeScreen";
-import ForgotPasswordScreen from "./screens/ForgotPasswordScreen";
-
 import { UserProvider } from "./UserContext";
-import ResetPasswordScreen from "./screens/ResetPasswordScreen";
+import LoginScreen from "./client/screens/LoginScreen";
+import ForgotPasswordScreen from "./client/screens/ForgotPasswordScreen";
+import ResetPasswordScreen from "./client/screens/ResetPasswordScreen";
+import RegisterScreen from "./client/screens/RegisterScreen";
+import VerificationScreen from "./client/screens/VerificationScreen";
+import EmailChangeScreen from "./client/screens/EmailChangeScreen";
+import HomeScreen from "./client/screens/HomeScreen";
+import ProfileScreen from "./client/screens/ProfileScreen";
+import AccountScreen from "./client/screens/AccountScreen";
+import PasswordChangeScreen from "./client/screens/PasswordChangeScreen";
+import ReservationScreen from "./client/screens/ReservationScreen";
+import ClassDescriptionScreen from "./client/screens/ClassDescriptionScreen";
+import SettingsScreen from "./client/screens/SettingsScreen";
+import FeedbackScreen from "./client/screens/FeedbackScreen";
 
 axios.defaults.baseURL = "http://10.110.10.17:4000";
 

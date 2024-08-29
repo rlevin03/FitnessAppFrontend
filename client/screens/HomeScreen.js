@@ -32,16 +32,16 @@ import {
   FONTSIZES,
 } from "../components/Constants";
 import ClassSummary from "../components/ClassSummary";
-import { UserContext } from "../UserContext";
+import { UserContext } from "../../UserContext";
 import { CommonActions, useFocusEffect } from "@react-navigation/native";
 import axios from "axios";
 import moment from "moment-timezone";
 
 const imageSliderData = [
-  { img: require("../assets/marino1.jpg") },
-  { img: require("../assets/marino2.jpg") },
-  { img: require("../assets/marino3.jpg") },
-  { img: require("../assets/marino4.jpg") },
+  { img: require("../../assets/marino1.jpg") },
+  { img: require("../../assets/marino2.jpg") },
+  { img: require("../../assets/marino3.jpg") },
+  { img: require("../../assets/marino4.jpg") },
 ];
 
 const filterOptions = {
@@ -62,7 +62,7 @@ const Header = memo(({ navigation }) => {
         icon={() => (
           <Image
             style={styles.logo}
-            source={require("../assets/Northeastern_Universitylogo_square.webp")}
+            source={require("../../assets/Northeastern_Universitylogo_square.webp")}
           />
         )}
         onPress={() => {}}
@@ -266,8 +266,8 @@ const HomeScreen = ({ navigation }) => {
           highlightDateNameStyle={{ color: COLORS.secondary }}
           onDateSelected={(date) => setSelectedDate(date)}
           customDatesStyles={customDatesStyles}
-          iconLeft={require("../assets/left-chevron.png")}
-          iconRight={require("../assets/chevron-right.png")}
+          iconLeft={require("../../assets/left-chevron.png")}
+          iconRight={require("../../assets/chevron-right.png")}
           iconLeftStyle={{ paddingRight: 30 }}
           iconRightStyle={{ paddingLeft: 30 }}
         />

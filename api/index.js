@@ -10,7 +10,6 @@ dotenv.config();
 
 const app = express();
 const dbUrl = process.env.MONGO_URL;
-const api = process.env.API_URL;
 
 // Middleware
 app.use(express.json());
@@ -18,7 +17,6 @@ app.use(helmet());
 app.use(cors());
 app.options("*", cors());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
 app.use(cookieParser());
 
 // Database Connection
@@ -37,7 +35,7 @@ app.use(`/email`, emailRoutes);
 app.use(`/classes`, classRoutes);
 
 app.get("/", (req, res) => {
-  res.json("Hello Ilya");
+  res.json("Hello World");
 });
 
 app.listen(4000, () => {

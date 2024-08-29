@@ -6,7 +6,7 @@ import SettingsOption from "../components/SettingsOption";
 import { CommonActions } from "@react-navigation/native";
 import axios from "axios";
 import { useContext } from "react";
-import { UserContext } from "../UserContext";
+import { UserContext } from "../../UserContext";
 
 const SettingsScreen = ({ navigation }) => {
   const { setUser } = useContext(UserContext);

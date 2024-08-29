@@ -18,7 +18,7 @@ import {
   DIMENSIONS,
   FONTSIZES,
 } from "../components/Constants";
-import { UserContext } from "../UserContext";
+import { UserContext } from "../../UserContext";
 import axios from "axios";
 
 // Function to get the suffix for the day of the month (st, nd, rd, th)

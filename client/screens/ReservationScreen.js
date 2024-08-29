@@ -15,7 +15,7 @@ import {
 import { createTimeRange } from "../components/Constants";
 import Header from "../components/Header";
 import axios from "axios";
-import { UserContext } from "../UserContext";
+import { UserContext } from "../../UserContext";
 import { useFocusEffect } from "@react-navigation/native";
 
 const ReservationScreen = ({ navigation }) => {

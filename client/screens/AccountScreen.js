@@ -9,7 +9,7 @@ import {
 import { Button, PaperProvider, Text } from "react-native-paper";
 import Header from "../components/Header";
 import { COLORS, DIMENSIONS, FONTSIZES } from "../components/Constants";
-import { UserContext } from "../UserContext";
+import { UserContext } from "../../UserContext";
 import axios from "axios";
 
 const AccountScreen = ({ navigation }) => {
