@@ -79,7 +79,6 @@ const ResetPasswordScreen = ({ navigation, route }) => {
           label="Email Verification Code"
           autoCapitalize="none"
           textColor="white"
-          outlineColor="white"
           activeOutlineColor="white"
           style={styles.input}
           value={userCode}
@@ -91,7 +90,6 @@ const ResetPasswordScreen = ({ navigation, route }) => {
           secureTextEntry
           autoCapitalize="none"
           textColor="white"
-          outlineColor="white"
           activeOutlineColor="white"
           style={styles.input}
           value={newPassword}

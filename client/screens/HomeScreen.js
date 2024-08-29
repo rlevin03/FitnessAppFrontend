@@ -99,9 +99,7 @@ const HomeScreen = ({ navigation }) => {
     try {
       const response = await axios.get("/classes", {
         params: {
-          date: selectedDate
-            ? moment(selectedDate)
-            : moment(new Date()),
+          date: selectedDate ? moment(selectedDate) : moment(new Date()),
           types: selectedFilters.types.join(","),
           campuses: user.location,
           instructors: selectedFilters.instructors.join(","),
@@ -258,7 +256,7 @@ const HomeScreen = ({ navigation }) => {
             duration: 50,
             highlightColor: COLORS.primary,
           }}
-          style={{ height: 90, marginTop: -15 }}
+          style={{ height: 90 }}
           calendarHeaderStyle={{ color: COLORS.white }}
           dateNumberStyle={{ color: COLORS.white }}
           dateNameStyle={{ color: COLORS.secondary }}

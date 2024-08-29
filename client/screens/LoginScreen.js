@@ -63,7 +63,6 @@ const LoginScreen = ({ navigation }) => {
           label="Email"
           textColor="white"
           autoCapitalize="none"
-          outlineColor="white"
           activeOutlineColor="white"
           style={styles.input}
           value={email}
@@ -73,7 +72,6 @@ const LoginScreen = ({ navigation }) => {
         <TextInput
           mode="outlined"
           label="Password"
-          outlineColor="white"
           textColor="white"
           autoCapitalize="none"
           secureTextEntry

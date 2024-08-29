@@ -21,9 +21,8 @@ import {
 import { UserContext } from "../../UserContext";
 import axios from "axios";
 
-// Function to get the suffix for the day of the month (st, nd, rd, th)
 const getDaySuffix = (day) => {
-  if (day > 3 && day < 21) return "th"; // 'th' suffix for 4-20
+  if (day > 3 && day < 21) return "th";
   switch (day % 10) {
     case 1:
       return "st";

@@ -82,7 +82,6 @@ const RegisterScreen = ({ navigation }) => {
           mode="outlined"
           label="Valid Email"
           textColor="white"
-          outlineColor="white"
           autoCapitalize="none"
           activeOutlineColor="white"
           style={styles.input}
@@ -93,7 +92,6 @@ const RegisterScreen = ({ navigation }) => {
           mode="outlined"
           label="Name"
           textColor="white"
-          outlineColor="white"
           activeOutlineColor="white"
           style={styles.input}
           value={name}
@@ -103,7 +101,6 @@ const RegisterScreen = ({ navigation }) => {
           mode="outlined"
           label="Password"
           textColor="white"
-          outlineColor="white"
           autoCapitalize="none"
           secureTextEntry
           activeOutlineColor="white"
@@ -115,7 +112,6 @@ const RegisterScreen = ({ navigation }) => {
           mode="outlined"
           label="Re-enter Password"
           textColor="white"
-          outlineColor="white"
           autoCapitalize="none"
           secureTextEntry
           activeOutlineColor="white"

@@ -46,7 +46,6 @@ const ForgotPasswordScreen = ({ navigation }) => {
           label="Email"
           textColor="white"
           autoCapitalize="none"
-          outlineColor="white"
           activeOutlineColor="white"
           style={styles.input}
           value={email}
