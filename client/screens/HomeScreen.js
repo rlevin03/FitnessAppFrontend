@@ -36,12 +36,19 @@ import { UserContext } from "../../UserContext";
 import { CommonActions, useFocusEffect } from "@react-navigation/native";
 import axios from "axios";
 import moment from "moment-timezone";
+import logo from "../../assets/Northeastern_Universitylogo_square.webp";
+import picture1 from "../../assets/marino1.jpg";
+import picture2 from "../../assets/marino2.jpg";
+import picture3 from "../../assets/marino3.jpg";
+import picture4 from "../../assets/marino4.jpg";
+import leftScroller from "../../assets/left-chevron.png";
+import rightScroller from "../../assets/chevron-right.png";
 
 const imageSliderData = [
-  { img: require("../../assets/marino1.jpg") },
-  { img: require("../../assets/marino2.jpg") },
-  { img: require("../../assets/marino3.jpg") },
-  { img: require("../../assets/marino4.jpg") },
+  { img: picture1 },
+  { img: picture2 },
+  { img: picture3 },
+  { img: picture4 },
 ];
 
 const filterOptions = {
@@ -59,12 +66,7 @@ const Header = memo(({ navigation }) => {
   return (
     <Appbar.Header style={styles.header}>
       <Appbar.Action
-        icon={() => (
-          <Image
-            style={styles.logo}
-            source={require("../../assets/Northeastern_Universitylogo_square.webp")}
-          />
-        )}
+        icon={() => <Image style={styles.logo} source={logo} />}
         onPress={() => {}}
       />
       <Appbar.Content title="" />
@@ -97,7 +99,7 @@ const HomeScreen = ({ navigation }) => {
   const fetchClasses = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await axios.get("/classes", {
+      const response = await axios.get("/classes/filtered", {
         params: {
           date: selectedDate ? moment(selectedDate) : moment(new Date()),
           types: selectedFilters.types.join(","),
@@ -264,8 +266,8 @@ const HomeScreen = ({ navigation }) => {
           highlightDateNameStyle={{ color: COLORS.secondary }}
           onDateSelected={(date) => setSelectedDate(date)}
           customDatesStyles={customDatesStyles}
-          iconLeft={require("../../assets/left-chevron.png")}
-          iconRight={require("../../assets/chevron-right.png")}
+          iconLeft={leftScroller}
+          iconRight={rightScroller}
           iconLeftStyle={{ paddingRight: 30 }}
           iconRightStyle={{ paddingLeft: 30 }}
         />
@@ -314,8 +316,9 @@ const HomeScreen = ({ navigation }) => {
         />
         <Modal
           visible={visible}
+          onDismiss={applyFilters}
           contentContainerStyle={{
-            backgroundColor: "#A4804A",
+            backgroundColor: COLORS.tertiary,
             padding: 20,
             height: "80%",
             width: DIMENSIONS.componentWidth,
@@ -327,7 +330,7 @@ const HomeScreen = ({ navigation }) => {
             <Text style={styles.modalTitle}>Filter Classes</Text>
             {Object.keys(filterOptions).map((filterType) => (
               <View key={filterType} style={[styles.filterSection]}>
-                <Text style={styles.textBig}>
+                <Text style={[styles.textBig, { color: COLORS.white }]}>
                   {filterType.charAt(0).toUpperCase() + filterType.slice(1)}
                 </Text>
                 <View
@@ -353,16 +356,13 @@ const HomeScreen = ({ navigation }) => {
                 </View>
               </View>
             ))}
-            <Button
+            <TouchableRipple
               mode="contained"
               onPress={applyFilters}
-              style={[
-                styles.button,
-                { backgroundColor: COLORS.black, marginTop: 20 },
-              ]}
+              style={[styles.button, { backgroundColor: COLORS.secondary }]}
             >
-              Apply Filters
-            </Button>
+              <Text style={styles.buttonText}>Apply Filters</Text>
+            </TouchableRipple>
           </ScrollView>
         </Modal>
       </View>
@@ -404,6 +404,7 @@ const styles = StyleSheet.create({
     fontSize: FONTSIZES.medium,
     color: COLORS.black,
     fontWeight: "bold",
+    textAlign: "center",
   },
   logo: {
     width: 45,
@@ -468,7 +469,7 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: FONTSIZES.large,
     fontWeight: "bold",
-    color: COLORS.black,
+    color: COLORS.white,
     textAlign: "center",
     marginBottom: 20,
   },

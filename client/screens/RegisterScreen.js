@@ -21,6 +21,7 @@ import {
 } from "../components/Constants";
 import axios from "axios";
 import { CommonActions } from "@react-navigation/native";
+import logo from "../../assets/Northeastern_Universitylogo_square.webp";
 
 const RegisterScreen = ({ navigation }) => {
   const [email, setEmail] = useState("");
@@ -76,7 +77,7 @@ const RegisterScreen = ({ navigation }) => {
       >
         <Image
           style={styles.image}
-          source={require("../../assets/Northeastern_Universitylogo_square.webp")}
+          source={logo}
         />
         <TextInput
           mode="outlined"

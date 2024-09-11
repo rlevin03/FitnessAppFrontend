@@ -13,6 +13,7 @@ import { PaperProvider, Text, TouchableRipple } from "react-native-paper";
 import axios from "axios";
 import { COLORS, DIMENSIONS, FONTSIZES } from "../components/Constants";
 import { CommonActions } from "@react-navigation/native";
+import logoLatin from "../../assets/latin_logo.png";
 
 const VerificationScreen = ({ navigation, route }) => {
   const { recipientEmail } = route.params;
@@ -94,7 +95,7 @@ const VerificationScreen = ({ navigation, route }) => {
         <View style={styles.wrapper}>
           <Image
             style={styles.logo}
-            source={require("../../assets/latin_logo.png")}
+            source={logoLatin}
           />
           <Text style={[styles.text, styles.boldText]}>
             Verify your school email

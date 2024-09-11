@@ -16,13 +16,16 @@ import { COLORS, DIMENSIONS, FONTSIZES } from "../components/Constants";
 import { useState, useContext } from "react";
 import { CommonActions } from "@react-navigation/native";
 import { UserContext } from "../../UserContext";
+import logo from "../../assets/Northeastern_Universitylogo_square.webp"
 
 const LoginScreen = ({ navigation }) => {
+  // TODO: either fix or don't suppress this warning
   LogBox.ignoreLogs(["Failed to fetch user profile"]);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+
   const { setUser } = useContext(UserContext);
 
   const handleLogin = async () => {
@@ -56,7 +59,7 @@ const LoginScreen = ({ navigation }) => {
       >
         <Image
           style={styles.image}
-          source={require("../../assets/Northeastern_Universitylogo_square.webp")}
+          source={logo}
         />
         <TextInput
           mode="outlined"
@@ -100,7 +103,7 @@ const LoginScreen = ({ navigation }) => {
         </TouchableRipple>
 
         <TouchableRipple
-          style={styles.navButton}
+          style={styles.navButton} // TODO: nativewind?
           onPress={() => navigation.navigate("Forgot Password")}
           accessibilityLabel="Forgot Password button"
         >

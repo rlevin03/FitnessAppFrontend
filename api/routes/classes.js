@@ -5,7 +5,17 @@ const { default: mongoose } = require("mongoose");
 
 const router = express.Router();
 
-router.get("/", async (req, res) => {
+router.get("/byDate", async (req, res) => {
+  try {
+    const classes = await ClassModel.find().sort({ date: 1 });
+    res.json(classes);
+  } catch (err) {
+    console.error("Error fetching classes:", err);
+    res.status(500).json({ message: "Error fetching classes" });
+  }
+});
+
+router.get("/filtered", async (req, res) => {
   const { date, types, campuses, instructors } = req.query;
 
   let query = {};
@@ -55,8 +65,8 @@ router.get("/reservations", async (req, res) => {
     }
 
     const classes = {
-      reservations: user.reservations,
-      waitLists: user.waitLists,
+      reservations: user.reservations.sort((a, b) => new Date(a.date) - new Date(b.date)),
+      waitLists: user.waitLists.sort((a, b) => new Date(a.date) - new Date(b.date)),
     };
 
     res.status(200).json(classes);
@@ -109,7 +119,6 @@ router.patch("/reserve", async (req, res) => {
     if (cls.usersSignedUp.length < cls.maxCapacity) {
       user.reservations.push(classId);
       cls.usersSignedUp.push(userId);
-      user.totalReservations.push(classId);
       cls.totalSignUps.push(userId);
     } else if (cls.usersOnWaitList.length < cls.waitListCapacity) {
       user.waitLists.push(classId);
@@ -171,7 +180,6 @@ router.patch("/cancel", async (req, res) => {
       const reservationIndex = user.reservations.indexOf(classId);
       if (reservationIndex !== -1) {
         user.reservations.splice(reservationIndex, 1);
-        user.totalReservations.splice(reservationIndex, 1);
       }
 
       // Check if there is anyone on the waitlist
@@ -185,7 +193,6 @@ router.patch("/cancel", async (req, res) => {
         const nextUser = await UserModel.findById(nextUserId).session(session);
         if (nextUser) {
           nextUser.reservations.push(classId);
-          nextUser.totalReservations.push(classId);
           const userWaitListIndex = nextUser.waitLists.indexOf(classId);
           if (userWaitListIndex !== -1) {
             nextUser.waitLists.splice(userWaitListIndex, 1);
@@ -222,6 +229,69 @@ router.patch("/cancel", async (req, res) => {
       `Error cancelling class for userId ${userId} and classId ${classId}:`,
       err
     );
+    await session.abortTransaction();
+    res.status(500).json({ message: err.message });
+  } finally {
+    session.endSession();
+  }
+});
+
+router.post("/attendance", async (req, res) => {
+  const { present, absent, classId } = req.body;
+
+  // Input validation
+  if (!present || !absent || !classId) {
+    return res
+      .status(400)
+      .json({ message: "Missing present, absent, or classId" });
+  }
+
+  if (
+    !mongoose.Types.ObjectId.isValid(classId) ||
+    !present.every((id) => mongoose.Types.ObjectId.isValid(id)) ||
+    !absent.every((id) => mongoose.Types.ObjectId.isValid(id))
+  ) {
+    return res
+      .status(400)
+      .json({ message: "Invalid present, absent, or classId" });
+  }
+
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    // Update present users: increment classes attended and total classes
+    await UserModel.updateMany(
+      { _id: { $in: present } },
+      {
+        $inc: { classesAttended: 1 },
+        $addToSet: { totalReservations: classId },
+        $pull: { reservations: classId },
+      },
+      { session }
+    );
+
+    // Update absent users: increment absence count and total classes
+    await UserModel.updateMany(
+      { _id: { $in: absent } },
+      { $inc: { absenceCount: 1 }, $pull: { reservations: classId } },
+      { session }
+    );
+
+    // Mark attendance as taken for the class
+    const cls = await ClassModel.findByIdAndUpdate(
+      classId,
+      { $set: { attendanceTaken: true } },
+      { new: true, session }
+    );
+
+    await session.commitTransaction();
+    res.status(200).json({
+      message: "Attendance submitted successfully.",
+      classData: cls,
+    });
+  } catch (err) {
+    console.error("Error submitting attendance:", err);
     await session.abortTransaction();
     res.status(500).json({ message: err.message });
   } finally {

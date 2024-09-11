@@ -3,7 +3,7 @@ import { StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
 import { COLORS, DIMENSIONS, FONTSIZES } from "./Constants";
 
-const ClassSummary = ({ classData }) => {
+const ClassSummary = ({ classData, leftInfoTop, leftInfoBottom }) => {
   const date = new Date(classData.date); // Ensure date is a Date object
 
   return (

@@ -19,6 +19,7 @@ const ClassSchema = new Schema(
     skillLevel: { type: String, required: true },
     intensityLevel: { type: String, required: true },
     equipmentToBring: [String],
+    attendanceTaken: { type: Boolean, default: false },
     usersSignedUp: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
     userInTransit: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
     usersOnWaitList: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],

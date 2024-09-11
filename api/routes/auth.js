@@ -24,7 +24,7 @@ router.post("/register", async (req, res) => {
       name,
       email,
       password: hashedPassword,
-      location
+      location,
     });
 
     res.status(201).json({ message: "User registered successfully" });
@@ -106,6 +106,8 @@ router.get("/profile", (req, res) => {
         waitLists,
         location,
         paid,
+        isInstuctor,
+        totalReservations,
         _id,
       } = await User.findById(userData.id);
       res.json({
@@ -117,6 +119,8 @@ router.get("/profile", (req, res) => {
         waitLists,
         location,
         paid,
+        isInstuctor,
+        totalReservations,
         _id,
       });
     });

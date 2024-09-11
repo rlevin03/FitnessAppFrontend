@@ -59,8 +59,12 @@ const ReservationScreen = ({ navigation }) => {
   );
 
   const sections = [
-    { title: "-----Reservations-----", data: reservations },
-    { title: "-----Waitlists-----", data: waitLists },
+    ...(reservations.length > 0
+      ? [{ title: "-----Reservations-----", data: reservations }]
+      : []),
+    ...(waitLists.length > 0
+      ? [{ title: "-----Waitlists-----", data: waitLists }]
+      : []),
   ];
 
   if (loading) {
@@ -176,10 +180,8 @@ const ReservationScreen = ({ navigation }) => {
                         },
                       ]}
                     >
-                      {createTimeRange(
-                        classData.date,
-                        classData.duration
-                      ) || ""}
+                      {createTimeRange(classData.date, classData.duration) ||
+                        ""}
                     </Text>
                     <View style={styles.placeAndAttendees}>
                       <Text
@@ -210,9 +212,9 @@ const ReservationScreen = ({ navigation }) => {
                               classData.usersOnWaitList.indexOf(user._id) + 1 ||
                               0
                             }`
-                          : `Attendees: ${classData.usersSignedUp.length || 0}/${
-                              classData.maxCapacity || "N/A"
-                            }`}
+                          : `Attendees: ${
+                              classData.usersSignedUp.length || 0
+                            }/${classData.maxCapacity || "N/A"}`}
                       </Text>
                     </View>
                   </View>

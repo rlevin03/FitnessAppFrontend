@@ -1,10 +1,12 @@
-import React, { useContext, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import { Linking, StyleSheet, View } from "react-native";
 import { Button, Modal, PaperProvider, Text } from "react-native-paper";
 import { COLORS, DIMENSIONS, FONTSIZES } from "../components/Constants";
 import SettingsOption from "../components/SettingsOption";
 import Header from "../components/Header";
 import { UserContext } from "../../UserContext";
+import axios from "axios";
+import { useFocusEffect } from "@react-navigation/native";
 
 const monthNames = [
   "January",
@@ -23,12 +25,30 @@ const monthNames = [
 
 const ProfileScreen = ({ navigation }) => {
   const { user } = useContext(UserContext);
+  const [classesAttended, setClassesAttended] = useState(0);
   const currentMonth = monthNames[new Date().getMonth()];
   const currentYear = new Date().getFullYear();
   const [visible, setVisible] = useState(false);
 
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
+
+  const getClassesAttended = useCallback(async () => {
+    try {
+      response = await axios.get("/users/classesAttended", {
+        params: { userId: user._id },
+      });
+      setClassesAttended(response.data);
+    } catch (error) {
+      console.error("Error fetching classes attended:", error);
+    }
+  });
+
+  useFocusEffect(
+    useCallback(() => {
+      getClassesAttended();
+    }, [getClassesAttended])
+  );
 
   return (
     <PaperProvider>
@@ -42,9 +62,7 @@ const ProfileScreen = ({ navigation }) => {
             >{`${currentMonth} ${currentYear}`}</Text>
           </View>
           <View style={styles.classesAttendedNumberContainer}>
-            <Text style={styles.classesAttendedNumber}>
-              {user.classesAttended}
-            </Text>
+            <Text style={styles.classesAttendedNumber}>{classesAttended}</Text>
           </View>
         </View>
         <Button
@@ -69,6 +87,12 @@ const ProfileScreen = ({ navigation }) => {
             title="Settings"
             onPress={() => navigation.navigate("Settings")}
           />
+          {user.isInstructor && (
+            <SettingsOption
+              title="Instructor Portal"
+              onPress={() => navigation.navigate("Classes")}
+            />
+          )}
           <SettingsOption
             title="Leave Feedback"
             onPress={() => navigation.navigate("Feedback")}

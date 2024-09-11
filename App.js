@@ -18,8 +18,10 @@ import ReservationScreen from "./client/screens/ReservationScreen";
 import ClassDescriptionScreen from "./client/screens/ClassDescriptionScreen";
 import SettingsScreen from "./client/screens/SettingsScreen";
 import FeedbackScreen from "./client/screens/FeedbackScreen";
+import ClassesScreen from "./client/screens/instructorScreens/ClassesScreen";
+import AttendanceScreen from "./client/screens/instructorScreens/AttendanceScreen";
 
-axios.defaults.baseURL = "http://10.110.10.17:4000";
+axios.defaults.baseURL = "http://10.110.205.49:4000";
 
 export default function App() {
   const Stack = createNativeStackNavigator();
@@ -92,6 +94,16 @@ export default function App() {
             <Stack.Screen
               name="Settings"
               component={SettingsScreen}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="Classes"
+              component={ClassesScreen}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="Attendance"
+              component={AttendanceScreen}
               options={{ headerShown: false }}
             />
             <Stack.Screen

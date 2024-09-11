@@ -51,6 +51,7 @@ const ClassDescriptionScreen = ({ navigation, route }) => {
       );
       return;
     }
+
     setLoading(true);
 
     try {
@@ -127,10 +128,7 @@ const ClassDescriptionScreen = ({ navigation, route }) => {
             {getDaySuffix(new Date(updatedClassData.date).getDate())}
           </Text>
           <Text style={styles.dateText}>
-            {createTimeRange(
-              updatedClassData.date,
-              updatedClassData.duration
-            )}
+            {createTimeRange(updatedClassData.date, updatedClassData.duration)}
           </Text>
           <View style={styles.infoRow}>
             <Text style={styles.labelText}>Location: </Text>
@@ -170,7 +168,15 @@ const ClassDescriptionScreen = ({ navigation, route }) => {
         <View style={styles.componentContainer}>
           {updatedClassData.usersSignedUp.includes(user._id) ||
           updatedClassData.usersOnWaitList.includes(user._id) ? (
-            <View style={[styles.buttonInner, styles.button]}>
+            <View
+              style={[
+                styles.buttonInner,
+                styles.button,
+                updatedClassData.attendanceTaken && {
+                  justifyContent: "center",
+                },
+              ]}
+            >
               <Text style={styles.buttonText}>
                 {updatedClassData.usersSignedUp.includes(user._id)
                   ? "You Reserved a Spot"
@@ -178,12 +184,14 @@ const ClassDescriptionScreen = ({ navigation, route }) => {
                       updatedClassData.usersOnWaitList.indexOf(user._id) + 1
                     }`}
               </Text>
-              <MaterialCommunityIcons
-                name="dots-vertical"
-                size={30}
-                color={COLORS.white}
-                onPress={() => setModalVisible(true)}
-              />
+              {!updatedClassData.attendanceTaken && (
+                <MaterialCommunityIcons
+                  name="dots-vertical"
+                  size={30}
+                  color={COLORS.white}
+                  onPress={() => setModalVisible(true)}
+                />
+              )}
             </View>
           ) : (
             <TouchableRipple
