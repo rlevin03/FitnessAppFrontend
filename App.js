@@ -21,6 +21,8 @@ import FeedbackScreen from "./client/screens/FeedbackScreen";
 import ClassesScreen from "./client/screens/instructorScreens/ClassesScreen";
 import AttendanceScreen from "./client/screens/instructorScreens/AttendanceScreen";
 
+// TODO: use .env variable rather than this
+// TODO: host on netlify, so you have a stable server URL
 axios.defaults.baseURL = "http://10.110.205.49:4000";
 
 export default function App() {

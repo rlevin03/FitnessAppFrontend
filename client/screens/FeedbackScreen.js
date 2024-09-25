@@ -24,6 +24,7 @@ const FeedbackScreen = ({ navigation }) => {
     <PaperProvider>
       <KeyboardAvoidingView
         style={styles.container}
+        // TODO: I would make something like this a constant
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         keyboardVerticalOffset={Platform.select({ ios: 60, android: 0 })}
       >
@@ -40,6 +41,7 @@ const FeedbackScreen = ({ navigation }) => {
               .required("Feedback is required"),
           })}
           onSubmit={async (values, { resetForm, setSubmitting }) => {
+            // TODO: don't inline callbacks like this.
             try {
               await axios.post("/email/feedback", {
                 feedback: values.feedback,
