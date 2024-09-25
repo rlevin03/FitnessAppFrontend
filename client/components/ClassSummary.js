@@ -3,6 +3,8 @@ import { StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
 import { COLORS, DIMENSIONS, FONTSIZES } from "./Constants";
 
+// TODO: Typescript is useful for typing parameters - knowing what the type of things like classData are.
+// TODO: break apart complex parameters like classData (if it's useful for readability).
 const ClassSummary = ({ classData, leftInfoTop, leftInfoBottom }) => {
   const date = new Date(classData.date); // Ensure date is a Date object
 
@@ -26,6 +28,7 @@ const ClassSummary = ({ classData, leftInfoTop, leftInfoBottom }) => {
         </Text>
         <View style={{ flexDirection: "row", alignItems: "center" }}>
           <Text style={styles.textMedium}>{classData.duration}</Text>
+          {/* TODO: switch to classnames (npm package) */}
           <Text style={[styles.textMedium, { marginLeft: 3 }]}>min</Text>
         </View>
       </View>
@@ -48,6 +51,8 @@ const ClassSummary = ({ classData, leftInfoTop, leftInfoBottom }) => {
   );
 };
 
+// TODO: switch to tailwind (for website only, not worth it here - also it would be NativeWind for React Native)
+// https://tailwindcss.com/docs/installation
 const styles = StyleSheet.create({
   container: {
     flexDirection: "row",

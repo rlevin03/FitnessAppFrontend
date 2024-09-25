@@ -8,7 +8,7 @@ const Header = ({ navigation, title }) => {
       <Appbar.BackAction size={30} onPress={() => navigation.goBack()} />
       <Appbar.Content
         color={COLORS.white}
-        titleStyle={{
+        titleStyle={{ // TODO: move to stylesheet
           fontWeight: "bold",
           fontSize: FONTSIZES.large,
           marginLeft: -5,

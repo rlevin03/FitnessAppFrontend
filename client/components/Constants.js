@@ -20,6 +20,7 @@ export const DIMENSIONS = {
 
 export const VALIDEMAILS = ["northeastern.edu", "husky.neu.edu", "gmail.com"];
 
+// TODO: move to a utils.js file - not a constant
 export function createTimeRange(startDateTime, durationMinutes) {
   const startDate = new Date(startDateTime);
 
@@ -43,6 +44,7 @@ export function createTimeRange(startDateTime, durationMinutes) {
   return `${startTime} - ${endTime}`;
 }
 
+// TODO: make a utils file for functions like this
 export const adjustDateToLocal = (isoDateString) => {
   const date = new Date(isoDateString);
   const localDate = new Date(date.getTime() + date.getTimezoneOffset() * 60000);

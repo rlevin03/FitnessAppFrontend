@@ -91,7 +91,9 @@ const HomeScreen = ({ navigation }) => {
   const [loading, setLoading] = useState(true);
   const [modalFilters, setModalFilters] = useState({ ...selectedFilters });
   const { user, ready } = useContext(UserContext);
-  const currentDate = moment();
+  // TODO: i wouldn't bother with this - you'll want to get the current one, not the one when the class is
+  // this is also a very simple function call, so there's no time-saving by putting this here.
+  const currentDate = moment(); 
 
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
@@ -175,6 +177,8 @@ const HomeScreen = ({ navigation }) => {
   }, [user, navigation]);
 
   const renderClassItem = ({ item }) => {
+    // TODO: prettier settings - you can enforce that these variables are either used or deleted
+    // by configuring prettier and eslint with your project
     const classDate = adjustDateToLocal(item.date);
     const now = currentDate;
 
@@ -200,6 +204,7 @@ const HomeScreen = ({ navigation }) => {
     },
   ];
 
+  // TODO: break into smaller components, make folder for home screen and all sub-components (that are not shared among other screens)
   return (
     <PaperProvider>
       <View style={styles.container}>
@@ -314,6 +319,7 @@ const HomeScreen = ({ navigation }) => {
           refreshing={loading}
           onRefresh={fetchClasses}
         />
+        {/* TODO: component */}
         <Modal
           visible={visible}
           onDismiss={applyFilters}
