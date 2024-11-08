@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useCallback, useContext, useState } from "react";
 import {
   PaperProvider,
   Text,
@@ -20,6 +20,7 @@ import {
 } from "../components/Constants";
 import { UserContext } from "../../UserContext";
 import axios from "axios";
+import { useFocusEffect } from "@react-navigation/native";
 
 const getDaySuffix = (day) => {
   if (day > 3 && day < 21) return "th";
@@ -39,9 +40,27 @@ const ClassDescriptionScreen = ({ navigation, route }) => {
   const { classData } = route.params;
   const { user } = useContext(UserContext);
   const classFull = classData.usersSignedUp.length >= classData.maxCapacity;
+  const [instructor, setInstructor] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const [updatedClassData, setUpdatedClassData] = useState(classData);
+
+  useFocusEffect(
+    useCallback(() => {
+      getInstructor();
+    }, [getInstructor])
+  );
+
+  const getInstructor = async () => {
+    try {
+      const response = await axios.get("/classes/instructor", {
+        params: { instructorId: updatedClassData.instructor },
+      });
+      setInstructor(response.data);
+    } catch (error) {
+      console.error("Error fetching instructor:", error);
+    }
+  };
 
   const handleJoinClass = async () => {
     if (classData.paymentRequired && !user.paid) {
@@ -79,7 +98,7 @@ const ClassDescriptionScreen = ({ navigation, route }) => {
         userId: user._id,
       });
 
-      if (response.status === 200) {
+      if (response.status === 200) {  
         setUpdatedClassData(response.data.classData);
         setModalVisible(false);
       }
@@ -138,7 +157,7 @@ const ClassDescriptionScreen = ({ navigation, route }) => {
           </View>
           <View style={styles.infoRow}>
             <Text style={styles.labelText}>Instructor: </Text>
-            <Text style={styles.textMedium}>{updatedClassData.instructor}</Text>
+            <Text style={styles.textMedium}>{instructor}</Text>
           </View>
           <View style={styles.infoRow}>
             <Text style={styles.labelText}>Currently Signed: </Text>

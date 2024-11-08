@@ -22,18 +22,16 @@ import {
   Modal,
   PaperProvider,
   TouchableRipple,
-  Button,
 } from "react-native-paper";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import {
-  adjustDateToLocal,
-  COLORS,
-  DIMENSIONS,
-  FONTSIZES,
-} from "../components/Constants";
+import { COLORS, DIMENSIONS, FONTSIZES } from "../components/Constants";
 import ClassSummary from "../components/ClassSummary";
 import { UserContext } from "../../UserContext";
-import { CommonActions, useFocusEffect } from "@react-navigation/native";
+import {
+  CommonActions,
+  useFocusEffect,
+  useNavigation,
+} from "@react-navigation/native";
 import axios from "axios";
 import moment from "moment-timezone";
 import logo from "../../assets/Northeastern_Universitylogo_square.webp";
@@ -43,6 +41,7 @@ import picture3 from "../../assets/marino3.jpg";
 import picture4 from "../../assets/marino4.jpg";
 import leftScroller from "../../assets/left-chevron.png";
 import rightScroller from "../../assets/chevron-right.png";
+import { InstructorsContext } from "../../InstructorsContext";
 
 const imageSliderData = [
   { img: picture1 },
@@ -51,25 +50,26 @@ const imageSliderData = [
   { img: picture4 },
 ];
 
-const filterOptions = {
-  types: ["Yoga", "Pilates", "Cardio", "Strength", "Dance"],
-  instructors: [
-    "John Doe",
-    "Joe Shmo",
-    "Jane Doe",
-    "Alice Smith",
-    "Bob Johnson",
-  ],
-};
+const Header = memo(() => {
+  const navigation = useNavigation();
+  const { user } = useContext(UserContext);
+  const campusTitle = user.location ? `${user.location}` : "Set your campus";
 
-const Header = memo(({ navigation }) => {
   return (
-    <Appbar.Header style={styles.header}>
+    <Appbar.Header style={styles.header} mode="center-aligned">
       <Appbar.Action
         icon={() => <Image style={styles.logo} source={logo} />}
         onPress={() => {}}
       />
-      <Appbar.Content title="" />
+      <Appbar.Content
+        titleStyle={{
+          fontWeight: "bold",
+          fontSize: FONTSIZES.large,
+          color: COLORS.white,
+          marginLeft: 20,
+        }}
+        title={campusTitle}
+      />
       <Appbar.Action
         icon="account-circle-outline"
         onPress={() => navigation.navigate("Profile")}
@@ -80,7 +80,14 @@ const Header = memo(({ navigation }) => {
   );
 });
 
-const HomeScreen = ({ navigation }) => {
+const HomeScreen = () => {
+  const {
+    instructors,
+    ready: instructorsReady,
+    error,
+  } = useContext(InstructorsContext);
+  const { user, ready: userReady } = useContext(UserContext);
+  const navigation = useNavigation();
   const [classes, setClasses] = useState([]);
   const [visible, setVisible] = useState(false);
   const [selectedFilters, setSelectedFilters] = useState({
@@ -90,18 +97,17 @@ const HomeScreen = ({ navigation }) => {
   const [selectedDate, setSelectedDate] = useState();
   const [loading, setLoading] = useState(true);
   const [modalFilters, setModalFilters] = useState({ ...selectedFilters });
-  const { user, ready } = useContext(UserContext);
-  const currentDate = moment();
 
-  const showModal = () => setVisible(true);
-  const hideModal = () => setVisible(false);
+  const showModal = useCallback(() => setVisible(true), []);
+  const hideModal = useCallback(() => setVisible(false), []);
 
   const fetchClasses = useCallback(async () => {
+    if (!user || !user.location) return;
     setLoading(true);
     try {
       const response = await axios.get("/classes/filtered", {
         params: {
-          date: selectedDate ? moment(selectedDate) : moment(new Date()),
+          date: selectedDate ? moment(selectedDate) : moment(),
           types: selectedFilters.types.join(","),
           campuses: user.location,
           instructors: selectedFilters.instructors.join(","),
@@ -113,15 +119,17 @@ const HomeScreen = ({ navigation }) => {
     } finally {
       setLoading(false);
     }
-  }, [selectedDate, selectedFilters]);
+  }, [selectedDate, selectedFilters, user]);
 
   useFocusEffect(
     useCallback(() => {
-      fetchClasses();
-    }, [fetchClasses])
+      if (userReady && instructorsReady) {
+        fetchClasses();
+      }
+    }, [fetchClasses, userReady, instructorsReady])
   );
 
-  const removeFilter = (filterType, filterValue) => {
+  const removeFilter = useCallback((filterType, filterValue) => {
     setSelectedFilters((prevSelectedFilters) => ({
       ...prevSelectedFilters,
       [filterType]: prevSelectedFilters[filterType].filter(
@@ -134,9 +142,9 @@ const HomeScreen = ({ navigation }) => {
         (item) => item !== filterValue
       ),
     }));
-  };
+  }, []);
 
-  const toggleModalFilter = (filterType, filterValue) => {
+  const toggleModalFilter = useCallback((filterType, filterValue) => {
     setModalFilters((prevModalFilters) => {
       const isSelected = prevModalFilters[filterType].includes(filterValue);
       const updatedFilters = isSelected
@@ -144,22 +152,12 @@ const HomeScreen = ({ navigation }) => {
         : [...prevModalFilters[filterType], filterValue];
       return { ...prevModalFilters, [filterType]: updatedFilters };
     });
-  };
+  }, []);
 
-  const applyFilters = () => {
+  const applyFilters = useCallback(() => {
     setSelectedFilters(modalFilters);
     hideModal();
-  };
-
-  if (!ready) {
-    return (
-      <PaperProvider>
-        <View style={[styles.container, { justifyContent: "center" }]}>
-          <ActivityIndicator size="large" color={COLORS.primary} />
-        </View>
-      </PaperProvider>
-    );
-  }
+  }, [modalFilters, hideModal]);
 
   useEffect(() => {
     if (user && user.verified === false) {
@@ -174,25 +172,6 @@ const HomeScreen = ({ navigation }) => {
     }
   }, [user, navigation]);
 
-  const renderClassItem = ({ item }) => {
-    const classDate = adjustDateToLocal(item.date);
-    const now = currentDate;
-
-    const isPast = moment(item.date).isBefore(moment(), "day");
-
-    return (
-      <TouchableRipple
-        onPress={() =>
-          navigation.navigate("Class Description", { classData: item })
-        }
-        style={isPast ? styles.disabledClass : {}}
-        disabled={isPast}
-      >
-        <ClassSummary navigation={navigation} classData={item} />
-      </TouchableRipple>
-    );
-  };
-
   const customDatesStyles = [
     {
       date: moment(),
@@ -200,10 +179,62 @@ const HomeScreen = ({ navigation }) => {
     },
   ];
 
+  const renderClassItem = useCallback(
+    ({ item }) => {
+      const isPast = moment(item.date).isBefore(moment(), "day");
+      const instructor = instructors.find(
+        (inst) => inst._id === item.instructor
+      );
+      const instructorName = instructor
+        ? instructor.name
+        : "Unknown Instructor";
+
+      return (
+        <TouchableRipple
+          onPress={() =>
+            navigation.navigate("Class Description", { classData: item })
+          }
+          style={isPast ? styles.disabledClass : null}
+          disabled={isPast}
+        >
+          <ClassSummary classData={{ ...item, instructorName }} />
+        </TouchableRipple>
+      );
+    },
+    [instructors, navigation]
+  );
+
+  const filterOptions = {
+    types: ["Yoga", "Pilates", "Cardio", "Strength", "Dance"],
+    instructors,
+  };
+
+  if (error) {
+    return (
+      <PaperProvider>
+        <View style={styles.centeredContainer}>
+          <Text style={styles.errorText}>
+            Failed to load instructors. Please try again later.
+          </Text>
+        </View>
+      </PaperProvider>
+    );
+  }
+
+  if (!userReady || !instructorsReady) {
+    return (
+      <PaperProvider>
+        <View style={styles.centeredContainer}>
+          <ActivityIndicator size="large" color={COLORS.primary} />
+        </View>
+      </PaperProvider>
+    );
+  }
+
   return (
     <PaperProvider>
       <View style={styles.container}>
-        <Header navigation={navigation} />
+        <Header />
         <Text
           style={[
             styles.textBig,
@@ -283,15 +314,26 @@ const HomeScreen = ({ navigation }) => {
               style={styles.filtersContainer}
             >
               {Object.keys(selectedFilters).map((filterType) =>
-                selectedFilters[filterType].map((filterValue) => (
-                  <TouchableOpacity
-                    key={filterValue}
-                    style={styles.filterButton}
-                    onPress={() => removeFilter(filterType, filterValue)}
-                  >
-                    <Text style={styles.textMedium}>{filterValue}</Text>
-                  </TouchableOpacity>
-                ))
+                selectedFilters[filterType].map((filterValue) => {
+                  let displayValue = filterValue;
+
+                  if (filterType === "instructors") {
+                    const instructor = instructors.find(
+                      (inst) => inst._id === filterValue
+                    );
+                    displayValue = instructor ? instructor.name : filterValue;
+                  }
+
+                  return (
+                    <TouchableOpacity
+                      key={filterValue}
+                      style={styles.filterButton}
+                      onPress={() => removeFilter(filterType, filterValue)}
+                    >
+                      <Text style={styles.textMedium}>{displayValue}</Text>
+                    </TouchableOpacity>
+                  );
+                })
               )}
             </ScrollView>
           </View>
@@ -339,20 +381,48 @@ const HomeScreen = ({ navigation }) => {
                     { backgroundColor: COLORS.black, width: "100%" },
                   ]}
                 >
-                  {filterOptions[filterType].map((filterValue) => (
-                    <TouchableOpacity
-                      key={filterValue}
-                      style={[
-                        styles.filterButton,
-                        { marginBottom: 5, backgroundColor: COLORS.white },
-                        modalFilters[filterType].includes(filterValue) &&
-                          styles.selectedFilterButton,
-                      ]}
-                      onPress={() => toggleModalFilter(filterType, filterValue)}
-                    >
-                      <Text style={styles.textMedium}>{filterValue}</Text>
-                    </TouchableOpacity>
-                  ))}
+                  {filterOptions[filterType].map((filterValue) => {
+                    if (filterType === "instructors") {
+                      // filterValue is an instructor object { _id, name }
+                      return (
+                        <TouchableOpacity
+                          key={filterValue._id}
+                          style={[
+                            styles.filterButton,
+                            { marginBottom: 5, backgroundColor: COLORS.white },
+                            modalFilters.instructors.includes(
+                              filterValue._id
+                            ) && styles.selectedFilterButton,
+                          ]}
+                          onPress={() =>
+                            toggleModalFilter("instructors", filterValue._id)
+                          }
+                        >
+                          <Text style={styles.textMedium}>
+                            {filterValue.name}
+                          </Text>
+                        </TouchableOpacity>
+                      );
+                    } else {
+                      // filterValue is a string (e.g., "Yoga", "Pilates")
+                      return (
+                        <TouchableOpacity
+                          key={filterValue}
+                          style={[
+                            styles.filterButton,
+                            { marginBottom: 5, backgroundColor: COLORS.white },
+                            modalFilters[filterType].includes(filterValue) &&
+                              styles.selectedFilterButton,
+                          ]}
+                          onPress={() =>
+                            toggleModalFilter(filterType, filterValue)
+                          }
+                        >
+                          <Text style={styles.textMedium}>{filterValue}</Text>
+                        </TouchableOpacity>
+                      );
+                    }
+                  })}
                 </View>
               </View>
             ))}
@@ -375,9 +445,19 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: COLORS.black,
   },
-  buttonContainer: {
-    alignItems: "center",
-    fontWeight: "bold",
+  centeredContainer: {
+    flex: 1,
+    justifyContent: "center",
+    backgroundColor: COLORS.black,
+  },
+  header: {
+    backgroundColor: COLORS.primary,
+  },
+  logo: {
+    width: 45,
+    height: 45,
+    marginLeft: -10,
+    marginTop: -10,
   },
   textBig: {
     fontSize: FONTSIZES.large,
@@ -386,6 +466,9 @@ const styles = StyleSheet.create({
   textMedium: {
     fontSize: FONTSIZES.medium,
     fontWeight: "bold",
+  },
+  buttonContainer: {
+    alignItems: "center",
   },
   button: {
     width: DIMENSIONS.componentWidth,
@@ -406,15 +489,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     textAlign: "center",
   },
-  logo: {
-    width: 45,
-    height: 45,
-    marginLeft: -10,
-    marginTop: -10,
-  },
-  header: {
-    backgroundColor: COLORS.primary,
-  },
   sliderContainer: {
     height: 200,
     width: "100%",
@@ -422,6 +496,13 @@ const styles = StyleSheet.create({
   },
   carouselImage: {
     resizeMode: "cover",
+  },
+  headerContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: DIMENSIONS.componentWidth,
+    alignSelf: "center",
+    marginBottom: 10,
   },
   filtersWrapper: {
     backgroundColor: COLORS.tertiary,
@@ -443,6 +524,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     marginRight: 5,
     paddingVertical: 5,
+    marginBottom: 5,
   },
   selectedFilterButton: {
     backgroundColor: COLORS.primary,
@@ -454,18 +536,6 @@ const styles = StyleSheet.create({
     marginLeft: 7,
     height: "100%",
   },
-  headerContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    width: DIMENSIONS.componentWidth,
-    alignSelf: "center",
-    marginBottom: 10,
-  },
-  classesContainer: {
-    paddingTop: 15,
-    paddingHorizontal: 15,
-    paddingBottom: 20,
-  },
   modalTitle: {
     fontSize: FONTSIZES.large,
     fontWeight: "bold",
@@ -476,13 +546,19 @@ const styles = StyleSheet.create({
   filterSection: {
     marginBottom: 20,
   },
-  filterItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 10,
-  },
   disabledClass: {
     opacity: 0.5,
+  },
+  classesContainer: {
+    paddingTop: 15,
+    paddingHorizontal: 15,
+    paddingBottom: 20,
+  },
+  errorText: {
+    color: COLORS.white,
+    textAlign: "center",
+    fontSize: FONTSIZES.large,
+    paddingHorizontal: 20,
   },
 });
 

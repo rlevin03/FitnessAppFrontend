@@ -8,17 +8,22 @@ export function UserProvider({ children }) {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    if (!user) {
-      axios
-        .get("/auth/profile")
-        .then(({ data }) => {
+    const fetchUserProfile = async () => {
+      try {
+        const token = axios.defaults.headers.common["Authorization"];
+        if (token) {
+          const { data } = await axios.get("/auth/profile");
           setUser(data);
-          setReady(true);
-        })
-        .catch((error) => {
-          console.error("Failed to fetch user profile:", error);
-          setReady(true);
-        });
+        }
+      } catch (error) {
+        console.warn("No user profile found. User might not be authenticated.");
+      } finally {
+        setReady(true);
+      }
+    };
+
+    if (!user) {
+      fetchUserProfile();
     }
   }, [user]);
 

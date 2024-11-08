@@ -20,6 +20,8 @@ export const DIMENSIONS = {
 
 export const VALIDEMAILS = ["northeastern.edu", "husky.neu.edu", "gmail.com"];
 
+export const CAMPUSES = ["Boston", "Oakland", "London", "Seattle"];
+
 export function createTimeRange(startDateTime, durationMinutes) {
   const startDate = new Date(startDateTime);
 

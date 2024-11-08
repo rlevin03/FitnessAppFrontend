@@ -51,9 +51,6 @@ const AttendanceScreen = ({ navigation, route }) => {
       });
       // Update class data with the new attendance state
       setUpdatedClassData(response.data.classData);
-
-      setPresent(present);
-      setAbsent(absent);
     } catch (error) {
       console.error("Error submitting attendance:", error);
     } finally {

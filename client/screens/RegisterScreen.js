@@ -1,84 +1,91 @@
-import { useState } from "react";
+import { useState } from 'react';
 import {
-  Dimensions,
   Image,
   KeyboardAvoidingView,
   Platform,
   StyleSheet,
   Text,
-} from "react-native";
+} from 'react-native';
 import {
-  Menu,
+  Button,
+  Modal,
   PaperProvider,
+  Portal,
+  RadioButton,
   TextInput,
   TouchableRipple,
-} from "react-native-paper";
+} from 'react-native-paper';
 import {
+  CAMPUSES,
   COLORS,
   DIMENSIONS,
   FONTSIZES,
   VALIDEMAILS,
-} from "../components/Constants";
-import axios from "axios";
-import { CommonActions } from "@react-navigation/native";
-import logo from "../../assets/Northeastern_Universitylogo_square.webp";
+} from '../components/Constants';
+import axios from 'axios';
+import { CommonActions } from '@react-navigation/native';
+import logo from '../../assets/Northeastern_Universitylogo_square.webp';
 
 const RegisterScreen = ({ navigation }) => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [password2, setPassword2] = useState("");
-  const [name, setName] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [password2, setPassword2] = useState('');
+  const [name, setName] = useState('');
+  const [campus, setCampus] = useState('');
+  const [selectedCampus, setSelectedCampus] = useState('');
   const [visible, setVisible] = useState(false);
-  const [location, setLocation] = useState("");
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
 
-  const openMenu = () => setVisible(true);
-  const closeMenu = () => setVisible(false);
+  const toggleModal = () => setVisible(!visible);
+  const handleSetCampus = () => {
+    setCampus(selectedCampus);
+    toggleModal();
+  };
 
   const handleRegister = async () => {
-    let emailEnd = email.split("@")[1];
-    if (!email || !password || !password2 || !name || !location) {
-      setError("Please fill out all fields");
+    let emailEnd = email.split('@')[1];
+    if (!email || !password || !password2 || !name || !campus) {
+      setError('Please fill out all fields, including campus selection');
       return;
     }
     if (password !== password2) {
-      setError("Passwords do not match");
+      setError('Passwords do not match');
       return;
     }
     if (!VALIDEMAILS.includes(emailEnd)) {
-      setError("Please use your school email");
+      setError('Please use your school email');
       return;
     }
     try {
-      await axios.post("/auth/register", {
+      await axios.post('/auth/register', {
         name,
         email,
         password,
-        location,
+        campus,
       });
 
       navigation.dispatch(
         CommonActions.reset({
           index: 0,
-          routes: [{ name: "Verification", params: { recipientEmail: email } }],
+          routes: [
+            { name: 'Verification', params: { recipientEmail: email } },
+          ],
         })
       );
     } catch (error) {
       console.error(error);
-      setError("Account creation failed");
+      setError('Account creation failed');
     }
   };
+
   return (
     <PaperProvider>
       <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.container}
         keyboardVerticalOffset={Platform.select({ ios: 60, android: 0 })}
       >
-        <Image
-          style={styles.image}
-          source={logo}
-        />
+        <Image style={styles.image} source={logo} />
         <TextInput
           mode="outlined"
           label="Valid Email"
@@ -121,64 +128,63 @@ const RegisterScreen = ({ navigation }) => {
           onChangeText={setPassword2}
         />
 
-        <Menu
-          visible={visible}
-          onDismiss={closeMenu}
-          contentStyle={{
-            backgroundColor: COLORS.white,
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-          style={{
-            position: "absolute",
-            top: Dimensions.get("window").height - 130,
-            left: Dimensions.get("window").width / 2 - 100,
-            width: 200,
-          }}
-          anchor={
-            <TouchableRipple
-              style={[
-                styles.navButton,
-                { width: DIMENSIONS.componentWidth, paddingVertical: 10 },
-              ]}
-              onPress={openMenu}
+        <TouchableRipple style={[styles.input, {marginTop: 10}]} onPress={toggleModal}>
+          <Text style={styles.campusText}>
+            {campus ? `Campus: ${campus}` : 'Select Campus'}
+          </Text>
+        </TouchableRipple>
+
+        <Portal>
+          <Modal
+            visible={visible}
+            onDismiss={toggleModal}
+            contentContainerStyle={styles.modalContainer}
+          >
+            <Text style={styles.modalTitle}>Select your campus:</Text>
+            <RadioButton.Group
+              onValueChange={(newValue) => setSelectedCampus(newValue)}
+              value={selectedCampus}
             >
-              <Text
-                style={[
-                  styles.navButtonText,
-                  { color: COLORS.white, fontSize: FONTSIZES.medium },
-                ]}
-              >
-                {location || "Choose Default Campus"}
-              </Text>
-            </TouchableRipple>
-          }
-        >
-          <Menu.Item onPress={() => setLocation("Boston")} title="Boston" />
-          <Menu.Item onPress={() => setLocation("Oakland")} title="Oakland" />
-          <Menu.Item onPress={() => setLocation("London")} title="London" />
-        </Menu>
+              {CAMPUSES.map((campusItem) => (
+                <RadioButton.Item
+                  mode="android"
+                  color={COLORS.black}
+                  label={campusItem}
+                  value={campusItem}
+                  key={campusItem}
+                />
+              ))}
+            </RadioButton.Group>
+            <Button
+              mode="contained"
+              onPress={handleSetCampus}
+              style={styles.modalButton}
+            >
+              Confirm
+            </Button>
+            <Button
+              onPress={toggleModal}
+              style={[
+                styles.modalButton,
+                { backgroundColor: 'transparent' },
+              ]}
+              textColor={COLORS.primary}
+            >
+              Cancel
+            </Button>
+          </Modal>
+        </Portal>
 
         {error ? <Text style={styles.errorText}>{error}</Text> : null}
         <TouchableRipple style={styles.registerButton} onPress={handleRegister}>
-          <Text
-            style={{
-              fontWeight: "bold",
-              fontSize: FONTSIZES.large,
-              color: COLORS.white,
-            }}
-          >
-            Create Account
-          </Text>
+          <Text style={styles.registerButtonText}>Create Account</Text>
         </TouchableRipple>
 
         <TouchableRipple
           style={styles.navButton}
-          onPress={() => navigation.navigate("Login")}
+          onPress={() => navigation.navigate('Login')}
         >
-          <Text style={[styles.navButtonText, { color: COLORS.white }]}>
-            Have an account?
-          </Text>
+          <Text style={styles.navButtonText}>Have an account?</Text>
         </TouchableRipple>
       </KeyboardAvoidingView>
     </PaperProvider>
@@ -189,60 +195,81 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: COLORS.black,
+    paddingHorizontal: 20,
   },
   image: {
-    width: "75%",
-    height: "40%",
-    alignSelf: "center",
+    width: '75%',
+    height: '30%',
+    alignSelf: 'center',
     marginTop: 30,
     marginBottom: 10,
   },
   input: {
     marginBottom: 5,
-    alignSelf: "center",
+    borderRadius: DIMENSIONS.cornerCurve,
+    alignSelf: 'center',
     backgroundColor: COLORS.primary,
     width: DIMENSIONS.componentWidth,
     height: 55,
+    justifyContent: 'center',
+  },
+  campusText: {
+    color: COLORS.white,
+    fontSize: FONTSIZES.medium,
+    paddingLeft: 15,
   },
   registerButton: {
-    width: "80%",
+    width: '80%',
     backgroundColor: COLORS.maroon,
     padding: 10,
-    alignSelf: "center",
-    alignItems: "center",
+    alignSelf: 'center',
+    alignItems: 'center',
     marginTop: 20,
     borderRadius: DIMENSIONS.cornerCurve,
   },
-  noAccountText: {
+  registerButtonText: {
+    fontWeight: 'bold',
+    fontSize: FONTSIZES.large,
     color: COLORS.white,
-    alignSelf: "center",
-    fontSize: FONTSIZES.medium,
-    flexDirection: "row",
-    marginTop: 5,
-    fontWeight: "400",
   },
   errorText: {
-    color: "red",
-    alignSelf: "center",
+    color: 'red',
+    alignSelf: 'center',
     marginTop: 10,
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
   navButton: {
-    width: "50%",
+    width: '50%',
     backgroundColor: COLORS.primary,
     padding: 5,
-    alignSelf: "center",
-    alignItems: "center",
-    justifyContent: "center",
+    alignSelf: 'center',
+    alignItems: 'center',
+    justifyContent: 'center',
     marginTop: 10,
     borderRadius: DIMENSIONS.cornerCurve,
   },
   navButtonText: {
     color: COLORS.white,
-    alignSelf: "center",
     fontSize: FONTSIZES.small,
-    flexDirection: "row",
-    fontWeight: "400",
+    fontWeight: '400',
+  },
+  modalContainer: {
+    backgroundColor: COLORS.white,
+    padding: 20,
+    marginHorizontal: 20,
+    borderRadius: 10,
+  },
+  modalTitle: {
+    fontSize: FONTSIZES.large,
+    fontWeight: 'bold',
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  modalButton: {
+    backgroundColor: COLORS.primary,
+    borderRadius: DIMENSIONS.cornerCurve,
+    width: '100%',
+    marginTop: 20,
   },
 });
 

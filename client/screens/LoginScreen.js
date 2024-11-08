@@ -1,7 +1,6 @@
 import axios from "axios";
 import {
   Image,
-  LogBox,
   StyleSheet,
   KeyboardAvoidingView,
   Platform,
@@ -16,17 +15,17 @@ import { COLORS, DIMENSIONS, FONTSIZES } from "../components/Constants";
 import { useState, useContext } from "react";
 import { CommonActions } from "@react-navigation/native";
 import { UserContext } from "../../UserContext";
-import logo from "../../assets/Northeastern_Universitylogo_square.webp"
+import logo from "../../assets/Northeastern_Universitylogo_square.webp";
+import { InstructorsContext } from "../../InstructorsContext";
 
 const LoginScreen = ({ navigation }) => {
-  // TODO: either fix or don't suppress this warning
-  LogBox.ignoreLogs(["Failed to fetch user profile"]);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const { setUser } = useContext(UserContext);
+  const { refreshInstructors } = useContext(InstructorsContext);
 
   const handleLogin = async () => {
     setError(null);
@@ -37,6 +36,7 @@ const LoginScreen = ({ navigation }) => {
         password,
       });
       if (setUser) setUser(data);
+      if (refreshInstructors) refreshInstructors();
       navigation.dispatch(
         CommonActions.reset({
           index: 0,
@@ -57,10 +57,7 @@ const LoginScreen = ({ navigation }) => {
         style={styles.container}
         keyboardVerticalOffset={Platform.select({ ios: 60, android: 0 })}
       >
-        <Image
-          style={styles.image}
-          source={logo}
-        />
+        <Image style={styles.image} source={logo} />
         <TextInput
           mode="outlined"
           label="Email"

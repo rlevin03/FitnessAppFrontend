@@ -6,15 +6,48 @@ import {
   ActivityIndicator,
   Alert,
 } from "react-native";
-import { Button, PaperProvider, Text } from "react-native-paper";
+import {
+  Button,
+  PaperProvider,
+  Text,
+  Modal,
+  Portal,
+  RadioButton,
+} from "react-native-paper";
 import Header from "../components/Header";
-import { COLORS, DIMENSIONS, FONTSIZES } from "../components/Constants";
+import {
+  CAMPUSES,
+  COLORS,
+  DIMENSIONS,
+  FONTSIZES,
+} from "../components/Constants";
 import { UserContext } from "../../UserContext";
 import axios from "axios";
 
 const AccountScreen = ({ navigation }) => {
-  const { user } = useContext(UserContext);
+  const { user, setUser } = useContext(UserContext);
   const [loading, setLoading] = useState(false);
+  const [visible, setVisible] = useState(false);
+  const [selectedCampus, setSelectedCampus] = useState(user.location || "");
+
+  const toggleModal = () => setVisible(!visible);
+
+  const handleChangeCampus = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.post("/users/update-campus", {
+        email: user.email,
+        location: selectedCampus,
+      });
+      setUser({ ...user, location: selectedCampus });
+      setVisible(false);
+    } catch (error) {
+      console.error(error);
+      alert("Failed to update campus");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleAccountDelete = async () => {
     Alert.alert(
@@ -75,7 +108,9 @@ const AccountScreen = ({ navigation }) => {
           >
             <Text style={styles.textLargeBold}>Change Password</Text>
           </Button>
+
           <View style={styles.spacer} />
+
           <Button
             mode="contained"
             style={[styles.settingsButton, { marginBottom: 30 }]}
@@ -141,6 +176,18 @@ const styles = StyleSheet.create({
   },
   spacer: {
     flex: 1,
+  },
+  modalContainer: {
+    backgroundColor: COLORS.white,
+    padding: 20,
+    margin: 20,
+    borderRadius: 10,
+  },
+  modalTitle: {
+    fontSize: FONTSIZES.large,
+    fontWeight: "bold",
+    marginBottom: 20,
+    textAlign: "center",
   },
 });
 

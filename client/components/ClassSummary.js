@@ -1,10 +1,30 @@
-import React from "react";
+import React, { useCallback, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
 import { COLORS, DIMENSIONS, FONTSIZES } from "./Constants";
+import axios from "axios";
+import { useFocusEffect } from "@react-navigation/native";
 
-const ClassSummary = ({ classData, leftInfoTop, leftInfoBottom }) => {
+const ClassSummary = ({ classData }) => {
   const date = new Date(classData.date); // Ensure date is a Date object
+  const [instructor, setInstructor] = useState("");
+
+  const getInstructor = useCallback(async () => {
+    try {
+      const response = await axios.get("/classes/instructor", {
+        params: { instructorId: classData.instructor },
+      });
+      setInstructor(response.data);
+    } catch (error) {
+      console.error("Error fetching instructor:", error);
+    }
+  }, [classData.instructor]);
+
+  useFocusEffect(
+    useCallback(() => {
+      getInstructor();
+    }, [getInstructor])
+  );
 
   return (
     <View style={styles.container}>
@@ -38,7 +58,7 @@ const ClassSummary = ({ classData, leftInfoTop, leftInfoBottom }) => {
           {classData.name}
         </Text>
         <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-          <Text style={styles.textMedium}>{classData.instructor}</Text>
+          <Text style={styles.textMedium}>{instructor}</Text>
           <Text style={[styles.textMedium, { marginRight: 10 }]}>
             {classData.campus}
           </Text>
