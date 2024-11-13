@@ -1,26 +1,26 @@
-import React, { useCallback, useContext, useEffect, useState } from "react";
-import { Linking, StyleSheet, View } from "react-native";
-import { Button, Modal, PaperProvider, Text } from "react-native-paper";
-import { COLORS, DIMENSIONS, FONTSIZES } from "../components/Constants";
-import SettingsOption from "../components/SettingsOption";
-import Header from "../components/Header";
-import { UserContext } from "../../UserContext";
-import axios from "axios";
-import { useFocusEffect } from "@react-navigation/native";
+import React, { useCallback, useContext, useEffect, useState } from 'react';
+import { Linking, StyleSheet, View } from 'react-native';
+import { Button, Modal, PaperProvider, Text } from 'react-native-paper';
+import { COLORS, DIMENSIONS, FONTSIZES } from '../components/Constants';
+import SettingsOption from '../components/SettingsOption';
+import Header from '../components/Header';
+import { UserContext } from '../../UserContext';
+import axios from 'axios';
+import { useFocusEffect } from '@react-navigation/native';
 
 const monthNames = [
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December",
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December',
 ];
 
 const ProfileScreen = ({ navigation }) => {
@@ -35,12 +35,12 @@ const ProfileScreen = ({ navigation }) => {
 
   const getClassesAttended = useCallback(async () => {
     try {
-      response = await axios.get("/users/classesAttended", {
+      response = await axios.get('/users/classesAttended', {
         params: { userId: user._id },
       });
       setClassesAttended(response.data);
     } catch (error) {
-      console.error("Error fetching classes attended:", error);
+      console.error('Error fetching classes attended:', error);
     }
   });
 
@@ -77,25 +77,25 @@ const ProfileScreen = ({ navigation }) => {
           <Text style={styles.userText}>{user.name}</Text>
           <SettingsOption
             title="Account"
-            onPress={() => navigation.navigate("Account")}
+            onPress={() => navigation.navigate('Account')}
           />
           <SettingsOption
             title="Reservations"
-            onPress={() => navigation.navigate("Reservations")}
+            onPress={() => navigation.navigate('Reservations')}
           />
           <SettingsOption
             title="Settings"
-            onPress={() => navigation.navigate("Settings")}
+            onPress={() => navigation.navigate('Settings')}
           />
           {user.isInstructor && (
             <SettingsOption
               title="Instructor Portal"
-              onPress={() => navigation.navigate("Classes")}
+              onPress={() => navigation.navigate('Classes')}
             />
           )}
           <SettingsOption
             title="Leave Feedback"
-            onPress={() => navigation.navigate("Feedback")}
+            onPress={() => navigation.navigate('Feedback')}
             roundedBottom={true}
           />
         </View>
@@ -109,14 +109,14 @@ const ProfileScreen = ({ navigation }) => {
               margin: 20,
             }}
           >
-            <Text style={{ fontSize: FONTSIZES.medium, fontWeight: "bold" }}>
+            <Text style={{ fontSize: FONTSIZES.medium, fontWeight: 'bold' }}>
               Disclaimer: Paying for classes is only required for Northeastern
               Boston campus recreation classes. Other campuses have classes free
               of charge due to smaller programs. Users need to make sure they
               have paid the recreation fee in addition to the classes fee in
               order for the classes fee to take effect. Expect a period of
               around 24 hours between paying for classes and being able to
-              register for paid classes.{"\n\n"}
+              register for paid classes.{'\n\n'}
               Payment is by semester and is non-refundable under normal
               circumstances.
             </Text>
@@ -124,7 +124,7 @@ const ProfileScreen = ({ navigation }) => {
               style={styles.paymentConfirmButton}
               onPress={() =>
                 Linking.openURL(
-                  "https://commerce.cashnet.com/MARINOCENTER?itemcode=SFMC-AERO"
+                  'https://commerce.cashnet.com/MARINOCENTER?itemcode=SFMC-AERO'
                 ).catch((err) => console.error("Couldn't load page", err))
               }
             >
@@ -149,58 +149,58 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     width: DIMENSIONS.componentWidth,
-    alignSelf: "center",
+    alignSelf: 'center',
     borderRadius: DIMENSIONS.cornerCurve,
   },
   classesAttendedContainer: {
     marginVertical: 20,
     padding: 20,
     backgroundColor: COLORS.primary,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     width: DIMENSIONS.componentWidth,
-    alignSelf: "center",
+    alignSelf: 'center',
     borderRadius: DIMENSIONS.cornerCurve,
   },
   classesAttendedTextContainer: {
-    flexDirection: "column",
+    flexDirection: 'column',
   },
   classesAttendedText: {
     color: COLORS.black,
-    fontWeight: "bold",
+    fontWeight: 'bold',
     fontSize: FONTSIZES.medium,
     marginBottom: 10,
   },
   dateText: {
     color: COLORS.black,
     fontSize: FONTSIZES.small,
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
   classesAttendedNumberContainer: {
     borderColor: COLORS.black,
     borderWidth: 6,
     borderRadius: 100,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
     width: 70,
     height: 70,
   },
   classesAttendedNumber: {
     color: COLORS.white,
-    fontWeight: "bold",
+    fontWeight: 'bold',
     fontSize: FONTSIZES.large,
   },
   paymentButton: {
     padding: 3,
     backgroundColor: COLORS.tertiary,
     width: DIMENSIONS.componentWidth,
-    alignSelf: "center",
+    alignSelf: 'center',
     borderRadius: DIMENSIONS.cornerCurve,
   },
   paymentText: {
     color: COLORS.white,
-    fontWeight: "bold",
+    fontWeight: 'bold',
     fontSize: FONTSIZES.medium,
     paddingTop: 2,
   },
@@ -210,21 +210,21 @@ const styles = StyleSheet.create({
   userText: {
     color: COLORS.black,
     fontSize: FONTSIZES.large,
-    fontWeight: "bold",
+    fontWeight: 'bold',
     paddingVertical: 15,
     paddingLeft: 10,
     backgroundColor: COLORS.primary,
     width: DIMENSIONS.componentWidth,
-    alignSelf: "center",
+    alignSelf: 'center',
     borderTopLeftRadius: DIMENSIONS.cornerCurve,
     borderTopRightRadius: DIMENSIONS.cornerCurve,
   },
   paymentConfirmButton: {
     backgroundColor: COLORS.primary,
     width: DIMENSIONS.componentWidth,
-    alignSelf: "center",
-    justifyContent: "center",
-    alignContent: "center",
+    alignSelf: 'center',
+    justifyContent: 'center',
+    alignContent: 'center',
     borderRadius: DIMENSIONS.cornerCurve,
     marginTop: 20,
   },

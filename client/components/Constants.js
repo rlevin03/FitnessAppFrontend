@@ -1,10 +1,10 @@
 export const COLORS = {
-  primary: "#C8102E",
-  secondary: "#98D1B5",
-  tertiary: "#424344",
-  maroon: "#630B0B",
-  black: "#000000",
-  white: "#FFFFFF",
+  primary: '#C8102E',
+  secondary: '#98D1B5',
+  tertiary: '#424344',
+  maroon: '#630B0B',
+  black: '#000000',
+  white: '#FFFFFF',
 };
 
 export const FONTSIZES = {
@@ -14,13 +14,13 @@ export const FONTSIZES = {
 };
 
 export const DIMENSIONS = {
-  componentWidth: "95%",
+  componentWidth: '95%',
   cornerCurve: 5,
 };
 
-export const VALIDEMAILS = ["northeastern.edu", "husky.neu.edu", "gmail.com"];
+export const VALIDEMAILS = ['northeastern.edu', 'husky.neu.edu', 'gmail.com'];
 
-export const CAMPUSES = ["Boston", "Oakland", "London", "Seattle"];
+export const CAMPUSES = ['Boston', 'Oakland', 'London', 'Seattle'];
 
 export function createTimeRange(startDateTime, durationMinutes) {
   const startDate = new Date(startDateTime);
@@ -30,15 +30,15 @@ export function createTimeRange(startDateTime, durationMinutes) {
 
   const endDate = new Date(startDate.getTime() + durationMinutes * 60000);
 
-  const startTime = startDate.toLocaleTimeString("en-US", {
-    hour: "2-digit",
-    minute: "2-digit",
+  const startTime = startDate.toLocaleTimeString('en-US', {
+    hour: '2-digit',
+    minute: '2-digit',
     hour12: true,
   });
 
-  const endTime = endDate.toLocaleTimeString("en-US", {
-    hour: "2-digit",
-    minute: "2-digit",
+  const endTime = endDate.toLocaleTimeString('en-US', {
+    hour: '2-digit',
+    minute: '2-digit',
     hour12: true,
   });
 

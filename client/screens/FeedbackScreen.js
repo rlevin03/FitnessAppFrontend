@@ -1,30 +1,30 @@
-import React from "react";
+import React from 'react';
 import {
   PaperProvider,
   Text,
   Button,
   TextInput,
   ActivityIndicator,
-} from "react-native-paper";
+} from 'react-native-paper';
 import {
   StyleSheet,
   View,
   Alert,
   KeyboardAvoidingView,
   Platform,
-} from "react-native";
-import Header from "../components/Header";
-import { COLORS, DIMENSIONS, FONTSIZES } from "../components/Constants";
-import { Formik } from "formik";
-import * as Yup from "yup";
-import axios from "axios";
+} from 'react-native';
+import Header from '../components/Header';
+import { COLORS, DIMENSIONS, FONTSIZES } from '../components/Constants';
+import { Formik } from 'formik';
+import * as Yup from 'yup';
+import axios from 'axios';
 
 const FeedbackScreen = ({ navigation }) => {
   return (
     <PaperProvider>
       <KeyboardAvoidingView
         style={styles.container}
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         keyboardVerticalOffset={Platform.select({ ios: 60, android: 0 })}
       >
         <Header navigation={navigation} title="Feedback" />
@@ -33,23 +33,23 @@ const FeedbackScreen = ({ navigation }) => {
           Positive feedback is greatly appreciated but criticism helps the most
         </Text>
         <Formik
-          initialValues={{ feedback: "" }}
+          initialValues={{ feedback: '' }}
           validationSchema={Yup.object({
             feedback: Yup.string()
-              .min(10, "Feedback must be at least 10 characters")
-              .required("Feedback is required"),
+              .min(10, 'Feedback must be at least 10 characters')
+              .required('Feedback is required'),
           })}
           onSubmit={async (values, { resetForm, setSubmitting }) => {
             try {
-              await axios.post("/email/feedback", {
+              await axios.post('/email/feedback', {
                 feedback: values.feedback,
               });
-              Alert.alert("Success", "Feedback sent successfully");
+              Alert.alert('Success', 'Feedback sent successfully');
               resetForm();
             } catch (error) {
               Alert.alert(
-                "Error",
-                "Failed to send feedback. Please try again later."
+                'Error',
+                'Failed to send feedback. Please try again later.'
               );
             } finally {
               setSubmitting(false);
@@ -72,8 +72,8 @@ const FeedbackScreen = ({ navigation }) => {
                 multiline
                 numberOfLines={15}
                 activeOutlineColor={COLORS.white}
-                onChangeText={handleChange("feedback")}
-                onBlur={handleBlur("feedback")}
+                onChangeText={handleChange('feedback')}
+                onBlur={handleBlur('feedback')}
                 value={values.feedback}
                 style={styles.textInput}
                 theme={{ colors: { text: COLORS.black } }}
@@ -117,51 +117,51 @@ const styles = StyleSheet.create({
   textBigWhite: {
     color: COLORS.white,
     fontSize: 32,
-    fontWeight: "bold",
-    textAlign: "center",
+    fontWeight: 'bold',
+    textAlign: 'center',
     padding: 10,
     paddingTop: 20,
   },
   textSmallRed: {
     color: COLORS.secondary,
     fontSize: FONTSIZES.small,
-    textAlign: "center",
+    textAlign: 'center',
     marginHorizontal: 20,
   },
   textInput: {
-    textAlignVertical: "top",
+    textAlignVertical: 'top',
     backgroundColor: COLORS.primary,
     height: 300,
     width: DIMENSIONS.componentWidth,
-    alignSelf: "center",
+    alignSelf: 'center',
   },
   errorText: {
     color: COLORS.black,
     marginTop: 20,
-    textAlign: "center",
+    textAlign: 'center',
   },
   button: {
     backgroundColor: COLORS.maroon,
     width: DIMENSIONS.componentWidth,
-    alignSelf: "center",
-    justifyContent: "center",
+    alignSelf: 'center',
+    justifyContent: 'center',
     borderRadius: DIMENSIONS.cornerCurve,
     marginTop: 20,
   },
   buttonContent: {
     height: 50,
-    justifyContent: "center",
+    justifyContent: 'center',
   },
   buttonText: {
     fontSize: FONTSIZES.large,
-    fontWeight: "bold",
+    fontWeight: 'bold',
     color: COLORS.white,
     padding: 10,
     marginBottom: 5,
   },
   formWrapper: {
     width: DIMENSIONS.componentWidth,
-    alignSelf: "center",
+    alignSelf: 'center',
     backgroundColor: COLORS.primary,
     padding: 20,
     borderRadius: DIMENSIONS.cornerCurve,

@@ -1,5 +1,5 @@
-import React, { useEffect, useState, createContext } from "react";
-import axios from "axios";
+import React, { useEffect, useState, createContext } from 'react';
+import axios from 'axios';
 
 // Create the context with default values
 export const InstructorsContext = createContext({
@@ -19,13 +19,13 @@ export function InstructorsProvider({ children }) {
   const fetchInstructors = () => {
     setReady(false);
     axios
-      .get("/users/instructors")
+      .get('/users/instructors')
       .then(({ data }) => {
         setInstructors(data);
         setError(null);
       })
       .catch((error) => {
-        console.error("Failed to fetch instructors:", error);
+        console.error('Failed to fetch instructors:', error);
         setError(error);
       })
       .finally(() => {

@@ -1,22 +1,22 @@
-import React, { useCallback, useState } from "react";
-import { StyleSheet, View } from "react-native";
-import { Text } from "react-native-paper";
-import { COLORS, DIMENSIONS, FONTSIZES } from "./Constants";
-import axios from "axios";
-import { useFocusEffect } from "@react-navigation/native";
+import React, { useCallback, useState } from 'react';
+import { StyleSheet, View } from 'react-native';
+import { Text } from 'react-native-paper';
+import { COLORS, DIMENSIONS, FONTSIZES } from './Constants';
+import axios from 'axios';
+import { useFocusEffect } from '@react-navigation/native';
 
 const ClassSummary = ({ classData }) => {
   const date = new Date(classData.date); // Ensure date is a Date object
-  const [instructor, setInstructor] = useState("");
+  const [instructor, setInstructor] = useState('');
 
   const getInstructor = useCallback(async () => {
     try {
-      const response = await axios.get("/classes/instructor", {
+      const response = await axios.get('/classes/instructor', {
         params: { instructorId: classData.instructor },
       });
       setInstructor(response.data);
     } catch (error) {
-      console.error("Error fetching instructor:", error);
+      console.error('Error fetching instructor:', error);
     }
   }, [classData.instructor]);
 
@@ -32,19 +32,19 @@ const ClassSummary = ({ classData }) => {
         <Text
           style={[styles.textBig, { color: COLORS.black }]}
           accessible={true}
-          accessibilityLabel={`Class time ${date.toLocaleTimeString("en-US", {
-            hour: "2-digit",
-            minute: "2-digit",
+          accessibilityLabel={`Class time ${date.toLocaleTimeString('en-US', {
+            hour: '2-digit',
+            minute: '2-digit',
             hour12: true,
           })}`}
         >
-          {date.toLocaleTimeString("en-US", {
-            hour: "2-digit",
-            minute: "2-digit",
+          {date.toLocaleTimeString('en-US', {
+            hour: '2-digit',
+            minute: '2-digit',
             hour12: true,
           })}
         </Text>
-        <View style={{ flexDirection: "row", alignItems: "center" }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <Text style={styles.textMedium}>{classData.duration}</Text>
           <Text style={[styles.textMedium, { marginLeft: 3 }]}>min</Text>
         </View>
@@ -57,7 +57,7 @@ const ClassSummary = ({ classData }) => {
         <Text style={[styles.textBig, { color: COLORS.white }]}>
           {classData.name}
         </Text>
-        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
           <Text style={styles.textMedium}>{instructor}</Text>
           <Text style={[styles.textMedium, { marginRight: 10 }]}>
             {classData.campus}
@@ -70,7 +70,7 @@ const ClassSummary = ({ classData }) => {
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: "row",
+    flexDirection: 'row',
     backgroundColor: COLORS.primary,
     marginBottom: 10,
     borderRadius: DIMENSIONS.cornerCurve,
@@ -78,8 +78,8 @@ const styles = StyleSheet.create({
   },
   timeContainer: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   separator: {
     width: 4,
@@ -89,17 +89,17 @@ const styles = StyleSheet.create({
   },
   detailsContainer: {
     flex: 2,
-    justifyContent: "center",
+    justifyContent: 'center',
     marginLeft: 20,
   },
   textBig: {
     fontSize: FONTSIZES.medium,
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
   textMedium: {
     fontSize: FONTSIZES.small,
     color: COLORS.secondary,
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
 });
 

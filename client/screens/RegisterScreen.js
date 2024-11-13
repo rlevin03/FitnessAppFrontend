@@ -67,9 +67,7 @@ const RegisterScreen = ({ navigation }) => {
       navigation.dispatch(
         CommonActions.reset({
           index: 0,
-          routes: [
-            { name: 'Verification', params: { recipientEmail: email } },
-          ],
+          routes: [{ name: 'Verification', params: { recipientEmail: email } }],
         })
       );
     } catch (error) {
@@ -128,7 +126,10 @@ const RegisterScreen = ({ navigation }) => {
           onChangeText={setPassword2}
         />
 
-        <TouchableRipple style={[styles.input, {marginTop: 10}]} onPress={toggleModal}>
+        <TouchableRipple
+          style={[styles.input, { marginTop: 10 }]}
+          onPress={toggleModal}
+        >
           <Text style={styles.campusText}>
             {campus ? `Campus: ${campus}` : 'Select Campus'}
           </Text>
@@ -164,10 +165,7 @@ const RegisterScreen = ({ navigation }) => {
             </Button>
             <Button
               onPress={toggleModal}
-              style={[
-                styles.modalButton,
-                { backgroundColor: 'transparent' },
-              ]}
+              style={[styles.modalButton, { backgroundColor: 'transparent' }]}
               textColor={COLORS.primary}
             >
               Cancel

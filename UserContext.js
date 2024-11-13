@@ -1,5 +1,5 @@
-import axios from "axios";
-import { createContext, useEffect, useState } from "react";
+import axios from 'axios';
+import { createContext, useEffect, useState } from 'react';
 
 export const UserContext = createContext({});
 
@@ -10,13 +10,13 @@ export function UserProvider({ children }) {
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
-        const token = axios.defaults.headers.common["Authorization"];
+        const token = axios.defaults.headers.common['Authorization'];
         if (token) {
-          const { data } = await axios.get("/auth/profile");
+          const { data } = await axios.get('/auth/profile');
           setUser(data);
         }
       } catch (error) {
-        console.warn("No user profile found. User might not be authenticated.");
+        console.warn('No user profile found. User might not be authenticated.');
       } finally {
         setReady(true);
       }

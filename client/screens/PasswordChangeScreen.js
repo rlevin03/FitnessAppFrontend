@@ -1,44 +1,44 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState } from 'react';
 import {
   View,
   StyleSheet,
   Alert,
   KeyboardAvoidingView,
   Platform,
-} from "react-native";
+} from 'react-native';
 import {
   PaperProvider,
   TextInput,
   TouchableRipple,
   Text,
-} from "react-native-paper";
-import axios from "axios";
-import { CommonActions } from "@react-navigation/native";
-import { COLORS, DIMENSIONS, FONTSIZES } from "../components/Constants";
-import { UserContext } from "../../UserContext";
-import Header from "../components/Header";
+} from 'react-native-paper';
+import axios from 'axios';
+import { CommonActions } from '@react-navigation/native';
+import { COLORS, DIMENSIONS, FONTSIZES } from '../components/Constants';
+import { UserContext } from '../../UserContext';
+import Header from '../components/Header';
 
 const PasswordChangeScreen = ({ navigation }) => {
-  const [oldPassword, setOldPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [oldPassword, setOldPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const { user, setUser } = useContext(UserContext);
 
   const handlePasswordChange = async () => {
-    if (oldPassword === "" || newPassword === "") {
-      Alert.alert("Error", "Please enter both old and new passwords");
+    if (oldPassword === '' || newPassword === '') {
+      Alert.alert('Error', 'Please enter both old and new passwords');
       return;
     }
     if (oldPassword === newPassword) {
-      Alert.alert("Error", "Old and new passwords cannot be the same");
+      Alert.alert('Error', 'Old and new passwords cannot be the same');
       return;
     }
     if (newPassword !== confirmPassword) {
-      Alert.alert("Error", "Passwords do not match");
+      Alert.alert('Error', 'Passwords do not match');
       return;
     }
     try {
-      const response = await axios.patch("/auth/password-change", {
+      const response = await axios.patch('/auth/password-change', {
         email: user.email,
         oldPassword,
         newPassword,
@@ -47,19 +47,19 @@ const PasswordChangeScreen = ({ navigation }) => {
         navigation.dispatch(
           CommonActions.reset({
             index: 0,
-            routes: [{ name: "Login" }],
+            routes: [{ name: 'Login' }],
           })
         );
-        await axios.post("/auth/logout");
+        await axios.post('/auth/logout');
         setUser(null);
       }
     } catch (error) {
       if (error.response && error.response.status === 401) {
-        Alert.alert("Error", "Incorrect old password");
+        Alert.alert('Error', 'Incorrect old password');
         return;
       }
       console.error(error);
-      Alert.alert("Error", "Failed to change password");
+      Alert.alert('Error', 'Failed to change password');
     }
   };
 
@@ -67,7 +67,7 @@ const PasswordChangeScreen = ({ navigation }) => {
     <PaperProvider>
       <Header navigation={navigation} title="Password Form" />
       <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.container}
         keyboardVerticalOffset={Platform.select({ ios: 60, android: 0 })}
       >
@@ -110,7 +110,7 @@ const PasswordChangeScreen = ({ navigation }) => {
         >
           <Text
             style={{
-              fontWeight: "bold",
+              fontWeight: 'bold',
               fontSize: FONTSIZES.large,
               color: COLORS.white,
             }}
@@ -127,21 +127,21 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: COLORS.black,
-    justifyContent: "center",
+    justifyContent: 'center',
   },
   input: {
     marginBottom: 5,
-    alignSelf: "center",
+    alignSelf: 'center',
     backgroundColor: COLORS.primary,
     width: DIMENSIONS.componentWidth,
     height: 55,
   },
   passwordChangeButton: {
-    width: "80%",
+    width: '80%',
     backgroundColor: COLORS.maroon,
     padding: 10,
-    alignSelf: "center",
-    alignItems: "center",
+    alignSelf: 'center',
+    alignItems: 'center',
     marginTop: 20,
     borderRadius: DIMENSIONS.cornerCurve,
   },

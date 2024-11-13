@@ -4,7 +4,7 @@ import React, {
   useCallback,
   useContext,
   memo,
-} from "react";
+} from 'react';
 import {
   View,
   Text,
@@ -14,34 +14,34 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   ScrollView,
-} from "react-native";
-import CalendarStrip from "react-native-calendar-strip";
-import { ImageSlider } from "react-native-image-slider-banner";
+} from 'react-native';
+import CalendarStrip from 'react-native-calendar-strip';
+import { ImageSlider } from 'react-native-image-slider-banner';
 import {
   Appbar,
   Modal,
   PaperProvider,
   TouchableRipple,
-} from "react-native-paper";
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import { COLORS, DIMENSIONS, FONTSIZES } from "../components/Constants";
-import ClassSummary from "../components/ClassSummary";
-import { UserContext } from "../../UserContext";
+} from 'react-native-paper';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { COLORS, DIMENSIONS, FONTSIZES } from '../components/Constants';
+import ClassSummary from '../components/ClassSummary';
+import { UserContext } from '../../UserContext';
 import {
   CommonActions,
   useFocusEffect,
   useNavigation,
-} from "@react-navigation/native";
-import axios from "axios";
-import moment from "moment-timezone";
-import logo from "../../assets/Northeastern_Universitylogo_square.webp";
-import picture1 from "../../assets/marino1.jpg";
-import picture2 from "../../assets/marino2.jpg";
-import picture3 from "../../assets/marino3.jpg";
-import picture4 from "../../assets/marino4.jpg";
-import leftScroller from "../../assets/left-chevron.png";
-import rightScroller from "../../assets/chevron-right.png";
-import { InstructorsContext } from "../../InstructorsContext";
+} from '@react-navigation/native';
+import axios from 'axios';
+import moment from 'moment-timezone';
+import logo from '../../assets/Northeastern_Universitylogo_square.webp';
+import picture1 from '../../assets/marino1.jpg';
+import picture2 from '../../assets/marino2.jpg';
+import picture3 from '../../assets/marino3.jpg';
+import picture4 from '../../assets/marino4.jpg';
+import leftScroller from '../../assets/left-chevron.png';
+import rightScroller from '../../assets/chevron-right.png';
+import { InstructorsContext } from '../../InstructorsContext';
 
 const imageSliderData = [
   { img: picture1 },
@@ -53,7 +53,7 @@ const imageSliderData = [
 const Header = memo(() => {
   const navigation = useNavigation();
   const { user } = useContext(UserContext);
-  const campusTitle = user.location ? `${user.location}` : "Set your campus";
+  const campusTitle = user.location ? `${user.location}` : 'Set your campus';
 
   return (
     <Appbar.Header style={styles.header} mode="center-aligned">
@@ -63,7 +63,7 @@ const Header = memo(() => {
       />
       <Appbar.Content
         titleStyle={{
-          fontWeight: "bold",
+          fontWeight: 'bold',
           fontSize: FONTSIZES.large,
           color: COLORS.white,
           marginLeft: 20,
@@ -72,7 +72,7 @@ const Header = memo(() => {
       />
       <Appbar.Action
         icon="account-circle-outline"
-        onPress={() => navigation.navigate("Profile")}
+        onPress={() => navigation.navigate('Profile')}
         color={COLORS.black}
         size={45}
       />
@@ -105,12 +105,12 @@ const HomeScreen = () => {
     if (!user || !user.location) return;
     setLoading(true);
     try {
-      const response = await axios.get("/classes/filtered", {
+      const response = await axios.get('/classes/filtered', {
         params: {
           date: selectedDate ? moment(selectedDate) : moment(),
-          types: selectedFilters.types.join(","),
+          types: selectedFilters.types.join(','),
           campuses: user.location,
-          instructors: selectedFilters.instructors.join(","),
+          instructors: selectedFilters.instructors.join(','),
         },
       });
       setClasses(response.data);
@@ -165,7 +165,7 @@ const HomeScreen = () => {
         CommonActions.reset({
           index: 0,
           routes: [
-            { name: "Verification", params: { recipientEmail: user.email } },
+            { name: 'Verification', params: { recipientEmail: user.email } },
           ],
         })
       );
@@ -181,18 +181,18 @@ const HomeScreen = () => {
 
   const renderClassItem = useCallback(
     ({ item }) => {
-      const isPast = moment(item.date).isBefore(moment(), "day");
+      const isPast = moment(item.date).isBefore(moment(), 'day');
       const instructor = instructors.find(
         (inst) => inst._id === item.instructor
       );
       const instructorName = instructor
         ? instructor.name
-        : "Unknown Instructor";
+        : 'Unknown Instructor';
 
       return (
         <TouchableRipple
           onPress={() =>
-            navigation.navigate("Class Description", { classData: item })
+            navigation.navigate('Class Description', { classData: item })
           }
           style={isPast ? styles.disabledClass : null}
           disabled={isPast}
@@ -205,7 +205,7 @@ const HomeScreen = () => {
   );
 
   const filterOptions = {
-    types: ["Yoga", "Pilates", "Cardio", "Strength", "Dance"],
+    types: ['Yoga', 'Pilates', 'Cardio', 'Strength', 'Dance'],
     instructors,
   };
 
@@ -238,14 +238,14 @@ const HomeScreen = () => {
         <Text
           style={[
             styles.textBig,
-            { textAlign: "center", color: COLORS.white, paddingVertical: 10 },
+            { textAlign: 'center', color: COLORS.white, paddingVertical: 10 },
           ]}
         >
           Northeastern Recreation
         </Text>
         <View style={[styles.buttonContainer, { marginBottom: 10 }]}>
           <TouchableRipple
-            onPress={() => navigation.navigate("Reservations")}
+            onPress={() => navigation.navigate('Reservations')}
             rippleColor={COLORS.primary}
             style={styles.button}
           >
@@ -282,10 +282,10 @@ const HomeScreen = () => {
         <CalendarStrip
           startingDate={selectedDate}
           selectedDate={selectedDate}
-          minDate={moment().startOf("week")}
-          maxDate={moment().add(1, "month")}
+          minDate={moment().startOf('week')}
+          maxDate={moment().add(1, 'month')}
           daySelectionAnimation={{
-            type: "background",
+            type: 'background',
             duration: 50,
             highlightColor: COLORS.primary,
           }}
@@ -317,7 +317,7 @@ const HomeScreen = () => {
                 selectedFilters[filterType].map((filterValue) => {
                   let displayValue = filterValue;
 
-                  if (filterType === "instructors") {
+                  if (filterType === 'instructors') {
                     const instructor = instructors.find(
                       (inst) => inst._id === filterValue
                     );
@@ -346,10 +346,10 @@ const HomeScreen = () => {
             <Text
               style={[
                 styles.textBig,
-                { color: COLORS.white, textAlign: "center" },
+                { color: COLORS.white, textAlign: 'center' },
               ]}
             >
-              {loading ? "Loading classes..." : "No classes available"}
+              {loading ? 'Loading classes...' : 'No classes available'}
             </Text>
           }
           contentContainerStyle={styles.classesContainer}
@@ -362,9 +362,9 @@ const HomeScreen = () => {
           contentContainerStyle={{
             backgroundColor: COLORS.tertiary,
             padding: 20,
-            height: "80%",
+            height: '80%',
             width: DIMENSIONS.componentWidth,
-            alignSelf: "center",
+            alignSelf: 'center',
             borderRadius: DIMENSIONS.cornerCurve,
           }}
         >
@@ -378,11 +378,11 @@ const HomeScreen = () => {
                 <View
                   style={[
                     styles.filtersWrapper,
-                    { backgroundColor: COLORS.black, width: "100%" },
+                    { backgroundColor: COLORS.black, width: '100%' },
                   ]}
                 >
                   {filterOptions[filterType].map((filterValue) => {
-                    if (filterType === "instructors") {
+                    if (filterType === 'instructors') {
                       // filterValue is an instructor object { _id, name }
                       return (
                         <TouchableOpacity
@@ -395,7 +395,7 @@ const HomeScreen = () => {
                             ) && styles.selectedFilterButton,
                           ]}
                           onPress={() =>
-                            toggleModalFilter("instructors", filterValue._id)
+                            toggleModalFilter('instructors', filterValue._id)
                           }
                         >
                           <Text style={styles.textMedium}>
@@ -447,7 +447,7 @@ const styles = StyleSheet.create({
   },
   centeredContainer: {
     flex: 1,
-    justifyContent: "center",
+    justifyContent: 'center',
     backgroundColor: COLORS.black,
   },
   header: {
@@ -461,59 +461,59 @@ const styles = StyleSheet.create({
   },
   textBig: {
     fontSize: FONTSIZES.large,
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
   textMedium: {
     fontSize: FONTSIZES.medium,
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
   buttonContainer: {
-    alignItems: "center",
+    alignItems: 'center',
   },
   button: {
     width: DIMENSIONS.componentWidth,
     backgroundColor: COLORS.primary,
     paddingVertical: 10,
-    alignSelf: "center",
+    alignSelf: 'center',
     borderRadius: DIMENSIONS.cornerCurve,
   },
   buttonInner: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     paddingHorizontal: 20,
   },
   buttonText: {
     fontSize: FONTSIZES.medium,
     color: COLORS.black,
-    fontWeight: "bold",
-    textAlign: "center",
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
   sliderContainer: {
     height: 200,
-    width: "100%",
+    width: '100%',
     marginBottom: 10,
   },
   carouselImage: {
-    resizeMode: "cover",
+    resizeMode: 'cover',
   },
   headerContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     width: DIMENSIONS.componentWidth,
-    alignSelf: "center",
+    alignSelf: 'center',
     marginBottom: 10,
   },
   filtersWrapper: {
     backgroundColor: COLORS.tertiary,
     borderRadius: DIMENSIONS.cornerCurve,
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     padding: 10,
     width: DIMENSIONS.componentWidth,
-    alignSelf: "center",
+    alignSelf: 'center',
     marginTop: 5,
-    flexWrap: "wrap",
+    flexWrap: 'wrap',
   },
   filtersContainer: {
     marginLeft: 10,
@@ -534,13 +534,13 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     backgroundColor: COLORS.black,
     marginLeft: 7,
-    height: "100%",
+    height: '100%',
   },
   modalTitle: {
     fontSize: FONTSIZES.large,
-    fontWeight: "bold",
+    fontWeight: 'bold',
     color: COLORS.white,
-    textAlign: "center",
+    textAlign: 'center',
     marginBottom: 20,
   },
   filterSection: {
@@ -556,7 +556,7 @@ const styles = StyleSheet.create({
   },
   errorText: {
     color: COLORS.white,
-    textAlign: "center",
+    textAlign: 'center',
     fontSize: FONTSIZES.large,
     paddingHorizontal: 20,
   },

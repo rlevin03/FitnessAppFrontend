@@ -1,12 +1,12 @@
-import { Button, PaperProvider, Text } from "react-native-paper";
-import { Linking, StyleSheet, View } from "react-native";
-import Header from "../components/Header";
-import { COLORS, DIMENSIONS, FONTSIZES } from "../components/Constants";
-import SettingsOption from "../components/SettingsOption";
-import { CommonActions } from "@react-navigation/native";
-import axios from "axios";
-import { useContext } from "react";
-import { UserContext } from "../../UserContext";
+import { Button, PaperProvider, Text } from 'react-native-paper';
+import { Linking, StyleSheet, View } from 'react-native';
+import Header from '../components/Header';
+import { COLORS, DIMENSIONS, FONTSIZES } from '../components/Constants';
+import SettingsOption from '../components/SettingsOption';
+import { CommonActions } from '@react-navigation/native';
+import axios from 'axios';
+import { useContext } from 'react';
+import { UserContext } from '../../UserContext';
 
 const SettingsScreen = ({ navigation }) => {
   const { setUser } = useContext(UserContext);
@@ -15,14 +15,14 @@ const SettingsScreen = ({ navigation }) => {
       navigation.dispatch(
         CommonActions.reset({
           index: 0,
-          routes: [{ name: "Login" }],
+          routes: [{ name: 'Login' }],
         })
       );
-      await axios.post("/auth/logout");
+      await axios.post('/auth/logout');
       setUser(null);
     } catch (error) {
       console.error(error);
-      Alert.alert("Error", "Failed to log out");
+      Alert.alert('Error', 'Failed to log out');
     }
   };
 
@@ -36,7 +36,7 @@ const SettingsScreen = ({ navigation }) => {
             roundedTop
             onPress={() =>
               Linking.openURL(
-                "https://www.northeastern.edu/privacy-information/"
+                'https://www.northeastern.edu/privacy-information/'
               ).catch((err) => console.error("Couldn't load page", err))
             }
           />
@@ -44,7 +44,7 @@ const SettingsScreen = ({ navigation }) => {
             title="Emergency Information"
             onPress={() =>
               Linking.openURL(
-                "https://www.northeastern.edu/emergency-information/"
+                'https://www.northeastern.edu/emergency-information/'
               ).catch((err) => console.error("Couldn't load page", err))
             }
           />
@@ -53,7 +53,7 @@ const SettingsScreen = ({ navigation }) => {
             roundedBottom
             onPress={() =>
               Linking.openURL(
-                "https://digital-accessibility.northeastern.edu/"
+                'https://digital-accessibility.northeastern.edu/'
               ).catch((err) => console.error("Couldn't load page", err))
             }
           />
@@ -83,7 +83,7 @@ const styles = StyleSheet.create({
   },
   textLargeBold: {
     fontSize: FONTSIZES.large,
-    fontWeight: "bold",
+    fontWeight: 'bold',
     color: COLORS.white,
     padding: 15,
     marginBottom: 5,
@@ -91,9 +91,9 @@ const styles = StyleSheet.create({
   settingsButton: {
     backgroundColor: COLORS.primary,
     width: DIMENSIONS.componentWidth,
-    alignSelf: "center",
-    justifyContent: "center",
-    alignContent: "center",
+    alignSelf: 'center',
+    justifyContent: 'center',
+    alignContent: 'center',
     borderRadius: DIMENSIONS.cornerCurve,
     marginTop: 20,
   },

@@ -1,11 +1,11 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState } from 'react';
 import {
   StyleSheet,
   View,
   ScrollView,
   ActivityIndicator,
   Alert,
-} from "react-native";
+} from 'react-native';
 import {
   Button,
   PaperProvider,
@@ -13,29 +13,29 @@ import {
   Modal,
   Portal,
   RadioButton,
-} from "react-native-paper";
-import Header from "../components/Header";
+} from 'react-native-paper';
+import Header from '../components/Header';
 import {
   CAMPUSES,
   COLORS,
   DIMENSIONS,
   FONTSIZES,
-} from "../components/Constants";
-import { UserContext } from "../../UserContext";
-import axios from "axios";
+} from '../components/Constants';
+import { UserContext } from '../../UserContext';
+import axios from 'axios';
 
 const AccountScreen = ({ navigation }) => {
   const { user, setUser } = useContext(UserContext);
   const [loading, setLoading] = useState(false);
   const [visible, setVisible] = useState(false);
-  const [selectedCampus, setSelectedCampus] = useState(user.location || "");
+  const [selectedCampus, setSelectedCampus] = useState(user.location || '');
 
   const toggleModal = () => setVisible(!visible);
 
   const handleChangeCampus = async () => {
     try {
       setLoading(true);
-      const response = await axios.post("/users/update-campus", {
+      const response = await axios.post('/users/update-campus', {
         email: user.email,
         location: selectedCampus,
       });
@@ -43,7 +43,7 @@ const AccountScreen = ({ navigation }) => {
       setVisible(false);
     } catch (error) {
       console.error(error);
-      alert("Failed to update campus");
+      alert('Failed to update campus');
     } finally {
       setLoading(false);
     }
@@ -51,25 +51,25 @@ const AccountScreen = ({ navigation }) => {
 
   const handleAccountDelete = async () => {
     Alert.alert(
-      "Confirm Deletion",
-      "Are you sure you want to delete your account?",
+      'Confirm Deletion',
+      'Are you sure you want to delete your account?',
       [
         {
-          text: "Cancel",
-          style: "cancel",
+          text: 'Cancel',
+          style: 'cancel',
         },
         {
-          text: "OK",
+          text: 'OK',
           onPress: async () => {
             setLoading(true);
             try {
-              await axios.delete("/auth/delete-account", {
+              await axios.delete('/auth/delete-account', {
                 data: { email: user.email },
               });
-              navigation.navigate("Login");
+              navigation.navigate('Login');
             } catch (error) {
               console.error(error);
-              alert("Failed to delete account");
+              alert('Failed to delete account');
             } finally {
               setLoading(false);
             }
@@ -88,23 +88,23 @@ const AccountScreen = ({ navigation }) => {
             <Text style={[styles.textMediumBold, { paddingBottom: 30 }]}>
               Manage Account Settings
             </Text>
-            <View style={{ flexDirection: "row", alignSelf: "center" }}>
-              <Text style={[styles.textMediumBold, { fontWeight: "100" }]}>
-                Name:{" "}
+            <View style={{ flexDirection: 'row', alignSelf: 'center' }}>
+              <Text style={[styles.textMediumBold, { fontWeight: '100' }]}>
+                Name:{' '}
               </Text>
-              <Text style={styles.textMediumBold}>{user.name || ""} </Text>
+              <Text style={styles.textMediumBold}>{user.name || ''} </Text>
             </View>
-            <View style={{ flexDirection: "row", alignSelf: "center" }}>
-              <Text style={[styles.textMediumBold, { fontWeight: "100" }]}>
-                Email:{" "}
+            <View style={{ flexDirection: 'row', alignSelf: 'center' }}>
+              <Text style={[styles.textMediumBold, { fontWeight: '100' }]}>
+                Email:{' '}
               </Text>
-              <Text style={styles.textMediumBold}>{user.email || ""} </Text>
+              <Text style={styles.textMediumBold}>{user.email || ''} </Text>
             </View>
           </View>
           <Button
             mode="contained"
             style={styles.settingsButton}
-            onPress={() => navigation.navigate("Change Password")}
+            onPress={() => navigation.navigate('Change Password')}
           >
             <Text style={styles.textLargeBold}>Change Password</Text>
           </Button>
@@ -138,7 +138,7 @@ const styles = StyleSheet.create({
   },
   scrollContainer: {
     flexGrow: 1,
-    justifyContent: "space-between",
+    justifyContent: 'space-between',
   },
   accountInfo: {
     backgroundColor: COLORS.tertiary,
@@ -146,21 +146,21 @@ const styles = StyleSheet.create({
     borderRadius: DIMENSIONS.cornerCurve,
     marginVertical: 20,
     marginBottom: 30,
-    alignContent: "center",
-    justifyContent: "center",
+    alignContent: 'center',
+    justifyContent: 'center',
     width: DIMENSIONS.componentWidth,
-    alignSelf: "center",
+    alignSelf: 'center',
   },
   textMediumBold: {
     fontSize: FONTSIZES.medium,
-    fontWeight: "bold",
+    fontWeight: 'bold',
     color: COLORS.white,
     marginBottom: 10,
-    textAlign: "center",
+    textAlign: 'center',
   },
   textLargeBold: {
     fontSize: FONTSIZES.large,
-    fontWeight: "bold",
+    fontWeight: 'bold',
     color: COLORS.white,
     padding: 15,
     marginBottom: 5,
@@ -168,9 +168,9 @@ const styles = StyleSheet.create({
   settingsButton: {
     backgroundColor: COLORS.primary,
     width: DIMENSIONS.componentWidth,
-    alignSelf: "center",
-    justifyContent: "center",
-    alignContent: "center",
+    alignSelf: 'center',
+    justifyContent: 'center',
+    alignContent: 'center',
     borderRadius: DIMENSIONS.cornerCurve,
     marginTop: 20,
   },
@@ -185,9 +185,9 @@ const styles = StyleSheet.create({
   },
   modalTitle: {
     fontSize: FONTSIZES.large,
-    fontWeight: "bold",
+    fontWeight: 'bold',
     marginBottom: 20,
-    textAlign: "center",
+    textAlign: 'center',
   },
 });
 

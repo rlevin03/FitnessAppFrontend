@@ -1,22 +1,22 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState, useContext } from 'react';
 import {
   ActivityIndicator,
   PaperProvider,
   Text,
   TouchableRipple,
-} from "react-native-paper";
-import { SectionList, StyleSheet, View } from "react-native";
+} from 'react-native-paper';
+import { SectionList, StyleSheet, View } from 'react-native';
 import {
   adjustDateToLocal,
   COLORS,
   DIMENSIONS,
   FONTSIZES,
-} from "../components/Constants";
-import { createTimeRange } from "../components/Constants";
-import Header from "../components/Header";
-import axios from "axios";
-import { UserContext } from "../../UserContext";
-import { useFocusEffect } from "@react-navigation/native";
+} from '../components/Constants';
+import { createTimeRange } from '../components/Constants';
+import Header from '../components/Header';
+import axios from 'axios';
+import { UserContext } from '../../UserContext';
+import { useFocusEffect } from '@react-navigation/native';
 
 const ReservationScreen = ({ navigation }) => {
   const [reservations, setReservations] = useState([]);
@@ -27,26 +27,26 @@ const ReservationScreen = ({ navigation }) => {
 
   const fetchClasses = async () => {
     try {
-      const response = await axios.get("/classes/reservations", {
+      const response = await axios.get('/classes/reservations', {
         params: { userId: user._id },
       });
 
       setReservations(
         (response.data.reservations || []).map((item) => ({
           ...item,
-          listType: "reservation",
+          listType: 'reservation',
         }))
       );
 
       setWaitLists(
         (response.data.waitLists || []).map((item) => ({
           ...item,
-          listType: "waitlist",
+          listType: 'waitlist',
         }))
       );
     } catch (error) {
-      console.error("Error fetching classes:", error);
-      setError("Failed to load reservations. Please try again later.");
+      console.error('Error fetching classes:', error);
+      setError('Failed to load reservations. Please try again later.');
     } finally {
       setLoading(false);
     }
@@ -60,10 +60,10 @@ const ReservationScreen = ({ navigation }) => {
 
   const sections = [
     ...(reservations.length > 0
-      ? [{ title: "-----Reservations-----", data: reservations }]
+      ? [{ title: '-----Reservations-----', data: reservations }]
       : []),
     ...(waitLists.length > 0
-      ? [{ title: "-----Waitlists-----", data: waitLists }]
+      ? [{ title: '-----Waitlists-----', data: waitLists }]
       : []),
   ];
 
@@ -102,11 +102,11 @@ const ReservationScreen = ({ navigation }) => {
           keyExtractor={(item) => item._id || Math.random().toString()}
           renderItem={({ item: classData }) => {
             if (!classData || !classData.date || !classData.name) {
-              console.error("Invalid class data:", classData);
+              console.error('Invalid class data:', classData);
               return null;
             }
 
-            const isWaitList = classData.listType === "waitlist";
+            const isWaitList = classData.listType === 'waitlist';
             const containerStyle = isWaitList
               ? [styles.date, { backgroundColor: COLORS.primary }]
               : styles.date;
@@ -115,30 +115,30 @@ const ReservationScreen = ({ navigation }) => {
               <TouchableRipple
                 key={classData._id}
                 onPress={() =>
-                  navigation.navigate("Class Description", { classData })
+                  navigation.navigate('Class Description', { classData })
                 }
               >
                 <View style={styles.reservation}>
                   <View style={containerStyle}>
                     <Text style={styles.textMedium}>
                       {adjustDateToLocal(classData.date)
-                        .toLocaleDateString("en-US", {
-                          weekday: "short",
+                        .toLocaleDateString('en-US', {
+                          weekday: 'short',
                         })
                         .toUpperCase()}
                     </Text>
                     <Text
                       style={[
                         styles.textBig,
-                        { color: COLORS.white, fontWeight: "bold" },
+                        { color: COLORS.white, fontWeight: 'bold' },
                       ]}
                     >
                       {adjustDateToLocal(classData.date).getDate()}
                     </Text>
                     <Text style={styles.textMedium}>
                       {adjustDateToLocal(classData.date)
-                        .toLocaleDateString("en-US", {
-                          month: "short",
+                        .toLocaleDateString('en-US', {
+                          month: 'short',
                         })
                         .toUpperCase()}
                     </Text>
@@ -147,7 +147,7 @@ const ReservationScreen = ({ navigation }) => {
                     style={{
                       flex: 12,
                       padding: 10,
-                      justifyContent: "center",
+                      justifyContent: 'center',
                       backgroundColor: isWaitList
                         ? COLORS.black
                         : COLORS.primary,
@@ -162,26 +162,26 @@ const ReservationScreen = ({ navigation }) => {
                       style={[
                         styles.textBig,
                         {
-                          textAlign: "left",
-                          fontWeight: "bold",
+                          textAlign: 'left',
+                          fontWeight: 'bold',
                           color: isWaitList ? COLORS.primary : COLORS.black,
                         },
                       ]}
                     >
-                      {classData.name || "Unknown Class"}
+                      {classData.name || 'Unknown Class'}
                     </Text>
                     <Text
                       style={[
                         styles.textMedium,
                         {
-                          fontWeight: "bold",
-                          textAlign: "left",
+                          fontWeight: 'bold',
+                          textAlign: 'left',
                           color: COLORS.white,
                         },
                       ]}
                     >
                       {createTimeRange(classData.date, classData.duration) ||
-                        ""}
+                        ''}
                     </Text>
                     <View style={styles.placeAndAttendees}>
                       <Text
@@ -194,13 +194,13 @@ const ReservationScreen = ({ navigation }) => {
                           },
                         ]}
                       >
-                        {classData.location || "Unknown Location"}
+                        {classData.location || 'Unknown Location'}
                       </Text>
                       <Text
                         style={[
                           styles.textSmall,
                           {
-                            textAlign: "right",
+                            textAlign: 'right',
                             color: isWaitList
                               ? COLORS.tertiary
                               : COLORS.secondary,
@@ -214,7 +214,7 @@ const ReservationScreen = ({ navigation }) => {
                             }`
                           : `Attendees: ${
                               classData.usersSignedUp.length || 0
-                            }/${classData.maxCapacity || "N/A"}`}
+                            }/${classData.maxCapacity || 'N/A'}`}
                       </Text>
                     </View>
                   </View>
@@ -226,7 +226,7 @@ const ReservationScreen = ({ navigation }) => {
             <Text style={styles.sectionHeader}>{title}</Text>
           )}
           renderSectionFooter={({ section }) => {
-            if (section.title === "-----Reservations-----") {
+            if (section.title === '-----Reservations-----') {
               return <View style={{ height: 50 }} />;
             }
             return null;
@@ -247,18 +247,18 @@ const styles = StyleSheet.create({
   },
   textBig: {
     fontSize: FONTSIZES.large,
-    textAlign: "center",
+    textAlign: 'center',
   },
   textMedium: {
     fontSize: FONTSIZES.medium,
     color: COLORS.white,
-    textAlign: "center",
+    textAlign: 'center',
   },
   textSmall: {
     fontSize: FONTSIZES.small,
     color: COLORS.secondary,
-    textAlign: "left",
-    fontWeight: "bold",
+    textAlign: 'left',
+    fontWeight: 'bold',
   },
   date: {
     flex: 3,
@@ -270,39 +270,39 @@ const styles = StyleSheet.create({
   },
   reservation: {
     backgroundColor: COLORS.tertiary,
-    width: "100%",
-    flexDirection: "row",
+    width: '100%',
+    flexDirection: 'row',
   },
   placeAndAttendees: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
   loadingContainer: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   errorContainer: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   errorText: {
     color: COLORS.red,
-    textAlign: "center",
+    textAlign: 'center',
     marginTop: 20,
     fontSize: FONTSIZES.medium,
   },
   emptyText: {
     color: COLORS.white,
-    textAlign: "center",
+    textAlign: 'center',
     marginTop: 20,
     fontSize: FONTSIZES.medium,
   },
   sectionHeader: {
     fontSize: FONTSIZES.large,
-    fontWeight: "bold",
-    textAlign: "center",
+    fontWeight: 'bold',
+    textAlign: 'center',
     color: COLORS.white,
     paddingVertical: 5,
     paddingHorizontal: 10,

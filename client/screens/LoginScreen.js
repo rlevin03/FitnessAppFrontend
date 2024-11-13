@@ -1,26 +1,26 @@
-import axios from "axios";
+import axios from 'axios';
 import {
   Image,
   StyleSheet,
   KeyboardAvoidingView,
   Platform,
-} from "react-native";
+} from 'react-native';
 import {
   PaperProvider,
   Text,
   TextInput,
   TouchableRipple,
-} from "react-native-paper";
-import { COLORS, DIMENSIONS, FONTSIZES } from "../components/Constants";
-import { useState, useContext } from "react";
-import { CommonActions } from "@react-navigation/native";
-import { UserContext } from "../../UserContext";
-import logo from "../../assets/Northeastern_Universitylogo_square.webp";
-import { InstructorsContext } from "../../InstructorsContext";
+} from 'react-native-paper';
+import { COLORS, DIMENSIONS, FONTSIZES } from '../components/Constants';
+import { useState, useContext } from 'react';
+import { CommonActions } from '@react-navigation/native';
+import { UserContext } from '../../UserContext';
+import logo from '../../assets/Northeastern_Universitylogo_square.webp';
+import { InstructorsContext } from '../../InstructorsContext';
 
 const LoginScreen = ({ navigation }) => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -31,7 +31,7 @@ const LoginScreen = ({ navigation }) => {
     setError(null);
     setIsLoading(true);
     try {
-      const { data } = await axios.post("/auth/login", {
+      const { data } = await axios.post('/auth/login', {
         email,
         password,
       });
@@ -40,11 +40,11 @@ const LoginScreen = ({ navigation }) => {
       navigation.dispatch(
         CommonActions.reset({
           index: 0,
-          routes: [{ name: "Home" }],
+          routes: [{ name: 'Home' }],
         })
       );
     } catch (error) {
-      setError("Login failed. Please check your email and password.");
+      setError('Login failed. Please check your email and password.');
     } finally {
       setIsLoading(false);
     }
@@ -53,7 +53,7 @@ const LoginScreen = ({ navigation }) => {
   return (
     <PaperProvider>
       <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.container}
         keyboardVerticalOffset={Platform.select({ ios: 60, android: 0 })}
       >
@@ -90,18 +90,18 @@ const LoginScreen = ({ navigation }) => {
         >
           <Text
             style={{
-              fontWeight: "bold",
+              fontWeight: 'bold',
               fontSize: FONTSIZES.large,
               color: COLORS.white,
             }}
           >
-            {isLoading ? "Logging in..." : "Login"}
+            {isLoading ? 'Logging in...' : 'Login'}
           </Text>
         </TouchableRipple>
 
         <TouchableRipple
-          style={styles.navButton} // TODO: nativewind?
-          onPress={() => navigation.navigate("Forgot Password")}
+          style={styles.navButton}
+          onPress={() => navigation.navigate('Forgot Password')}
           accessibilityLabel="Forgot Password button"
         >
           <Text style={[styles.navButtonText, { color: COLORS.white }]}>
@@ -111,7 +111,7 @@ const LoginScreen = ({ navigation }) => {
 
         <TouchableRipple
           style={[styles.navButton, { marginTop: 5 }]}
-          onPress={() => navigation.navigate("Register")}
+          onPress={() => navigation.navigate('Register')}
           accessibilityLabel="Create Account button"
         >
           <Text style={[styles.navButtonText, { color: COLORS.white }]}>
@@ -132,48 +132,48 @@ const styles = StyleSheet.create({
     flexGrow: 1,
   },
   image: {
-    width: "75%",
-    height: "40%",
-    alignSelf: "center",
+    width: '75%',
+    height: '40%',
+    alignSelf: 'center',
     marginTop: 30,
     marginBottom: 10,
   },
   input: {
     marginBottom: 5,
-    alignSelf: "center",
+    alignSelf: 'center',
     backgroundColor: COLORS.primary,
     width: DIMENSIONS.componentWidth,
     height: 55,
   },
   loginButton: {
-    width: "80%",
+    width: '80%',
     backgroundColor: COLORS.maroon,
     padding: 10,
-    alignSelf: "center",
-    alignItems: "center",
+    alignSelf: 'center',
+    alignItems: 'center',
     marginTop: 20,
     borderRadius: DIMENSIONS.cornerCurve,
   },
   navButton: {
-    width: "50%",
+    width: '50%',
     backgroundColor: COLORS.primary,
     padding: 5,
-    alignSelf: "center",
-    alignItems: "center",
-    justifyContent: "center",
+    alignSelf: 'center',
+    alignItems: 'center',
+    justifyContent: 'center',
     marginTop: 10,
     borderRadius: DIMENSIONS.cornerCurve,
   },
   navButtonText: {
     color: COLORS.white,
-    alignSelf: "center",
+    alignSelf: 'center',
     fontSize: FONTSIZES.small,
-    flexDirection: "row",
-    fontWeight: "400",
+    flexDirection: 'row',
+    fontWeight: '400',
   },
   errorText: {
-    color: "red",
-    alignSelf: "center",
+    color: 'red',
+    alignSelf: 'center',
     marginTop: 10,
     paddingHorizontal: 20,
   },

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect } from 'react';
 import {
   Image,
   StyleSheet,
@@ -8,17 +8,17 @@ import {
   ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
-} from "react-native";
-import { PaperProvider, Text, TouchableRipple } from "react-native-paper";
-import axios from "axios";
-import { COLORS, DIMENSIONS, FONTSIZES } from "../components/Constants";
-import { CommonActions } from "@react-navigation/native";
-import logoLatin from "../../assets/latin_logo.png";
+} from 'react-native';
+import { PaperProvider, Text, TouchableRipple } from 'react-native-paper';
+import axios from 'axios';
+import { COLORS, DIMENSIONS, FONTSIZES } from '../components/Constants';
+import { CommonActions } from '@react-navigation/native';
+import logoLatin from '../../assets/latin_logo.png';
 
 const VerificationScreen = ({ navigation, route }) => {
   const { recipientEmail } = route.params;
-  const [code, setCode] = useState(["", "", "", "", "", ""]);
-  const [verificationCode, setVerificationCode] = useState("");
+  const [code, setCode] = useState(['', '', '', '', '', '']);
+  const [verificationCode, setVerificationCode] = useState('');
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -33,43 +33,43 @@ const VerificationScreen = ({ navigation, route }) => {
 
   const sendVerificationCodeToEmail = async (email, code) => {
     try {
-      await axios.post("/email/send-verification-code", {
+      await axios.post('/email/send-verification-code', {
         email,
         code,
       });
     } catch (error) {
-      Alert.alert("Error", "Failed to send verification code");
+      Alert.alert('Error', 'Failed to send verification code');
       console.error(error);
     }
   };
 
   const handleVerification = async () => {
     setLoading(true);
-    const enteredCode = code.join("");
+    const enteredCode = code.join('');
     if (enteredCode === verificationCode) {
       try {
-        const response = await axios.patch("/auth/verify", null, {
+        const response = await axios.patch('/auth/verify', null, {
           params: { email: recipientEmail },
         });
         if (response.status === 200) {
           navigation.dispatch(
             CommonActions.reset({
               index: 0,
-              routes: [{ name: "Login" }],
+              routes: [{ name: 'Login' }],
             })
           );
         } else {
-          Alert.alert("Error", "Verification failed. Please try again.");
+          Alert.alert('Error', 'Verification failed. Please try again.');
         }
       } catch (error) {
         console.error(error);
-        Alert.alert("Error", "An error occurred during verification.");
+        Alert.alert('Error', 'An error occurred during verification.');
       } finally {
         setLoading(false);
       }
     } else {
       setLoading(false);
-      Alert.alert("Error", "Invalid verification code");
+      Alert.alert('Error', 'Invalid verification code');
     }
   };
 
@@ -88,15 +88,12 @@ const VerificationScreen = ({ navigation, route }) => {
   return (
     <PaperProvider>
       <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.container}
         keyboardVerticalOffset={Platform.select({ ios: 60, android: 0 })}
       >
         <View style={styles.wrapper}>
-          <Image
-            style={styles.logo}
-            source={logoLatin}
-          />
+          <Image style={styles.logo} source={logoLatin} />
           <Text style={[styles.text, styles.boldText]}>
             Verify your school email
           </Text>
@@ -108,7 +105,7 @@ const VerificationScreen = ({ navigation, route }) => {
           <Text style={styles.wrongEmailText}>
             <TouchableRipple
               onPress={() =>
-                navigation.navigate("Email Change", {
+                navigation.navigate('Email Change', {
                   oldEmail: recipientEmail,
                 })
               }
@@ -121,7 +118,7 @@ const VerificationScreen = ({ navigation, route }) => {
                   { color: COLORS.white, marginBottom: -4 },
                 ]}
               >
-                Click here{" "}
+                Click here{' '}
               </Text>
             </TouchableRipple>
             if you would like to change the email address you signed up with.
@@ -168,38 +165,38 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: COLORS.black,
-    justifyContent: "center",
+    justifyContent: 'center',
   },
   wrapper: {
     backgroundColor: COLORS.primary,
     width: DIMENSIONS.componentWidth,
-    alignSelf: "center",
+    alignSelf: 'center',
     borderRadius: DIMENSIONS.cornerCurve,
     padding: 20,
   },
   logo: {
     width: 160,
     height: 160,
-    alignSelf: "center",
+    alignSelf: 'center',
     marginTop: 30,
     marginBottom: 10,
     borderRadius: 150,
   },
   text: {
-    textAlign: "center",
+    textAlign: 'center',
     color: COLORS.black,
   },
   boldText: {
     fontSize: FONTSIZES.medium,
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
   infoText: {
     fontSize: FONTSIZES.small,
     marginVertical: 20,
   },
   codeContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     marginVertical: 20,
   },
   codeInput: {
@@ -207,28 +204,28 @@ const styles = StyleSheet.create({
     height: 50,
     borderWidth: 3,
     borderColor: COLORS.black,
-    textAlign: "center",
+    textAlign: 'center',
     fontSize: FONTSIZES.medium,
     color: COLORS.white,
     backgroundColor: COLORS.primary,
   },
   wrongEmailText: {
-    textAlign: "center",
+    textAlign: 'center',
     fontSize: FONTSIZES.small,
     marginTop: -5,
-    fontWeight: "400",
+    fontWeight: '400',
   },
   verifyButton: {
-    width: "80%",
+    width: '80%',
     backgroundColor: COLORS.maroon,
     padding: 10,
-    alignSelf: "center",
-    alignItems: "center",
+    alignSelf: 'center',
+    alignItems: 'center',
     marginTop: 20,
     borderRadius: DIMENSIONS.cornerCurve,
   },
   verifyButtonText: {
-    fontWeight: "bold",
+    fontWeight: 'bold',
     fontSize: FONTSIZES.large,
     color: COLORS.white,
   },

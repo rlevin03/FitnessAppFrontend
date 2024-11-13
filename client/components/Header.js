@@ -1,6 +1,6 @@
-import { Appbar } from "react-native-paper";
-import { COLORS, FONTSIZES } from "./Constants";
-import { StyleSheet } from "react-native";
+import { Appbar } from 'react-native-paper';
+import { COLORS, FONTSIZES } from './Constants';
+import { StyleSheet } from 'react-native';
 
 const Header = ({ navigation, title }) => {
   return (
@@ -9,7 +9,7 @@ const Header = ({ navigation, title }) => {
       <Appbar.Content
         color={COLORS.white}
         titleStyle={{
-          fontWeight: "bold",
+          fontWeight: 'bold',
           fontSize: FONTSIZES.large,
           marginLeft: -5,
         }}

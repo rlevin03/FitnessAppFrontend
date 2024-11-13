@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useState } from "react";
+import React, { useCallback, useContext, useState } from 'react';
 import {
   PaperProvider,
   Text,
@@ -7,32 +7,32 @@ import {
   Portal,
   Button,
   ActivityIndicator,
-} from "react-native-paper";
-import { MaterialCommunityIcons } from "@expo/vector-icons"; // Ensure you have this import
-import Header from "../components/Header";
-import { Alert, StyleSheet, View } from "react-native";
+} from 'react-native-paper';
+import { MaterialCommunityIcons } from '@expo/vector-icons'; // Ensure you have this import
+import Header from '../components/Header';
+import { Alert, StyleSheet, View } from 'react-native';
 import {
   adjustDateToLocal,
   COLORS,
   createTimeRange,
   DIMENSIONS,
   FONTSIZES,
-} from "../components/Constants";
-import { UserContext } from "../../UserContext";
-import axios from "axios";
-import { useFocusEffect } from "@react-navigation/native";
+} from '../components/Constants';
+import { UserContext } from '../../UserContext';
+import axios from 'axios';
+import { useFocusEffect } from '@react-navigation/native';
 
 const getDaySuffix = (day) => {
-  if (day > 3 && day < 21) return "th";
+  if (day > 3 && day < 21) return 'th';
   switch (day % 10) {
     case 1:
-      return "st";
+      return 'st';
     case 2:
-      return "nd";
+      return 'nd';
     case 3:
-      return "rd";
+      return 'rd';
     default:
-      return "th";
+      return 'th';
   }
 };
 
@@ -40,7 +40,7 @@ const ClassDescriptionScreen = ({ navigation, route }) => {
   const { classData } = route.params;
   const { user } = useContext(UserContext);
   const classFull = classData.usersSignedUp.length >= classData.maxCapacity;
-  const [instructor, setInstructor] = useState("");
+  const [instructor, setInstructor] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const [updatedClassData, setUpdatedClassData] = useState(classData);
@@ -53,20 +53,20 @@ const ClassDescriptionScreen = ({ navigation, route }) => {
 
   const getInstructor = async () => {
     try {
-      const response = await axios.get("/classes/instructor", {
+      const response = await axios.get('/classes/instructor', {
         params: { instructorId: updatedClassData.instructor },
       });
       setInstructor(response.data);
     } catch (error) {
-      console.error("Error fetching instructor:", error);
+      console.error('Error fetching instructor:', error);
     }
   };
 
   const handleJoinClass = async () => {
     if (classData.paymentRequired && !user.paid) {
       Alert.alert(
-        "Payment Required",
-        "You need to pay the classes fee to register for this class."
+        'Payment Required',
+        'You need to pay the classes fee to register for this class.'
       );
       return;
     }
@@ -74,7 +74,7 @@ const ClassDescriptionScreen = ({ navigation, route }) => {
     setLoading(true);
 
     try {
-      const response = await axios.patch("/classes/reserve", {
+      const response = await axios.patch('/classes/reserve', {
         classId: updatedClassData._id,
         userId: user._id,
       });
@@ -83,8 +83,8 @@ const ClassDescriptionScreen = ({ navigation, route }) => {
         setUpdatedClassData(response.data.classData);
       }
     } catch (error) {
-      console.error("Error joining class:", error);
-      Alert.alert("Error", "Could not reserve the spot. Please try again.");
+      console.error('Error joining class:', error);
+      Alert.alert('Error', 'Could not reserve the spot. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -93,18 +93,18 @@ const ClassDescriptionScreen = ({ navigation, route }) => {
   const handleLeaveClass = async () => {
     setLoading(true);
     try {
-      const response = await axios.patch("/classes/cancel", {
+      const response = await axios.patch('/classes/cancel', {
         classId: updatedClassData._id,
         userId: user._id,
       });
 
-      if (response.status === 200) {  
+      if (response.status === 200) {
         setUpdatedClassData(response.data.classData);
         setModalVisible(false);
       }
     } catch (error) {
-      console.error("Error leaving class:", error);
-      Alert.alert("Error", "Could not leave the class. Please try again.");
+      console.error('Error leaving class:', error);
+      Alert.alert('Error', 'Could not leave the class. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -123,7 +123,7 @@ const ClassDescriptionScreen = ({ navigation, route }) => {
             onPress={handleLeaveClass}
             style={styles.modalButton}
           >
-            {classFull ? "Leave Waitlist" : "Cancel Reservation"}
+            {classFull ? 'Leave Waitlist' : 'Cancel Reservation'}
           </Button>
         </Modal>
       </Portal>
@@ -136,13 +136,13 @@ const ClassDescriptionScreen = ({ navigation, route }) => {
         </View>
         <View style={[styles.componentContainer, { marginVertical: 3 }]}>
           <Text style={styles.dateText}>
-            {adjustDateToLocal(classData.date).toLocaleDateString("en-US", {
-              weekday: "long",
+            {adjustDateToLocal(classData.date).toLocaleDateString('en-US', {
+              weekday: 'long',
             })}
-            ,{" "}
-            {adjustDateToLocal(classData.date).toLocaleDateString("en-US", {
-              month: "long",
-            })}{" "}
+            ,{' '}
+            {adjustDateToLocal(classData.date).toLocaleDateString('en-US', {
+              month: 'long',
+            })}{' '}
             {adjustDateToLocal(classData.date).getDate()}
             {getDaySuffix(new Date(updatedClassData.date).getDate())}
           </Text>
@@ -192,13 +192,13 @@ const ClassDescriptionScreen = ({ navigation, route }) => {
                 styles.buttonInner,
                 styles.button,
                 updatedClassData.attendanceTaken && {
-                  justifyContent: "center",
+                  justifyContent: 'center',
                 },
               ]}
             >
               <Text style={styles.buttonText}>
                 {updatedClassData.usersSignedUp.includes(user._id)
-                  ? "You Reserved a Spot"
+                  ? 'You Reserved a Spot'
                   : `You're on the Waitlist at position ${
                       updatedClassData.usersOnWaitList.indexOf(user._id) + 1
                     }`}
@@ -222,10 +222,10 @@ const ClassDescriptionScreen = ({ navigation, route }) => {
                 <ActivityIndicator color={COLORS.white} />
               ) : (
                 <View
-                  style={[styles.buttonInner, { justifyContent: "center" }]}
+                  style={[styles.buttonInner, { justifyContent: 'center' }]}
                 >
                   <Text style={styles.buttonText}>
-                    {classFull ? "Join Waitlist" : "Join Class"}
+                    {classFull ? 'Join Waitlist' : 'Join Class'}
                   </Text>
                 </View>
               )}
@@ -258,9 +258,9 @@ const ClassDescriptionScreen = ({ navigation, route }) => {
           <Text style={styles.infoTitle}>What to Bring</Text>
           <View
             style={{
-              flexDirection: "row",
-              justifyContent: "center",
-              flexWrap: "wrap",
+              flexDirection: 'row',
+              justifyContent: 'center',
+              flexWrap: 'wrap',
             }}
           >
             {updatedClassData.equipmentToBring &&
@@ -269,8 +269,8 @@ const ClassDescriptionScreen = ({ navigation, route }) => {
                 <Text key={index} style={styles.infoContent}>
                   {equipment}
                   {index < updatedClassData.equipmentToBring.length - 1
-                    ? ",  "
-                    : ""}
+                    ? ',  '
+                    : ''}
                 </Text>
               ))
             ) : (
@@ -291,7 +291,7 @@ const styles = StyleSheet.create({
   componentContainer: {
     backgroundColor: COLORS.tertiary,
     padding: 10,
-    width: "100%",
+    width: '100%',
   },
   textMedium: {
     color: COLORS.white,
@@ -301,24 +301,24 @@ const styles = StyleSheet.create({
   titleText: {
     color: COLORS.white,
     fontSize: 36,
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
   dateText: {
     color: COLORS.white,
     fontSize: FONTSIZES.large,
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
   labelText: {
     color: COLORS.white,
     fontSize: FONTSIZES.medium,
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
   infoRow: {
-    flexDirection: "row",
+    flexDirection: 'row',
     marginVertical: 2,
   },
   sectionTitle: {
-    fontWeight: "bold",
+    fontWeight: 'bold',
     marginBottom: 10,
     color: COLORS.white,
     fontSize: FONTSIZES.medium,
@@ -327,18 +327,18 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.primary,
     paddingVertical: 10,
     borderRadius: 5,
-    alignSelf: "center",
+    alignSelf: 'center',
     width: DIMENSIONS.componentWidth,
   },
   buttonText: {
     color: COLORS.white,
     fontSize: FONTSIZES.medium,
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
   buttonInner: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     paddingHorizontal: 15,
   },
   modalContainer: {
@@ -347,9 +347,9 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     marginTop: 0,
     borderRadius: DIMENSIONS.cornerCurve,
-    alignItems: "center",
-    justifyContent: "flex-start",
-    position: "absolute",
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    position: 'absolute',
     top: 70,
     left: 0,
     right: 0,
@@ -365,30 +365,30 @@ const styles = StyleSheet.create({
   },
   infoSection: {
     marginTop: 3,
-    flexDirection: "row",
+    flexDirection: 'row',
     backgroundColor: COLORS.primary,
     padding: 10,
   },
   infoColumn: {
     flex: 1,
-    alignItems: "center",
+    alignItems: 'center',
   },
   infoTitle: {
     color: COLORS.secondary,
     marginBottom: 10,
-    textAlign: "center",
+    textAlign: 'center',
     fontSize: FONTSIZES.small,
   },
   infoContent: {
     color: COLORS.white,
-    fontWeight: "bold",
-    textAlign: "center",
+    fontWeight: 'bold',
+    textAlign: 'center',
     fontSize: FONTSIZES.small,
   },
   equipmentContainer: {
     backgroundColor: COLORS.primary,
-    alignSelf: "center",
-    width: "100%",
+    alignSelf: 'center',
+    width: '100%',
     borderBottomRightRadius: DIMENSIONS.cornerCurve * 3,
     borderBottomLeftRadius: DIMENSIONS.cornerCurve * 3,
     padding: 20,
