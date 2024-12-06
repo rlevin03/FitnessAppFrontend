@@ -5,6 +5,8 @@ import {
   Platform,
   StyleSheet,
   Text,
+  ScrollView,
+  Dimensions,
 } from 'react-native';
 import {
   Button,
@@ -20,6 +22,7 @@ import {
   COLORS,
   DIMENSIONS,
   FONTSIZES,
+  isTablet,
   VALIDEMAILS,
 } from '../components/Constants';
 import axios from 'axios';
@@ -83,107 +86,112 @@ const RegisterScreen = ({ navigation }) => {
         style={styles.container}
         keyboardVerticalOffset={Platform.select({ ios: 60, android: 0 })}
       >
-        <Image style={styles.image} source={logo} />
-        <TextInput
-          mode="outlined"
-          label="Valid Email"
-          textColor="white"
-          autoCapitalize="none"
-          activeOutlineColor="white"
-          style={styles.input}
-          value={email}
-          onChangeText={setEmail}
-        />
-        <TextInput
-          mode="outlined"
-          label="Name"
-          textColor="white"
-          activeOutlineColor="white"
-          style={styles.input}
-          value={name}
-          onChangeText={setName}
-        />
-        <TextInput
-          mode="outlined"
-          label="Password"
-          textColor="white"
-          autoCapitalize="none"
-          secureTextEntry
-          activeOutlineColor="white"
-          style={styles.input}
-          value={password}
-          onChangeText={setPassword}
-        />
-        <TextInput
-          mode="outlined"
-          label="Re-enter Password"
-          textColor="white"
-          autoCapitalize="none"
-          secureTextEntry
-          activeOutlineColor="white"
-          style={styles.input}
-          value={password2}
-          onChangeText={setPassword2}
-        />
+        <ScrollView contentContainerStyle={styles.scrollContainer}>
+          <Image style={styles.image} source={logo} />
+          <TextInput
+            mode="outlined"
+            label="Valid Email"
+            textColor="white"
+            autoCapitalize="none"
+            activeOutlineColor="white"
+            style={styles.input}
+            value={email}
+            onChangeText={setEmail}
+          />
+          <TextInput
+            mode="outlined"
+            label="Name"
+            textColor="white"
+            activeOutlineColor="white"
+            style={styles.input}
+            value={name}
+            onChangeText={setName}
+          />
+          <TextInput
+            mode="outlined"
+            label="Password"
+            textColor="white"
+            autoCapitalize="none"
+            secureTextEntry
+            activeOutlineColor="white"
+            style={styles.input}
+            value={password}
+            onChangeText={setPassword}
+          />
+          <TextInput
+            mode="outlined"
+            label="Re-enter Password"
+            textColor="white"
+            autoCapitalize="none"
+            secureTextEntry
+            activeOutlineColor="white"
+            style={styles.input}
+            value={password2}
+            onChangeText={setPassword2}
+          />
 
-        <TouchableRipple
-          style={[styles.input, { marginTop: 10 }]}
-          onPress={toggleModal}
-        >
-          <Text style={styles.campusText}>
-            {campus ? `Campus: ${campus}` : 'Select Campus'}
-          </Text>
-        </TouchableRipple>
-
-        <Portal>
-          <Modal
-            visible={visible}
-            onDismiss={toggleModal}
-            contentContainerStyle={styles.modalContainer}
+          <TouchableRipple
+            style={[styles.input, styles.campusButton]}
+            onPress={toggleModal}
           >
-            <Text style={styles.modalTitle}>Select your campus:</Text>
-            <RadioButton.Group
-              onValueChange={(newValue) => setSelectedCampus(newValue)}
-              value={selectedCampus}
-            >
-              {CAMPUSES.map((campusItem) => (
-                <RadioButton.Item
-                  mode="android"
-                  color={COLORS.black}
-                  label={campusItem}
-                  value={campusItem}
-                  key={campusItem}
-                />
-              ))}
-            </RadioButton.Group>
-            <Button
-              mode="contained"
-              onPress={handleSetCampus}
-              style={styles.modalButton}
-            >
-              Confirm
-            </Button>
-            <Button
-              onPress={toggleModal}
-              style={[styles.modalButton, { backgroundColor: 'transparent' }]}
-              textColor={COLORS.primary}
-            >
-              Cancel
-            </Button>
-          </Modal>
-        </Portal>
+            <Text style={styles.campusText}>
+              {campus ? `Campus: ${campus}` : 'Select Campus'}
+            </Text>
+          </TouchableRipple>
 
-        {error ? <Text style={styles.errorText}>{error}</Text> : null}
-        <TouchableRipple style={styles.registerButton} onPress={handleRegister}>
-          <Text style={styles.registerButtonText}>Create Account</Text>
-        </TouchableRipple>
+          <Portal>
+            <Modal
+              visible={visible}
+              onDismiss={toggleModal}
+              contentContainerStyle={styles.modalContainer}
+            >
+              <Text style={styles.modalTitle}>Select your campus:</Text>
+              <RadioButton.Group
+                onValueChange={(newValue) => setSelectedCampus(newValue)}
+                value={selectedCampus}
+              >
+                {CAMPUSES.map((campusItem) => (
+                  <RadioButton.Item
+                    mode="android"
+                    color={COLORS.black}
+                    label={campusItem}
+                    value={campusItem}
+                    key={campusItem}
+                  />
+                ))}
+              </RadioButton.Group>
+              <Button
+                mode="contained"
+                onPress={handleSetCampus}
+                style={styles.modalButton}
+              >
+                Confirm
+              </Button>
+              <Button
+                onPress={toggleModal}
+                style={[styles.modalButton, { backgroundColor: 'transparent' }]}
+                textColor={COLORS.primary}
+              >
+                Cancel
+              </Button>
+            </Modal>
+          </Portal>
 
-        <TouchableRipple
-          style={styles.navButton}
-          onPress={() => navigation.navigate('Login')}
-        >
-          <Text style={styles.navButtonText}>Have an account?</Text>
-        </TouchableRipple>
+          {error ? <Text style={styles.errorText}>{error}</Text> : null}
+          <TouchableRipple
+            style={styles.registerButton}
+            onPress={handleRegister}
+          >
+            <Text style={styles.registerButtonText}>Create Account</Text>
+          </TouchableRipple>
+
+          <TouchableRipple
+            style={styles.navButton}
+            onPress={() => navigation.navigate('Login')}
+          >
+            <Text style={styles.navButtonText}>Have an account?</Text>
+          </TouchableRipple>
+        </ScrollView>
       </KeyboardAvoidingView>
     </PaperProvider>
   );
@@ -193,36 +201,43 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: COLORS.black,
-    paddingHorizontal: 20,
+  },
+  scrollContainer: {
+    flexGrow: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: isTablet ? 40 : 20,
+    paddingHorizontal: isTablet ? 30 : 20,
   },
   image: {
-    width: '75%',
-    height: '30%',
-    alignSelf: 'center',
-    marginTop: 30,
-    marginBottom: 10,
+    width: isTablet ? '35%' : '50%',
+    height: isTablet ? '25%' : '20%',
+    resizeMode: 'contain',
+    marginBottom: isTablet ? 30 : 20,
   },
   input: {
-    marginBottom: 5,
+    marginBottom: 10,
     borderRadius: DIMENSIONS.cornerCurve,
-    alignSelf: 'center',
     backgroundColor: COLORS.primary,
     width: DIMENSIONS.componentWidth,
     height: 55,
     justifyContent: 'center',
   },
+  campusButton: {
+    marginTop: isTablet ? 15 : 10,
+    alignItems: 'flex-start',
+    paddingHorizontal: 10,
+  },
   campusText: {
     color: COLORS.white,
-    fontSize: FONTSIZES.medium,
-    paddingLeft: 15,
+    fontSize: FONTSIZES.small,
   },
   registerButton: {
-    width: '80%',
+    width: isTablet ? '70%' : '80%',
     backgroundColor: COLORS.maroon,
-    padding: 10,
-    alignSelf: 'center',
+    padding: 15,
     alignItems: 'center',
-    marginTop: 20,
+    marginTop: isTablet ? 30 : 20,
     borderRadius: DIMENSIONS.cornerCurve,
   },
   registerButtonText: {
@@ -231,19 +246,18 @@ const styles = StyleSheet.create({
     color: COLORS.white,
   },
   errorText: {
-    color: 'red',
-    alignSelf: 'center',
-    marginTop: 10,
+    color: COLORS.primary,
+    textAlign: 'center',
+    marginTop: isTablet ? 15 : 10,
     fontWeight: 'bold',
   },
   navButton: {
-    width: '50%',
+    width: isTablet ? '40%' : '50%',
     backgroundColor: COLORS.primary,
-    padding: 5,
-    alignSelf: 'center',
+    padding: 10,
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 10,
+    marginTop: isTablet ? 15 : 10,
     borderRadius: DIMENSIONS.cornerCurve,
   },
   navButtonText: {
@@ -254,7 +268,7 @@ const styles = StyleSheet.create({
   modalContainer: {
     backgroundColor: COLORS.white,
     padding: 20,
-    marginHorizontal: 20,
+    marginHorizontal: isTablet ? 40 : 20,
     borderRadius: 10,
   },
   modalTitle: {

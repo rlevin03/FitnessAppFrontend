@@ -1,3 +1,6 @@
+import { Dimensions } from 'react-native';
+
+// Should be official northeastern colors
 export const COLORS = {
   primary: '#C8102E',
   secondary: '#98D1B5',
@@ -7,19 +10,23 @@ export const COLORS = {
   white: '#FFFFFF',
 };
 
+export const isTablet = Dimensions.get('window').width >= 768;
+
 export const FONTSIZES = {
-  small: 16,
-  medium: 20,
-  large: 24,
+  small: isTablet ? 20 : 16,
+  medium: isTablet ? 24 : 20,
+  large: isTablet ? 28 : 24,
 };
 
 export const DIMENSIONS = {
-  componentWidth: '95%',
-  cornerCurve: 5,
+  componentWidth: isTablet ? '90%' : '95%',
+  cornerCurve: isTablet ? 8 : 5,
 };
 
+// Valid emails domains. gmail is included for testing purposes and should be removed in production.
 export const VALIDEMAILS = ['northeastern.edu', 'husky.neu.edu', 'gmail.com'];
 
+// The campuses that are available for selection
 export const CAMPUSES = ['Boston', 'Oakland', 'London', 'Seattle'];
 
 export function createTimeRange(startDateTime, durationMinutes) {

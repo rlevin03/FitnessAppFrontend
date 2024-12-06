@@ -11,7 +11,12 @@ import {
   TextInput,
   TouchableRipple,
 } from 'react-native-paper';
-import { COLORS, DIMENSIONS, FONTSIZES } from '../components/Constants';
+import {
+  COLORS,
+  DIMENSIONS,
+  FONTSIZES,
+  isTablet,
+} from '../components/Constants';
 import { useState, useContext } from 'react';
 import { CommonActions } from '@react-navigation/native';
 import { UserContext } from '../../UserContext';
@@ -88,13 +93,7 @@ const LoginScreen = ({ navigation }) => {
           disabled={isLoading}
           accessibilityLabel="Login button"
         >
-          <Text
-            style={{
-              fontWeight: 'bold',
-              fontSize: FONTSIZES.large,
-              color: COLORS.white,
-            }}
-          >
+          <Text style={styles.loginButtonText}>
             {isLoading ? 'Logging in...' : 'Login'}
           </Text>
         </TouchableRipple>
@@ -104,19 +103,15 @@ const LoginScreen = ({ navigation }) => {
           onPress={() => navigation.navigate('Forgot Password')}
           accessibilityLabel="Forgot Password button"
         >
-          <Text style={[styles.navButtonText, { color: COLORS.white }]}>
-            Forgot Password
-          </Text>
+          <Text style={styles.navButtonText}>Forgot Password</Text>
         </TouchableRipple>
 
         <TouchableRipple
-          style={[styles.navButton, { marginTop: 5 }]}
+          style={[styles.navButton, { marginTop: isTablet ? 10 : 5 }]}
           onPress={() => navigation.navigate('Register')}
           accessibilityLabel="Create Account button"
         >
-          <Text style={[styles.navButtonText, { color: COLORS.white }]}>
-            Create Account
-          </Text>
+          <Text style={styles.navButtonText}>Create Account</Text>
         </TouchableRipple>
       </KeyboardAvoidingView>
     </PaperProvider>
@@ -127,55 +122,52 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: COLORS.black,
-  },
-  scrollContainer: {
-    flexGrow: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   image: {
-    width: '75%',
-    height: '40%',
-    alignSelf: 'center',
-    marginTop: 30,
-    marginBottom: 10,
+    width: isTablet ? '35%' : '65%',
+    height: isTablet ? '25%' : '30%',
+    resizeMode: 'contain',
+    marginBottom: isTablet ? 30 : 10,
   },
   input: {
     marginBottom: 5,
-    alignSelf: 'center',
     backgroundColor: COLORS.primary,
     width: DIMENSIONS.componentWidth,
     height: 55,
   },
   loginButton: {
-    width: '80%',
+    width: isTablet ? '70%' : '80%',
     backgroundColor: COLORS.maroon,
     padding: 10,
-    alignSelf: 'center',
     alignItems: 'center',
-    marginTop: 20,
+    marginTop: isTablet ? 25 : 20,
     borderRadius: DIMENSIONS.cornerCurve,
   },
+  loginButtonText: {
+    fontWeight: 'bold',
+    fontSize: FONTSIZES.large,
+    color: COLORS.white,
+  },
   navButton: {
-    width: '50%',
+    width: isTablet ? '40%' : '50%',
     backgroundColor: COLORS.primary,
     padding: 5,
-    alignSelf: 'center',
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 10,
+    marginTop: isTablet ? 15 : 10,
     borderRadius: DIMENSIONS.cornerCurve,
   },
   navButtonText: {
     color: COLORS.white,
-    alignSelf: 'center',
     fontSize: FONTSIZES.small,
-    flexDirection: 'row',
-    fontWeight: '400',
   },
   errorText: {
-    color: 'red',
-    alignSelf: 'center',
-    marginTop: 10,
-    paddingHorizontal: 20,
+    color: COLORS.primary,
+    textAlign: 'center',
+    marginTop: isTablet ? 15 : 10,
+    fontWeight: 'bold',
   },
 });
 

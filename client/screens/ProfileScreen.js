@@ -1,33 +1,23 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { Linking, StyleSheet, View } from 'react-native';
 import { Button, Modal, PaperProvider, Text } from 'react-native-paper';
-import { COLORS, DIMENSIONS, FONTSIZES } from '../components/Constants';
+import {
+  COLORS,
+  DIMENSIONS,
+  FONTSIZES,
+  isTablet,
+} from '../components/Constants';
 import SettingsOption from '../components/SettingsOption';
 import Header from '../components/Header';
 import { UserContext } from '../../UserContext';
 import axios from 'axios';
 import { useFocusEffect } from '@react-navigation/native';
-
-const monthNames = [
-  'January',
-  'February',
-  'March',
-  'April',
-  'May',
-  'June',
-  'July',
-  'August',
-  'September',
-  'October',
-  'November',
-  'December',
-];
+import moment from 'moment';
 
 const ProfileScreen = ({ navigation }) => {
   const { user } = useContext(UserContext);
   const [classesAttended, setClassesAttended] = useState(0);
-  const currentMonth = monthNames[new Date().getMonth()];
-  const currentYear = new Date().getFullYear();
+  const currentMonthYear = moment().format('MMMM YYYY');
   const [visible, setVisible] = useState(false);
 
   const showModal = () => setVisible(true);
@@ -59,7 +49,7 @@ const ProfileScreen = ({ navigation }) => {
             <Text style={styles.classesAttendedText}>Classes Attended</Text>
             <Text
               style={styles.dateText}
-            >{`${currentMonth} ${currentYear}`}</Text>
+            >{`${currentMonthYear}`}</Text>
           </View>
           <View style={styles.classesAttendedNumberContainer}>
             <Text style={styles.classesAttendedNumber}>{classesAttended}</Text>
@@ -67,13 +57,13 @@ const ProfileScreen = ({ navigation }) => {
         </View>
         <Button
           mode="contained"
-          style={styles.paymentButton}
+          style={[styles.button, {backgroundColor: COLORS.tertiary}] }
           onPress={showModal}
         >
-          <Text style={styles.paymentText}>Pay for Recreation Classes</Text>
+          <Text style={[styles.paymentText, {padding: 5}]}>Pay for Recreation Classes</Text>
         </Button>
 
-        <View style={styles.settingsContainer}>
+        <View>
           <Text style={styles.userText}>{user.name}</Text>
           <SettingsOption
             title="Account"
@@ -121,7 +111,7 @@ const ProfileScreen = ({ navigation }) => {
               circumstances.
             </Text>
             <Button
-              style={styles.paymentConfirmButton}
+              style={[styles.button, {marginTop: 20}]}
               onPress={() =>
                 Linking.openURL(
                   'https://commerce.cashnet.com/MARINOCENTER?itemcode=SFMC-AERO'
@@ -153,8 +143,8 @@ const styles = StyleSheet.create({
     borderRadius: DIMENSIONS.cornerCurve,
   },
   classesAttendedContainer: {
-    marginVertical: 20,
-    padding: 20,
+    marginVertical: isTablet ? 30 : 20,
+    padding: isTablet ? 30 : 20,
     backgroundColor: COLORS.primary,
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -191,21 +181,10 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: FONTSIZES.large,
   },
-  paymentButton: {
-    padding: 3,
-    backgroundColor: COLORS.tertiary,
-    width: DIMENSIONS.componentWidth,
-    alignSelf: 'center',
-    borderRadius: DIMENSIONS.cornerCurve,
-  },
   paymentText: {
     color: COLORS.white,
     fontWeight: 'bold',
     fontSize: FONTSIZES.medium,
-    paddingTop: 2,
-  },
-  settingsContainer: {
-    marginTop: 20,
   },
   userText: {
     color: COLORS.black,
@@ -219,14 +198,14 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: DIMENSIONS.cornerCurve,
     borderTopRightRadius: DIMENSIONS.cornerCurve,
   },
-  paymentConfirmButton: {
+  button: {
     backgroundColor: COLORS.primary,
     width: DIMENSIONS.componentWidth,
     alignSelf: 'center',
     justifyContent: 'center',
     alignContent: 'center',
     borderRadius: DIMENSIONS.cornerCurve,
-    marginTop: 20,
+    marginBottom: isTablet ? 30 : 20,
   },
 });
 

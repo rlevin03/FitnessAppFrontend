@@ -1,16 +1,16 @@
-import React, { useState, useCallback } from "react";
-import { FlatList, StyleSheet, View } from "react-native";
+import React, { useState, useCallback } from 'react';
+import { FlatList, StyleSheet, View } from 'react-native';
 import {
   Icon,
   PaperProvider,
   Text,
   TouchableRipple,
   ActivityIndicator,
-} from "react-native-paper";
-import { COLORS, DIMENSIONS, FONTSIZES } from "../../components/Constants";
-import Header from "../../components/Header";
-import axios from "axios";
-import { useFocusEffect } from "@react-navigation/native";
+} from 'react-native-paper';
+import { COLORS, DIMENSIONS, FONTSIZES } from '../../components/Constants';
+import Header from '../../components/Header';
+import axios from 'axios';
+import { useFocusEffect } from '@react-navigation/native';
 
 const AttendanceScreen = ({ navigation, route }) => {
   const { classData } = route.params;
@@ -23,13 +23,13 @@ const AttendanceScreen = ({ navigation, route }) => {
   const fetchUserData = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await axios.get("/users/signees", {
+      const response = await axios.get('/users/signees', {
         params: { classId: updatedClassData._id },
       });
       setUserData(response.data);
       setAbsent(response.data.map((user) => user._id)); // Default all users to absent
     } catch (error) {
-      console.error("Error fetching users:", error);
+      console.error('Error fetching users:', error);
     } finally {
       setLoading(false);
     }
@@ -44,7 +44,7 @@ const AttendanceScreen = ({ navigation, route }) => {
   const handleSubmitAttendance = async () => {
     setLoading(true);
     try {
-      const response = await axios.post("/classes/attendance", {
+      const response = await axios.post('/classes/attendance', {
         present,
         absent,
         classId: updatedClassData._id,
@@ -52,7 +52,7 @@ const AttendanceScreen = ({ navigation, route }) => {
       // Update class data with the new attendance state
       setUpdatedClassData(response.data.classData);
     } catch (error) {
-      console.error("Error submitting attendance:", error);
+      console.error('Error submitting attendance:', error);
     } finally {
       setLoading(false);
     }
@@ -174,17 +174,17 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.black,
   },
   checkboxText: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     marginLeft: 10,
     flex: 1,
   },
   checkbox: {
     backgroundColor: COLORS.primary,
     width: DIMENSIONS.componentWidth,
-    alignSelf: "center",
-    flexDirection: "row",
-    alignItems: "center",
+    alignSelf: 'center',
+    flexDirection: 'row',
+    alignItems: 'center',
     marginTop: 10,
     padding: 10,
     borderRadius: DIMENSIONS.cornerCurve,
@@ -197,20 +197,20 @@ const styles = StyleSheet.create({
     width: DIMENSIONS.componentWidth,
     backgroundColor: COLORS.secondary,
     paddingVertical: 10,
-    alignSelf: "center",
+    alignSelf: 'center',
     borderRadius: DIMENSIONS.cornerCurve,
     marginBottom: 20,
   },
   buttonText: {
     fontSize: FONTSIZES.medium,
     color: COLORS.black,
-    fontWeight: "bold",
-    textAlign: "center",
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
   loadingContainer: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 

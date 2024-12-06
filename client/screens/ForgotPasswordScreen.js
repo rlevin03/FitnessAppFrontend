@@ -6,7 +6,12 @@ import {
   TextInput,
   TouchableRipple,
 } from 'react-native-paper';
-import { COLORS, DIMENSIONS, FONTSIZES } from '../components/Constants';
+import {
+  COLORS,
+  DIMENSIONS,
+  FONTSIZES,
+  isTablet,
+} from '../components/Constants';
 import { useState } from 'react';
 
 const ForgotPasswordScreen = ({ navigation }) => {
@@ -84,7 +89,7 @@ const styles = StyleSheet.create({
     height: 55,
   },
   emailChangeButton: {
-    width: '80%',
+    width: isTablet ? '70%' : '80%',
     backgroundColor: COLORS.maroon,
     padding: 10,
     alignSelf: 'center',

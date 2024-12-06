@@ -14,7 +14,12 @@ import {
   Platform,
 } from 'react-native';
 import Header from '../components/Header';
-import { COLORS, DIMENSIONS, FONTSIZES } from '../components/Constants';
+import {
+  COLORS,
+  DIMENSIONS,
+  FONTSIZES,
+  isTablet,
+} from '../components/Constants';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
@@ -70,7 +75,7 @@ const FeedbackScreen = ({ navigation }) => {
                 mode="outlined"
                 label="Enter your feedback"
                 multiline
-                numberOfLines={15}
+                height={isTablet? 500 : 290}
                 activeOutlineColor={COLORS.white}
                 onChangeText={handleChange('feedback')}
                 onBlur={handleBlur('feedback')}
@@ -131,7 +136,6 @@ const styles = StyleSheet.create({
   textInput: {
     textAlignVertical: 'top',
     backgroundColor: COLORS.primary,
-    height: 300,
     width: DIMENSIONS.componentWidth,
     alignSelf: 'center',
   },

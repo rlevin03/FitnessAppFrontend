@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { TouchableRipple, Text } from 'react-native-paper';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { COLORS, DIMENSIONS, FONTSIZES } from './Constants';
+import { COLORS, DIMENSIONS, FONTSIZES, isTablet } from './Constants';
 
 const SettingsOption = ({ title, onPress, roundedBottom, roundedTop }) => {
   return (
@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
   container: {
     width: DIMENSIONS.componentWidth,
     backgroundColor: COLORS.primary,
-    paddingVertical: 15,
+    paddingVertical: isTablet ? 17 : 15,
     alignSelf: 'center',
   },
   content: {
@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
   },
   divider: {
     width: DIMENSIONS.componentWidth,
-    height: 3,
+    height: isTablet ? 4 : 3,
     backgroundColor: COLORS.black,
     alignSelf: 'center',
   },

@@ -14,8 +14,9 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   ScrollView,
+  Dimensions,
 } from 'react-native';
-import CalendarStrip from 'react-native-calendar-strip';
+// import CalendarStrip from 'react-native-calendar-strip';
 import { ImageSlider } from 'react-native-image-slider-banner';
 import {
   Appbar,
@@ -24,7 +25,12 @@ import {
   TouchableRipple,
 } from 'react-native-paper';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { COLORS, DIMENSIONS, FONTSIZES } from '../components/Constants';
+import {
+  COLORS,
+  DIMENSIONS,
+  FONTSIZES,
+  isTablet,
+} from '../components/Constants';
 import ClassSummary from '../components/ClassSummary';
 import { UserContext } from '../../UserContext';
 import {
@@ -42,6 +48,7 @@ import picture4 from '../../assets/marino4.jpg';
 import leftScroller from '../../assets/left-chevron.png';
 import rightScroller from '../../assets/chevron-right.png';
 import { InstructorsContext } from '../../InstructorsContext';
+import CalendarStrip from '../components/CalendarStrip';
 
 const imageSliderData = [
   { img: picture1 },
@@ -53,28 +60,20 @@ const imageSliderData = [
 const Header = memo(() => {
   const navigation = useNavigation();
   const { user } = useContext(UserContext);
-  const campusTitle = user.location ? `${user.location}` : 'Set your campus';
+  const campusTitle = 'Set your campus'; //user.location ? `${user.location}` : 
 
   return (
     <Appbar.Header style={styles.header} mode="center-aligned">
       <Appbar.Action
         icon={() => <Image style={styles.logo} source={logo} />}
-        onPress={() => {}}
+        size={isTablet ? 50 : 45}
       />
-      <Appbar.Content
-        titleStyle={{
-          fontWeight: 'bold',
-          fontSize: FONTSIZES.large,
-          color: COLORS.white,
-          marginLeft: 20,
-        }}
-        title={campusTitle}
-      />
+      <Appbar.Content titleStyle={styles.appbarTitle} title={campusTitle} />
       <Appbar.Action
         icon="account-circle-outline"
         onPress={() => navigation.navigate('Profile')}
         color={COLORS.black}
-        size={45}
+        size={isTablet ? 50 : 45}
       />
     </Appbar.Header>
   );
@@ -222,6 +221,7 @@ const HomeScreen = () => {
   }
 
   if (!userReady || !instructorsReady) {
+    console.log('Loading...');
     return (
       <PaperProvider>
         <View style={styles.centeredContainer}>
@@ -235,15 +235,10 @@ const HomeScreen = () => {
     <PaperProvider>
       <View style={styles.container}>
         <Header />
-        <Text
-          style={[
-            styles.textBig,
-            { textAlign: 'center', color: COLORS.white, paddingVertical: 10 },
-          ]}
+        <Text style={styles.titleText}>Northeastern Recreation</Text>
+        <View
+          style={[styles.buttonContainer, { marginBottom: isTablet ? 15 : 10 }]}
         >
-          Northeastern Recreation
-        </Text>
-        <View style={[styles.buttonContainer, { marginBottom: 10 }]}>
           <TouchableRipple
             onPress={() => navigation.navigate('Reservations')}
             rippleColor={COLORS.primary}
@@ -253,7 +248,7 @@ const HomeScreen = () => {
               <Text style={styles.buttonText}>View My Reservations</Text>
               <MaterialCommunityIcons
                 name="chevron-right"
-                size={30}
+                size={isTablet ? 35 : 30}
                 color={COLORS.black}
               />
             </View>
@@ -279,7 +274,7 @@ const HomeScreen = () => {
             Filters
           </Text>
         </View>
-        <CalendarStrip
+        {/* <CalendarStrip
           startingDate={selectedDate}
           selectedDate={selectedDate}
           minDate={moment().startOf('week')}
@@ -288,20 +283,22 @@ const HomeScreen = () => {
             type: 'background',
             duration: 50,
             highlightColor: COLORS.primary,
+            borderRadius: 10,
           }}
-          style={{ height: 90 }}
-          calendarHeaderStyle={{ color: COLORS.white }}
-          dateNumberStyle={{ color: COLORS.white }}
-          dateNameStyle={{ color: COLORS.secondary }}
-          highlightDateNumberStyle={{ color: COLORS.white }}
-          highlightDateNameStyle={{ color: COLORS.secondary }}
+          style={{ height: isTablet ? 110 : 90 }}
+          calendarHeaderStyle={{ color: COLORS.white, fontSize: 20 }}
+          dateNumberStyle={{ color: COLORS.white, fontSize: 20 }}
+          dateNameStyle={{ color: COLORS.secondary, fontSize: 14 }}
+          highlightDateNumberStyle={{ color: COLORS.white, fontSize: 20 }}
+          highlightDateNameStyle={{ color: COLORS.secondary, fontSize: 14 }}
           onDateSelected={(date) => setSelectedDate(date)}
           customDatesStyles={customDatesStyles}
           iconLeft={leftScroller}
           iconRight={rightScroller}
-          iconLeftStyle={{ paddingRight: 30 }}
-          iconRightStyle={{ paddingLeft: 30 }}
-        />
+          iconLeftStyle={{ paddingRight: isTablet ? 70 : 30 }}
+          iconRightStyle={{ paddingLeft: isTablet ? 70 : 30 }}
+        /> */}
+        <CalendarStrip />
         {Object.values(selectedFilters).flat().length > 0 && (
           <View style={styles.filtersWrapper}>
             <Text style={[styles.textMedium, { color: COLORS.white }]}>
@@ -359,14 +356,7 @@ const HomeScreen = () => {
         <Modal
           visible={visible}
           onDismiss={applyFilters}
-          contentContainerStyle={{
-            backgroundColor: COLORS.tertiary,
-            padding: 20,
-            height: '80%',
-            width: DIMENSIONS.componentWidth,
-            alignSelf: 'center',
-            borderRadius: DIMENSIONS.cornerCurve,
-          }}
+          contentContainerStyle={styles.modalContainer}
         >
           <ScrollView>
             <Text style={styles.modalTitle}>Filter Classes</Text>
@@ -445,6 +435,11 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: COLORS.black,
   },
+  scrollContainer: {
+    flexGrow: 1,
+    alignItems: 'center',
+    paddingVertical: isTablet ? 20 : 10,
+  },
   centeredContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -454,17 +449,29 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.primary,
   },
   logo: {
-    width: 45,
-    height: 45,
+    width: isTablet ? 50 : 45,
+    height: isTablet ? 50 : 45,
     marginLeft: -10,
-    marginTop: -10,
+  },
+  appbarTitle: {
+    fontWeight: 'bold',
+    fontSize: FONTSIZES.large,
+    color: COLORS.white,
+    marginLeft: isTablet ? 25 : 20,
+  },
+  titleText: {
+    fontSize: FONTSIZES.large,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    color: COLORS.white,
+    paddingVertical: isTablet ? 15 : 10,
   },
   textBig: {
-    fontSize: FONTSIZES.large,
+    fontSize: FONTSIZES.medium,
     fontWeight: 'bold',
   },
   textMedium: {
-    fontSize: FONTSIZES.medium,
+    fontSize: FONTSIZES.small,
     fontWeight: 'bold',
   },
   buttonContainer: {
@@ -473,7 +480,7 @@ const styles = StyleSheet.create({
   button: {
     width: DIMENSIONS.componentWidth,
     backgroundColor: COLORS.primary,
-    paddingVertical: 10,
+    paddingVertical: isTablet ? 15 : 10,
     alignSelf: 'center',
     borderRadius: DIMENSIONS.cornerCurve,
   },
@@ -481,7 +488,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 20,
+    paddingHorizontal: isTablet ? 25 : 20,
   },
   buttonText: {
     fontSize: FONTSIZES.medium,
@@ -490,9 +497,9 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   sliderContainer: {
-    height: 200,
+    height: isTablet ? 300 : 200,
     width: '100%',
-    marginBottom: 10,
+    marginBottom: isTablet ? 20 : 10,
   },
   carouselImage: {
     resizeMode: 'cover',
@@ -502,17 +509,17 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     width: DIMENSIONS.componentWidth,
     alignSelf: 'center',
-    marginBottom: 10,
+    marginBottom: isTablet ? 15 : 10,
   },
   filtersWrapper: {
     backgroundColor: COLORS.tertiary,
     borderRadius: DIMENSIONS.cornerCurve,
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 10,
+    padding: isTablet ? 15 : 10,
     width: DIMENSIONS.componentWidth,
     alignSelf: 'center',
-    marginTop: 5,
+    marginTop: isTablet ? 10 : 5,
     flexWrap: 'wrap',
   },
   filtersContainer: {
@@ -521,9 +528,9 @@ const styles = StyleSheet.create({
   filterButton: {
     backgroundColor: COLORS.primary,
     borderRadius: DIMENSIONS.cornerCurve,
-    paddingHorizontal: 10,
+    paddingHorizontal: isTablet ? 15 : 10,
     marginRight: 5,
-    paddingVertical: 5,
+    paddingVertical: isTablet ? 8 : 5,
     marginBottom: 5,
   },
   selectedFilterButton: {
@@ -541,23 +548,31 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: COLORS.white,
     textAlign: 'center',
-    marginBottom: 20,
+    marginBottom: isTablet ? 30 : 20,
+  },
+  modalContainer: {
+    backgroundColor: COLORS.tertiary,
+    padding: 20,
+    height: '80%',
+    width: DIMENSIONS.componentWidth,
+    alignSelf: 'center',
+    borderRadius: DIMENSIONS.cornerCurve,
   },
   filterSection: {
-    marginBottom: 20,
+    marginBottom: isTablet ? 25 : 20,
   },
   disabledClass: {
     opacity: 0.5,
   },
   classesContainer: {
-    paddingTop: 15,
-    paddingHorizontal: 15,
-    paddingBottom: 20,
+    paddingTop: isTablet ? 20 : 15,
+    paddingHorizontal: isTablet ? 20 : 15,
+    paddingBottom: isTablet ? 25 : 20,
   },
   errorText: {
     color: COLORS.white,
     textAlign: 'center',
-    fontSize: FONTSIZES.large,
+    fontSize: FONTSIZES.medium,
     paddingHorizontal: 20,
   },
 });
