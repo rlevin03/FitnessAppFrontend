@@ -16,7 +16,6 @@ import {
   ScrollView,
   Dimensions,
 } from 'react-native';
-// import CalendarStrip from 'react-native-calendar-strip';
 import { ImageSlider } from 'react-native-image-slider-banner';
 import {
   Appbar,
@@ -48,7 +47,7 @@ import picture4 from '../../assets/marino4.jpg';
 import leftScroller from '../../assets/left-chevron.png';
 import rightScroller from '../../assets/chevron-right.png';
 import { InstructorsContext } from '../../InstructorsContext';
-import CalendarStrip from '../components/CalendarStrip';
+import ReactNativeCalendarStrip from 'react-native-calendar-strip';
 
 const imageSliderData = [
   { img: picture1 },
@@ -274,7 +273,7 @@ const HomeScreen = () => {
             Filters
           </Text>
         </View>
-        {/* <CalendarStrip
+        <ReactNativeCalendarStrip
           startingDate={selectedDate}
           selectedDate={selectedDate}
           minDate={moment().startOf('week')}
@@ -297,8 +296,7 @@ const HomeScreen = () => {
           iconRight={rightScroller}
           iconLeftStyle={{ paddingRight: isTablet ? 70 : 30 }}
           iconRightStyle={{ paddingLeft: isTablet ? 70 : 30 }}
-        /> */}
-        <CalendarStrip />
+        />
         {Object.values(selectedFilters).flat().length > 0 && (
           <View style={styles.filtersWrapper}>
             <Text style={[styles.textMedium, { color: COLORS.white }]}>

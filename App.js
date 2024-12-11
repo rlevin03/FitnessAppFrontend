@@ -23,7 +23,7 @@ import ClassesScreen from './client/screens/instructorScreens/ClassesScreen';
 import AttendanceScreen from './client/screens/instructorScreens/AttendanceScreen';
 import { InstructorsProvider } from './InstructorsContext';
 
-axios.defaults.baseURL = 'http://10.110.102.215:4000';
+axios.defaults.baseURL = 'http://3.98.106.231';
 Text.defaultProps = Text.defaultProps || {};
 Text.defaultProps.allowFontScaling = false;
 
@@ -35,7 +35,7 @@ export default function App() {
       <UserProvider>
         <InstructorsProvider>
           <NavigationContainer>
-            <Stack.Navigator initialRouteName="Home">
+            <Stack.Navigator initialRouteName="Login">
               <Stack.Screen
                 name="Login"
                 component={LoginScreen}
