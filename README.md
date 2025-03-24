@@ -6,6 +6,7 @@ A few issues to keep in mind:
 4. Some other issues specific to the backend will be listed in the readme there
 
 
-Other than that, just CD into the main folder and run npm install to download all the dependencies
-You will also need to download the Expo app on your phone to access the app
-Then run npm start to startup the front end and scan the QR code with the Expo app which will launch it on your device
+Other than that, just CD into the main folder and run npm install to download all the dependencies \
+You will also need to download the Expo app on your phone to access the app \
+Then run npm start to start the front end and scan the QR code with the Expo app which will launch it on your device \
+Head to the backend repo to start up the processes there
